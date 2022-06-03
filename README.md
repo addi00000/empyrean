@@ -23,11 +23,12 @@
         <li>Paste the following into the command prompt andf press enter: <code>
         git clone https://github.com/addi00000/pegasus.git && cd pegasus
         </code></li>
+        <li></li>
     </ol>   
     <hr style="border-radius: 2%; margin-top: 30px; margin-bottom: 30px;" noshade="" size="20" width="100%">
 </div>
 
 <div align="center">
-    <img src="img/embed_ex-1.png">
-    <img src="img/embed_ex.png">
+    <img width=48% src="img/embed_ex.png">
+    <img width=48% src="img/embed_ex-1.png">
 </div>
