@@ -29,6 +29,6 @@
 </div>
 
 <div align="center">
-    <img width=48% src="img/embed_ex.png">
-    <img width=48% src="img/embed_ex-1.png">
+    <img style="border-radius: 15px; display: block; margin-left: auto; margin-right: auto; margin-bottom:20px;" width="70%" width=48% src="img/embed_ex.png">
+    <img style="border-radius: 15px; display: block; margin-left: auto; margin-right: auto; margin-bottom:20px;" width="70%" width=48% src="img/embed_ex-1.png">
 </div>
