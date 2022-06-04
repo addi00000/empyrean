@@ -11,6 +11,7 @@
     <br>
     <img src="https://img.shields.io/github/followers/addi00000?color=%23000000&label=Follow%20me"> 
     <br>
+    <br>
     <img src="img/banner.png">
     <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 </div>
