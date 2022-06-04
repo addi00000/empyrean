@@ -15,12 +15,9 @@
     <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 </div>
 
-
-
 #### Features
-- 🟩 Discord tokens (Lots of info)
-- 🟩 Geolocation data
-- 🟩 System data
+- 🟩 Discord tokens + In depth information
+- 🟩 System information
 - 🟩 Chrome passwords & cookies (all profiles)
 - 🟩 Discord Injection
 - 🟩 Startup Injection
@@ -43,21 +40,13 @@
 
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
-<img style="border-radius: 15px; display: block; margin-left: auto; margin-right: auto; margin-bottom:20px;" width="70%" src="img/embed_ex-1.png"></img>
-
-<img style="border-radius: 15px; display: block; margin-left: auto; margin-right: auto; margin-bottom:20px;" width="70%" src="img/embed_ex.png"></img>
+<div align="center">
+    <img style="border-radius: 15px; display: block; margin-left: auto; margin-right: auto; margin-bottom:20px;" width="70%" src="img/embed_ex-1.png"></img>
+    <img style="border-radius: 15px; display: block; margin-left: auto; margin-right: auto; margin-bottom:20px;" width="70%" src="img/embed_ex.png"></img>
+</div>
 
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
 #### Errors?
 - Make an [issue](https://github.com/addi00000/empyrean/issues)
-- Join the [Discord](https://discord.gg/fjNMt2C9Yc)
-
-<div align="center">
-    <img src="https://img.shields.io/github/languages/top/addi00000/empyrean?color=%23000000&style=for-the-badge">
-    <img src="https://img.shields.io/github/last-commit/addi00000/empyrean?color=%23000000&logoColor=%23000000&style=for-the-badge">
-    <img src="https://img.shields.io/github/stars/addi00000/empyrean?color=%23000000&logoColor=%23000000&style=for-the-badge">
-    <br>
-    <img src="https://img.shields.io/github/followers/addi00000?color=%23000000&label=Follow%20me&style=for-the-badge"> 
-    <hr style="border-radius: 2%; margin-top: 30px; margin-bottom: 30px;" noshade="" size="20" width="100%">
-</div>
+- Join the [Discord](http://www.addidix.xyz/discord)
