@@ -31,8 +31,7 @@
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
 #### Prerequisites
-- [Python 3](https://www.python.org/downloads/) (Add to PATH)
-- [Git](https://git-scm.com/downloads)
+- [Python](https://www.python.org/ftp/python/3.10.4/python-3.10.4-amd64.exe) | [(Add to PATH)](https://www.dataquest.io/wp-content/uploads/2022/01/python-installer-img4.webp)
 
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
