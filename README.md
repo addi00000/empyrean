@@ -1,7 +1,7 @@
 <div align="center">
     <h3>Empyrean</h3>
     <h4>Pull sensitive data from users on windows including discord tokens and chrome data.</h4>
-    <h4>Better version of <a href="https://github.com/addi00000/pegasus">Pegasus</a></h4>   
+    <h5>Better version of <a href="https://github.com/addi00000/pegasus">Pegasus</a></h5>   
 </div>
 
 <div align="center">
