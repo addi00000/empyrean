@@ -1,6 +1,6 @@
 <div align="center">
     <h3>Empyrean</h3>
-    <h4>Open-source stealer that easy to use and super effective</h4>
+    <h4>Open-source stealer thats easy to use and super effective</h4>
 </div>
 
 <div align="center">
@@ -11,7 +11,7 @@
     <img src="https://img.shields.io/github/followers/addi00000?color=%23000000&label=Follow%20me"> 
     <br>
     <br>
-    <img src="img/banner.png">
+    <img src="https://c.tenor.com/DVzVKfkHYJcAAAAd/galaxy-space.gif">
     <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 </div>
 
