@@ -11,7 +11,7 @@
     <img src="https://img.shields.io/github/followers/addi00000?color=%23000000&label=Follow%20me"> 
     <br>
     <br>
-    <img src="https://giffiles.alphacoders.com/215/215784.gif">
+    <img src="https://c.tenor.com/DVzVKfkHYJcAAAAd/galaxy-space.gif">
     <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 </div>
 
