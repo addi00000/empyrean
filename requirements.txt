@@ -1,0 +1,8 @@
+requests
+wmi
+pycryptodome
+discord
+pillow
+pypiwin32
+
+pyinstaller

