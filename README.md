@@ -1,7 +1,7 @@
 <div align="center">
     <h2>⚠️ Still in development: Please make an issue if there is a bug</h2>
     <h3>Empyrean</h3>
-    <h4>Easy to use and open-source stealer thats super effective</h4>
+    <h4>Easy to use and open-source stealer that's super effective</h4>
 </div>
 
 <div align="center">
