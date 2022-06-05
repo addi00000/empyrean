@@ -20,7 +20,7 @@
 - 🟩 System information
 - 🟩 Chrome passwords & cookies (all profiles)
 - 🟩 Discord Injection
-- 🟩 Startup Injection
+- 🟩 Registry Startup Injection
 - 🟩 Anti VM / Virus Scan / Debug
 
 ##### 🟩 = Done/Working | 🟨 = In development | ⬛️ = Todo | 🟥 = Not Working
