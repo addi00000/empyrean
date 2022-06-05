@@ -1,5 +1,5 @@
 <div align="center">
-    <h1>⚠️ Still in development: Please make an issue for any bug</h1>
+    <h2>⚠️ Still in development: Please make an issue if there is a bug</h2>
     <h3>Empyrean</h3>
     <h4>Easy to use and open-source stealer thats super effective</h4>
 </div>
