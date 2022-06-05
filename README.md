@@ -1,6 +1,6 @@
 <div align="center">
     <h3>Empyrean</h3>
-    <h4>Open-source stealer thats easy to use and super effective</h4>
+    <h4>Easy to use and open-source stealer thats super effective</h4>
 </div>
 
 <div align="center">
