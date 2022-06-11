@@ -51,4 +51,4 @@
 
 #### Errors?
 - Make an [issue](https://github.com/addi00000/empyrean/issues)
-- Join the [Discord](http://www.addidix.xyz/discord)
+- Join the [Discord](https://discord.gg/G52tYpJWnQ)

