@@ -29,11 +29,6 @@
 
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
-#### Prerequisites
-- [Python](https://www.python.org/ftp/python/3.10.4/python-3.10.4-amd64.exe) | [(Add to PATH)](https://www.dataquest.io/wp-content/uploads/2022/01/python-installer-img4.webp)
-
-<hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
-
 #### Setup
 1. Download and extract the [source code](https://github.com/addi00000/empyrean/archive/refs/heads/main.zip)
 2. If you have never installed python before run install_python.bat
