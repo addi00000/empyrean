@@ -1,6 +1,5 @@
 import base64
 import ctypes
-import difflib
 import json
 import os
 import platform
