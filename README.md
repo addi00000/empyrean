@@ -19,7 +19,7 @@
 #### Features
 - 🟩 Discord tokens + In depth information
 - 🟩 System information
-- 🟩 Chrome passwords & cookies (all profiles)
+- 🟩 Chrome passwords, cookies (all profiles)
 - 🟨 Other browser information
 - 🟩 Injection (Discord, Discord Canary, Discord PTB, Discord Development)
 - 🟩 Registry Startup Injection
