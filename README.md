@@ -21,7 +21,7 @@
 - 🟩 System information
 - 🟩 Chrome passwords & cookies (all profiles)
 - 🟨 Other browser information
-- 🟩 Discord Injection
+- 🟩 Injection (Discord, Discord Canary, Discord PTB, Discord Development)
 - 🟩 Registry Startup Injection
 - 🟩 Anti VM / Virus Scan / Debug
 
