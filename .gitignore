@@ -8,3 +8,5 @@ built.exe
 
 test.py
 /tests
+/old
+/buildenv

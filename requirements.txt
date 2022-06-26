@@ -6,5 +6,6 @@ discord
 pillow
 pypiwin32
 
+alive-progress
 tinyaes
 pyinstaller
