@@ -71,7 +71,7 @@ def main():
     shutil.unpack_archive(f"{__BUILDENV__}\\upx.zip", f"{__BUILDENV__}\\upx"); os.remove(f"{__BUILDENV__}\\upx.zip")
     
     install_pyinstaller()
-    subprocess.run(f'cd {__BUILDENV__} && python -m PyInstaller --onefile --noconsole --upx-dir upx/{os.listdir(f"{__BUILDENV__}/upx")[0]} --icon NONE --distpath ../ --key EMPRYREAN --name built {first}.py', shell=True) #, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(f'cd {__BUILDENV__} && py -3.10 -m PyInstaller --onefile --noconsole --upx-dir upx/{os.listdir(f"{__BUILDENV__}/upx")[0]} --icon NONE --distpath ../ --key EMPRYREAN --name built {first}.py', shell=True) #, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
     shutil.rmtree(__BUILDENV__) if os.path.isdir(__BUILDENV__) else None
     
@@ -80,7 +80,7 @@ def install_pyinstaller():
     shutil.unpack_archive(f"{__BUILDENV__}\\pyinstaller.zip", f"{__BUILDENV__}\\pyinstaller"); os.remove(f"{__BUILDENV__}\\pyinstaller.zip")
 
     subprocess.run('pip uninstall -y pyinstaller', shell=True) #, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocess.run(f'cd {__BUILDENV__}/pyinstaller/pyinstaller-5.1/bootloader/ && python ./waf all --target-arch=64bit', shell=True) #, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(f'cd {__BUILDENV__}/pyinstaller/pyinstaller-5.1/bootloader/ && py -3.10 ./waf all --target-arch=64bit', shell=True) #, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.run(f'cd {__BUILDENV__}/pyinstaller/pyinstaller-5.1/ && pip install .', shell=True) #, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
 if __name__ == "__main__":

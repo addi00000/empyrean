@@ -7,6 +7,7 @@ screenshot.png
 built.exe
 
 test.py
-/tests
-/old
-/buildenv
+**/tests
+**/old
+**/buildenv
+**/__pycache__
