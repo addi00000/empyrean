@@ -8,4 +8,5 @@ pypiwin32
 
 alive-progress
 tinyaes
+wheel   
 pyinstaller

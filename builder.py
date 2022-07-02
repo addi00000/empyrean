@@ -81,7 +81,7 @@ def install_pyinstaller():
 
     subprocess.run('pip uninstall -y pyinstaller', shell=True) #, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.run(f'cd {__BUILDENV__}/pyinstaller/pyinstaller-5.1/bootloader/ && py -3.10 ./waf all --target-arch=64bit', shell=True) #, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocess.run(f'cd {__BUILDENV__}/pyinstaller/pyinstaller-5.1/ && pip install .', shell=True) #, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(f'cd {__BUILDENV__}/pyinstaller/pyinstaller-5.1/ && py -3.10 setup.py install', shell=True) #, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
 if __name__ == "__main__":
     main()
