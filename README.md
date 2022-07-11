@@ -1,8 +1,4 @@
-<div align="center">
-    <h2>⚠️ Still in development: Please make an issue if there is a bug</h2>
-    <h3>Empyrean</h3>
-    <h4>Easy to use and open-source stealer that's super effective</h4>
-</div>
+<img src="img/banner.png">
 
 <div align="center">
     <img src="https://img.shields.io/github/languages/top/addi00000/empyrean?color=%23000000">
@@ -10,9 +6,6 @@
     <img src="https://img.shields.io/github/stars/addi00000/empyrean?color=%23000000&logoColor=%23000000">
     <br>
     <img src="https://img.shields.io/github/followers/addi00000?color=%23000000&label=Follow%20me"> 
-    <br>
-    <br>
-    <img src="https://c.tenor.com/DVzVKfkHYJcAAAAd/galaxy-space.gif">
     <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 </div>
 
@@ -50,3 +43,5 @@
 #### Errors?
 - Make an [issue](https://github.com/addi00000/empyrean/issues)
 - Join the [Discord](https://discord.gg/G52tYpJWnQ)
+
+<img src="img/footer.png">
