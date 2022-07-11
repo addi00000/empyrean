@@ -19,10 +19,9 @@
 #### Features
 - 🟩 Discord tokens + In depth information
 - 🟩 System information
-- 🟩 Chrome passwords, cookies, and history (all profiles)
+- 🟩 Chrome passwords, cookies, history, and bookmarks (all profiles)
 - 🟨 Other browser information
 - 🟩 Injection (Discord, Discord Canary, Discord PTB, Discord Development)
-- 🟩 Registry Startup Injection
 - 🟩 Anti VM / Virus Scan / Debug
 
 ##### 🟩 = Done/Working | 🟨 = In development | ⬛️ = Todo | 🟥 = Not Working

