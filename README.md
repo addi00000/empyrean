@@ -34,7 +34,6 @@
 <details>
     <summary>For dummies</summary>
     <ol>
-        <li>Install the above prerequisites</li>
         <li><a href="https://github.com/addi00000/empyrean/archive/refs/heads/main.zip">Download source code zip</a></li>
         <li>Extract zip</li>
         <li>Run <code>install_python.bat</code></li>
