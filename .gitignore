@@ -1,13 +1,13 @@
-google-cookies.txt
-google-passwords.txt
-google-search-history.txt
-google-web-history.txt
-google-bookmarks.txt
-screenshot.png
+**/**-cookies.txt
+**/**-passwords.txt
+**/**-search-history.txt
+**/**-web-history.txt
+**/**-bookmarks.txt
+**/screenshot.png
 
-built.exe
+**/built.exe
 
-test.py
+**/test.py
 **/tests
 **/old
 **/buildenv
