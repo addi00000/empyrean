@@ -53,7 +53,7 @@ def main() -> None:
     install_upx()
 
     subprocess.run(
-        f'cd {__BUILDENV__} && py -3.10 -m PyInstaller --onefile --noconsole --icon NONE --distpath ../ --key EMPRYREAN --name built ./src/main.py', shell=True)
+        f'cd {__BUILDENV__} && py -3.10 -m PyInstaller --onefile --noconsole --upx-dir upx/{os.listdir(f"{__BUILDENV__}/upx")[0]} --icon NONE --distpath ../ --key EMPRYREAN --name built ./src/main.py', shell=True)
 
     shutil.rmtree(__BUILDENV__)
 
