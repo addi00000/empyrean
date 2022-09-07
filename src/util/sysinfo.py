@@ -65,9 +65,8 @@ class system():
         return disk
 
     def get_hwid(self) -> str:
-        p = subprocess.Popen("wmic csproduct get uuid", shell=True,
-                             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        hwid = ((p.stdout.read() + p.stderr.read()).decode().split("\n")[1])
+        hwid = subprocess.check_output('C:\Windows\System32\wbem\WMIC.exe csproduct get uuid', shell=True,
+                                        stdin=subprocess.PIPE, stderr=subprocess.PIPE).decode('utf-8').split('\n')[1].strip()
 
         return hwid
 
