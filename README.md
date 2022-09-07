@@ -40,7 +40,7 @@
         <li>Extract zip</li>
         <li>Run <code>install_python.bat</code></li>
         <li>Run the builder by double clicking the <code>build.bat</code> file</li>
-        <li>Follow instructions in builder and your exe will be in the same directory</li>
+        <li>Follow instructions in builder and your exe will be in the same folder as <code>built.exe</code></li>
     </ol>
 </details>
 <br>
