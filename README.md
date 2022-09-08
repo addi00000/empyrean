@@ -65,10 +65,17 @@ cd empyrean
 
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
+## Contributing
+
+View the [contributing guidelines](CONTRIBUTING.md) for more information on how you can help out.
+
+<hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
+
 ## License
 
-<!-- mit  -->
 Empyrean is licensed under the <a href="https://mit-license.org/">MIT License</a>.
+
+<hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
 ## Errors?
 - Make an [issue](https://github.com/addi00000/empyrean/issues)
