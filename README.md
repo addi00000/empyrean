@@ -19,7 +19,7 @@
 - Fake error messages
 - Custom icon
 
-<hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
+
 
 ## Install
 <br>
@@ -50,7 +50,7 @@ cd empyrean
 ```
 
 
-<hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
+
 
 <div align="center">
     <img style="border-radius: 15px; display: block; margin-left: auto; margin-right: auto; margin-bottom:20px;" width="70%" src="img/bu0.png"></img>
@@ -61,19 +61,19 @@ cd empyrean
     <img style="border-radius: 15px; display: block; margin-left: auto; margin-right: auto; margin-bottom:20px;" width="70%" src="img/em3.png"></img>
 </div>
 
-<hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
+
 
 ## Contributing
 
 View the [contributing guidelines](CONTRIBUTING.md) for more information on how you can help out.
 
-<hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
+
 
 ## License
 
 Empyrean is licensed under the <a href="https://mit-license.org/">MIT License</a>.
 
-<hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
+
 
 ## Errors?
 - Make an [issue](https://github.com/addi00000/empyrean/issues)
