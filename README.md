@@ -10,16 +10,14 @@
 </div>
 
 ## Features
-- 🟩 Discord token info
-- 🟩 Password, Cookie, History, & Bookmarks Stealer (Chrome, Brave, & Edge)
-- 🟩 Discord process [injection](img/em4.png)
-- 🟩 Detailed system info
-- 🟩 Anti-VM / Anti-Sandbox / Anti-Debug
-- 🟩 Startup injection
-- 🟩 Fake error message
-- ⬛️ Fud?
-
-##### 🟩 = Done/Working | 🟨 = In development | ⬛️ = Todo | 🟥 = Not Working
+- [Discord token info](img/em1.png)
+- [Browser stealing](img/em0.png) from 13 browsers (passwords, cookies, history, bookmarks, etc.)
+- [Discord process injection](img/em3.png) 
+- [Detailed system info](img/em2.png)
+- Anti Debugging
+- Startup persistence
+- Fake error messages
+- Custom icon
 
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
