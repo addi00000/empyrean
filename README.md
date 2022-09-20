@@ -1,4 +1,4 @@
-<img src="img/banner.png">
+<img src="img/banner.png" width="100%" height="100%" />
 
 <div align="center">
     <img src="https://img.shields.io/github/languages/top/addi00000/empyrean?color=%23000000">
