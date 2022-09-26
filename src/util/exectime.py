@@ -3,7 +3,7 @@ import time
 from discord import Embed, SyncWebhook
 
 
-class ExecTime(object):
+class exec_time(object):
     def __init__(self):
         self._start = time.time()
         self._stop = None

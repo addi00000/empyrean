@@ -1,14 +1,4 @@
-**/**-cookies.txt
-**/**-passwords.txt
-**/**-search-history.txt
-**/**-web-history.txt
-**/**-bookmarks.txt
-**/screenshot.png
-
-**/built.exe
-
-**/test.py
+**/built*
 **/tests
-**/old
 **/buildenv
 **/__pycache__
