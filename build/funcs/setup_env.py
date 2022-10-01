@@ -16,8 +16,9 @@ class setup_env:
         self.create_build_dir()
 
         self.copy_src()
-        self.install_pyinstaller()
-        self.install_upx()
+        self.install_nuitka()
+        # self.install_pyinstaller()
+        # self.install_upx()
 
     def create_build_dir(self) -> None:
         if not os.path.exists(self.build_dir):
@@ -25,6 +26,9 @@ class setup_env:
 
     def copy_src(self) -> None:
         shutil.copytree(self.src_dir, self.build_dir + os.sep + 'src')
+
+    def install_nuitka(self):
+        subprocess.run(['pip', 'install', 'nuitka'], cwd=self.build_dir)
 
     def install_pyinstaller(self) -> None:
         url = 'https://github.com/pyinstaller/pyinstaller/archive/refs/tags/v5.1.zip'
