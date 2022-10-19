@@ -14,5 +14,5 @@ banner = r'''
       \_______)|___|\__/|___|(_______)  |___/    |__|  \___) \_______)(___/    \___)\___|\____\) 
      
                                      Made by github.com/addi00000
-                                        discord.gg/J8b8uzwjbS
+                                        discord.gg/C2xM9Ej3wr
 '''
