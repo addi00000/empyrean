@@ -1,9 +1,11 @@
-from InquirerPy import prompt
-import os
-import subprocess
-import shutil
 import json
+import os
+import shutil
+import subprocess
+
 import requests
+from InquirerPy import prompt
+
 
 def get_config() -> dict:
     questions = [
