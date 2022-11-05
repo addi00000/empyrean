@@ -2,7 +2,7 @@ import json
 import os
 import shutil
 import subprocess
-
+import re
 import requests
 from InquirerPy import prompt # type: ignore
 
@@ -13,7 +13,7 @@ def get_config() -> dict:
             "type": "input",
             "name": "webhook",
             "message": "Enter your webhook URL",
-            "validate": (lambda x: False if not x.startswith("https://discord.com/api/webhooks/") else True)
+            "validate": (lambda x: False if re.match(r"https://(discord.com|discordapp.com)/api/webhooks/\d+/\S+", x) is None else True)
         },
         {
             "type": "confirm",
