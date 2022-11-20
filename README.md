@@ -33,39 +33,18 @@
     - Send token, password, and email on login or when password is changed
 - System info
     - User
-        - Display name
-        - Hostname
-        - Username
     - System
-        - CPU
-        - GPU
-        - RAM
-        - HWID
     - Disk
-        - Total space
-        - Free space
-        - Used space
-        - Disk type
     - Network
-        - IP
-        - MAC
-        - ISP
-        - Country
-        - City
-        - Region
     - WiFi
-        - SSID
-        - Password
-
     - Screenshot
-
 - Anti-debug
     - Check if being run in a virustotal sandbox
 
 - Startup persistence
     - Place stub in appdata
     - Add to startup registry
-         
+
 ## Install
 <br>
 <details>
