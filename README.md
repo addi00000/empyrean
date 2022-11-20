@@ -13,17 +13,59 @@
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
 ## Features
-- [Discord token info](img/em1.png)
-- [Browser stealing](img/em0.png) from 13 browsers (passwords, cookies, history, bookmarks, etc.)
-- [Discord process injection](img/em3.png) 
-- [Detailed system info](img/em2.png)
-- Anti Debugging
+- Discord token info
+    - Nitro
+    - Badges 
+    - Billing
+    - Email
+    - Phone
+    - HQ Guilds
+    - HQ Friends
+    - Gift codes
+- Browser data
+    - Cookies
+    - Passwords
+    - History
+    - Bookmarks
+    - Autofill
+    - Chrome, Edge, Brave, Opera GX, and many more...
+- Discord injection
+    - Send token, password, and email on login or when password is changed
+- System info
+    - User
+        - Display name
+        - Hostname
+        - Username
+    - System
+        - CPU
+        - GPU
+        - RAM
+        - HWID
+    - Disk
+        - Total space
+        - Free space
+        - Used space
+        - Disk type
+    - Network
+        - IP
+        - MAC
+        - ISP
+        - Country
+        - City
+        - Region
+    - WiFi
+        - SSID
+        - Password
+
+    - Screenshot
+
+- Anti-debug
+    - Check if being run in a virustotal sandbox
+
 - Startup persistence
-- Fake error messages
-- Custom icon
-
-
-
+    - Place stub in appdata
+    - Add to startup registry
+         
 ## Install
 <br>
 <details>
