@@ -281,8 +281,10 @@ class Opera:
             ]
 
             for operation in operations:
-                operation(path)
-            
+                try:
+                    operation(path)
+                except Exception as e:
+                    pass
 
     def get_master_key(self, path: str) -> str:
         with open(path, "r", encoding="utf-8") as f:
