@@ -185,6 +185,11 @@ class upload_tokens:
                 "shift": 17,
                 "ind": 131072
             },
+            "ACTIVE_DEVELOPER": {
+                "emoji": "<:Active_Dev:1045024909690163210>",
+                "shift": 22,
+                "ind": 4194304
+            },
             "CERTIFIED_MODERATOR": {
                 "emoji": "<:certified_moderator:988996447938674699>",
                 "shift": 18,
