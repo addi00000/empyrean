@@ -8,9 +8,10 @@ if %errorlevel% == 0 (
     exit
 )
 
-git --version 2>&1 | findstr "git version" >nul
-if not %errorlevel% == 0 (
-    echo git is not installed. Please install git from https://git-scm.com/download/win
+::fixed by K.Dot cause dif
+git --version 2>&1>nul
+if %errorlevel% == 9009 (
+    echo git is either not installed or not added to path!
 
     pause
     exit
