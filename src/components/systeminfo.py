@@ -90,8 +90,11 @@ class SystemInfo():
 
     def system_data(self) -> tuple[str, str, bool]:
         def get_hwid() -> str:
-            hwid = subprocess.check_output('C:\Windows\System32\wbem\WMIC.exe csproduct get uuid', shell=True,
-                                           stdin=subprocess.PIPE, stderr=subprocess.PIPE).decode('utf-8').split('\n')[1].strip()
+            try:
+                hwid = subprocess.check_output('C:\\Windows\\System32\\wbem\\WMIC.exe csproduct get uuid', shell=True,
+                                            stdin=subprocess.PIPE, stderr=subprocess.PIPE).decode('utf-8').split('\n')[1].strip()
+            except:
+                hwid = "None"
 
             return hwid
 

