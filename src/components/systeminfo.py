@@ -173,6 +173,8 @@ class SystemInfo():
 
         except subprocess.CalledProcessError:
             pass
+        except UnicodeDecodeError:
+            pass
 
         out += f'{"SSID":<20}| {"PASSWORD":<}\n'
         out += f'{"-"*20}|{"-"*29}\n'
