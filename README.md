@@ -9,6 +9,8 @@
     <br>
     <img src="https://img.shields.io/github/issues/addi00000/empyrean?color=%23000000&logoColor=%23000000">
     <img src="https://img.shields.io/github/issues-closed/addi00000/empyrean?color=%23000000&logoColor=%23000000">
+    <br>
+    <a href="https://discord.gg/vdwxZNr9H7"><img src="https://img.shields.io/discord/1037689816621535303?color=%23000000&label=discord&logo=discord&logoColor=%23FFFFFF"></a>
 </div>
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
@@ -46,34 +48,18 @@
     - Add to startup registry
 
 ## Install
-<br>
-<details>
-    <summary>Prerequisites</summary>
-    <ul>
-        <li><a href="https://www.python.org/downloads/windows/"><p>Python</p></a></li>
-        <li><a href="https://git-scm.com/download/win"><p>Git</p></a></li>
-    <ul>
-</details>
-<br>
-<details>
-    <summary>For dummies</summary>
-    <ol>
-        <li><a href="https://github.com/addi00000/empyrean/archive/refs/heads/main.zip">Download source code zip</a></li>
-        <li>Extract zip</li>
-        <li>Run <code>install_python.bat</code></li>
-        <li>Run the builder by double clicking the <code>build.bat</code> file</li>
-        <li>Follow instructions in builder and your exe will be in the same folder as <code>built.exe</code></li>
-    </ol>
-</details>
-<br>
 
-```bash
-git clone https://github.com/addi00000/empyrean.git
-cd empyrean
-./build.bat
-```
+### Preqrequisites
+- Windows 10/11
+- [Python](https://www.python.org/downloads/release/python-3109/)
+- [Git](https://git-scm.com/download/win)
 
-
+### Setup
+1. [Download source code zip](https://github.com/addi00000/empyrean/archive/refs/heads/main.zip)
+2. Extract zip
+3. Run `install_python.bat` if you don't have python installed
+4. Run the builder by double clicking the `build.bat` file
+5. Follow instructions in builder and your exe will be found in the `dist` folder under the name `main.exe`
 
 
 <div align="center">
@@ -101,6 +87,6 @@ Empyrean is licensed under the <a href="https://mit-license.org/">MIT License</a
 
 ## Errors?
 - Make an [issue](https://github.com/addi00000/empyrean/issues)
-- Join the [Discord](https://discord.gg/Chv8fx3a4H)
+- Join the [Discord](https://discord.gg/vdwxZNr9H7)
 
 <img src="img/footer.png">
