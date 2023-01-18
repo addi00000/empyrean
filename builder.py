@@ -1,4 +1,4 @@
-import json
+import zipfile
 import os
 import shutil
 import subprocess
@@ -143,6 +143,8 @@ class DoObfuscate:
         Executes the obfuscator
         """
         subprocess.run(
+            ['pip', 'install', '-r', 'requirements.txt'], cwd=os.path.join(self.build_dir, 'pyobf2'))
+        subprocess.run(
             ['python', 'main.py'], cwd=os.path.join(self.build_dir, 'pyobf2'))
 
 
@@ -165,7 +167,8 @@ class Build:
         with requests.get(url, stream=True) as r:
             with open(os.path.join(self.build_dir, 'pyinstaller.zip'), 'wb') as f:
                 shutil.copyfileobj(r.raw, f)
-        subprocess.run(['unzip', 'pyinstaller.zip'], cwd=self.build_dir)
+        with zipfile.ZipFile(os.path.join(self.build_dir, 'pyinstaller.zip'), 'r') as zip_ref:
+            zip_ref.extractall(self.build_dir)
 
     def get_upx(self) -> None:
         """
@@ -176,7 +179,8 @@ class Build:
         with requests.get(url, stream=True) as r:
             with open(os.path.join(self.build_dir, 'upx.zip'), 'wb') as f:
                 shutil.copyfileobj(r.raw, f)
-        subprocess.run(['unzip', 'upx.zip'], cwd=self.build_dir)
+        with zipfile.ZipFile(os.path.join(self.build_dir, 'upx.zip'), 'r') as zip_ref:
+            zip_ref.extractall(self.build_dir)
 
     def build(self) -> None:
         """
