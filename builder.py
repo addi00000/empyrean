@@ -111,6 +111,41 @@ class WriteConfig:
             f.write(f'__CONFIG__ = {self.config}')
 
 
+class DoObfuscate:
+    """
+    Obfuscate code using https://github.com/0x3C50/pyobf2
+    """
+
+    def __init__(self) -> None:
+        self.build_dir = os.path.join(os.getcwd(), 'build')
+        self.src_dir = os.path.join(self.build_dir, 'src')
+        self.obfuscator_config = ['[general]', f'input_file = "../src/main.py"', f'output_file = "../src/"', 'transitive = true', 'manual_include = []', 'overwrite_output_forcefully = false', '[removeTypeHints]', 'enabled = true', '[fstrToFormatSeq]', 'enabled = true', '[intObfuscator]', 'enabled = true', 'mode = "bits"', '[encodeStrings]', 'enabled = true',
+                                  '[renamer]', 'enabled = false', 'rename_format = "f\'{kind}{get_counter(kind)}\'"', '[replaceAttribSet]', 'enabled = true', '[unicodeTransformer]', 'enabled = true', '[dynamicCodeObjLauncher]', 'enabled = false', '[varCollector]', 'enabled = true', '[compileFinalFiles]', 'enabled = false', '[packInPyz]', 'enabled = false', 'bootstrap_file = "__main__.py"']
+
+    def get_obfuscator(self) -> None:
+        """
+        Clones the obfuscator from a specified repository into the build directory
+        """
+        subprocess.run(
+            ['git', 'clone', 'https://github.com/0x3C50/pyobf2.git'], cwd=self.build_dir)
+        subprocess.run(
+            ['git', 'checkout', '4173bd1d47c360e1a66ac72c627b7efc478a16c8'], cwd=os.path.join(self.build_dir, 'pyobf2'))
+
+    def write_config(self) -> None:
+        """
+        Writes the config data to the config file
+        """
+        with open(os.path.join(self.build_dir, 'pyobf2', 'config.toml'), 'w') as f:
+            f.write('\n'.join(self.obfuscator_config))
+
+    def execute_obfuscator(self) -> None:
+        """
+        Executes the obfuscator
+        """
+        subprocess.run(
+            ['python', 'main.py'], cwd=os.path.join(self.build_dir, 'pyobf2'))
+
+
 class Build:
     """
     The Build class downloads and installs the necessary packages and 
@@ -161,6 +196,11 @@ def main() -> None:
 
     write_config = WriteConfig(config_data)
     write_config.write_config()
+
+    do_obfuscate = DoObfuscate()
+    do_obfuscate.get_obfuscator()
+    do_obfuscate.write_config()
+    do_obfuscate.execute_obfuscator()
 
     build = Build()
     build.get_pyinstaller()
