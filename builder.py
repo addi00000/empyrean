@@ -109,13 +109,11 @@ class build:
         self.get_pyinstaller()
         self.get_upx()
 
-        if self.config["use_icon"]:
-            iconpath = self.config["icon_path"]
-            subprocess.run(['pyinstaller', '--onefile', '--noconsole', '--clean', '--distpath', 'self.dist_dir', '--workpath', os.path.join(self.build_dir, 'work'), '--specpath',
-                           os.path.join(self.build_dir, 'spec'), '--upx-dir', os.path.join(self.build_dir, 'upx'), '--icon', iconpath, os.path.join(self.build_dir, 'src', 'main.py')])
-        else:
-            subprocess.run(['pyinstaller', '--onefile', '--noconsole', '--clean', '--distpath', 'self.dist_dir', '--workpath', os.path.join(self.build_dir, 'work'),
-                           '--specpath', os.path.join(self.build_dir, 'spec'), '--upx-dir', os.path.join(self.build_dir, 'upx'), os.path.join(self.build_dir, 'src', 'main.py')])
+        args = (['pyinstaller', '--onefile', '--noconsole', '--clean', '--distpath', 'self.dist_dir', '--workpath', os.path.join(self.build_dir, 'work'),
+                 '--specpath', os.path.join(self.build_dir, 'spec'),
+                 '--upx-dir', os.path.join(self.build_dir, 'upx')] + (['--icon', self.config["icon_path"]] if self.config["use_icon"] else []) +
+                [os.path.join(self.build_dir, 'src', 'main.py')])
+        subprocess.run(args)
 
     def get_pyinstaller(self) -> None:
         url = 'https://github.com/pyinstaller/pyinstaller/archive/refs/tags/v5.1.zip'
