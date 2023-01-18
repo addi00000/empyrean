@@ -11,3 +11,4 @@ tinyaes
 wheel   
 pyinstaller
 InquirerPy
+rich

