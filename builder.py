@@ -1,19 +1,17 @@
+import ast
 import os
 import re
 import shutil
 import subprocess
+import traceback
 import zipfile
 
+import colorama
+import pyobf2.lib as obf
 import requests
-from rich.progress import (
-    BarColumn,
-    Progress,
-    SpinnerColumn,
-    TextColumn,
-    TimeElapsedColumn,
-)
-
 from InquirerPy import prompt  # type: ignore
+from rich.progress import (BarColumn, Progress, SpinnerColumn, TextColumn,
+                           TimeElapsedColumn)
 
 
 class Config:
@@ -128,33 +126,45 @@ class DoObfuscate:
     def __init__(self) -> None:
         self.build_dir = os.path.join(os.getcwd(), 'build')
         self.src_dir = os.path.join(self.build_dir, 'src')
-        self.obfuscator_config = ['[general]', f'input_file = "../src/main.py"', f'output_file = "../src/"', 'transitive = true', 'manual_include = []', 'overwrite_output_forcefully = false', '[removeTypeHints]', 'enabled = true', '[fstrToFormatSeq]', 'enabled = true', '[intObfuscator]', 'enabled = true', 'mode = "bits"', '[encodeStrings]', 'enabled = true',
-                                  '[renamer]', 'enabled = false', 'rename_format = "f\'{kind}{get_counter(kind)}\'"', '[replaceAttribSet]', 'enabled = true', '[unicodeTransformer]', 'enabled = true', '[dynamicCodeObjLauncher]', 'enabled = false', '[varCollector]', 'enabled = true', '[compileFinalFiles]', 'enabled = false', '[packInPyz]', 'enabled = false', 'bootstrap_file = "__main__.py"']
+        self.config = {
+            "removeTypeHints.enabled": True,
+            "fstrToFormatSeq.enabled": True,
+            "intObfuscator.enabled": True,
+            "intObfuscator.mode": "decode",
+            "encodeStrings.enabled": True,
+            "renamer.enabled": False,
+            "renamer.rename_format": "f'{kind}{get_counter(kind)}'",
+            "replaceAttribSet.enabled": True,
+            "unicodeTransformer.enabled": True,
+        }
 
-    def get_obfuscator(self) -> None:
+    def walk(self, path: str) -> dict:
         """
-        Clones the obfuscator from a specified repository into the build directory
+        Walk a directory and return a dict of files
         """
-        subprocess.run(
-            ['git', 'clone', 'https://github.com/0x3C50/pyobf2.git'], cwd=self.build_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        subprocess.run(
-            ['git', 'checkout', '4173bd1d47c360e1a66ac72c627b7efc478a16c8'], cwd=os.path.join(self.build_dir, 'pyobf2'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        files = {}
+        for root, _, filenames in os.walk(path):
+            for filename in filenames:
+                files[os.path.join(root, filename)] = os.path.join(
+                    root, filename).replace(path, '')
+        return files
 
-    def write_config(self) -> None:
+    def run(self) -> None:
         """
-        Writes the config data to the config file
+        Run the obfuscation
         """
-        with open(os.path.join(self.build_dir, 'pyobf2', 'config.toml'), 'w') as f:
-            f.write('\n'.join(self.obfuscator_config))
+        obf.set_config_dict(self.config)
 
-    def execute_obfuscator(self) -> None:
-        """
-        Executes the obfuscator
-        """
-        subprocess.run(
-            ['pip', 'install', '-r', 'requirements.txt'], cwd=os.path.join(self.build_dir, 'pyobf2'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        subprocess.run(
-            ['python', 'main.py'], cwd=os.path.join(self.build_dir, 'pyobf2'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        tree = self.walk(self.src_dir)
+        for file in tree:
+            if file.endswith('.py'):
+                with open(file, 'r', encoding='utf-8') as f:
+                    code = f.read()
+                tree[file] = ast.parse(code)
+                tree[file] = obf.do_obfuscation_single_ast(
+                    tree[file], tree[file])
+                with open(file, 'w', encoding='utf-8') as f:
+                    f.write(ast.unparse(tree[file]))
 
 
 class Build:
@@ -200,15 +210,13 @@ class Build:
 
 
 def main() -> None:
+    colorama.init()
+
     progress = Progress(
         TextColumn("[bold blue]{task.description}", justify="right"),
         BarColumn(bar_width=None),
         SpinnerColumn(
-            finished_text="✅",
-            speed=0.1,
-            spinner_name="dots",
-            style="green",
-        ),
+            spinner_name="monkey", style="bright_yellow", speed=1.0),
         TimeElapsedColumn()
     )
 
@@ -216,37 +224,26 @@ def main() -> None:
     config_data = config.get_config()
 
     with progress:
-        task1 = progress.add_task("[bold green]Making environment...", total=3)
+        task1 = progress.add_task("[bold green]Making environment...", total=1)
         make_env = MakeEnv()
-        progress.update(task1, advance=1)
         make_env.make_env()
-        progress.update(task1, advance=1)
         make_env.get_src()
         progress.update(task1, advance=1)
 
-        task2 = progress.add_task("[bold green]Writing config...", total=2)
+        task2 = progress.add_task("[bold green]Writing config...", total=1)
         write_config = WriteConfig(config_data)
-        progress.update(task2, advance=1)
         write_config.write_config()
         progress.update(task2, advance=1)
 
-        task3 = progress.add_task("[bold green]Obfuscating...", total=4)
+        task3 = progress.add_task("[bold green]Obfuscating...", total=1)
         do_obfuscate = DoObfuscate()
-        progress.update(task3, advance=1)
-        do_obfuscate.get_obfuscator()
-        progress.update(task3, advance=1)
-        do_obfuscate.write_config()
-        progress.update(task3, advance=1)
-        do_obfuscate.execute_obfuscator()
+        do_obfuscate.run()
         progress.update(task3, advance=1)
 
-        task4 = progress.add_task("[bold green]Building...", total=4)
+        task4 = progress.add_task("[bold green]Building...", total=1)
         build = Build()
-        progress.update(task4, advance=1)
         build.get_pyinstaller()
-        progress.update(task4, advance=1)
         build.get_upx()
-        progress.update(task4, advance=1)
         build.build()
         progress.update(task4, advance=1)
 

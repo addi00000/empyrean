@@ -1,4 +1,8 @@
 @echo off
+mode con: cols=100 lines=30
+title empyrean
+color 0a
+cls
 
 python --version 2>&1 | findstr " 3.11" >nul
 if %errorlevel% == 0 (
@@ -16,7 +20,7 @@ if %errorlevel% == 9009 (
 )
 
 py -3.10 -m pip uninstall -r interferences.txt
-py -3.10 -m pip install --force-reinstall -r requirements.txt
+py -3.10 -m pip install --upgrade -r requirements.txt
 
 cls
 

@@ -12,3 +12,4 @@ wheel
 pyinstaller
 InquirerPy
 rich
+pyobf2==1.1.5
