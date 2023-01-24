@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/github/issues/addi00000/empyrean?color=%23000000&logoColor=%23000000">
     <img src="https://img.shields.io/github/issues-closed/addi00000/empyrean?color=%23000000&logoColor=%23000000">
     <br>
-    <a href="https://discord.gg/rrRS5Sace8"><img src="https://img.shields.io/discord/1067145306350813366?color=%23000000&label=discord&logo=discord&logoColor=%23FFFFFF"></a>
+    <a href="https://discord.gg/GudVbfd9ZU"><img src="https://img.shields.io/discord/1067145306350813366?color=%23000000&label=discord&logo=discord&logoColor=%23FFFFFF"></a>
 </div>
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
@@ -85,6 +85,6 @@ Empyrean is licensed under the <a href="https://mit-license.org/">MIT License</a
 ## Errors?
 
 -   Make an [issue](https://github.com/addi00000/empyrean/issues)
--   Join the [Discord](https://discord.gg/rrRS5Sace8)
+-   Join the [Discord](https://discord.gg/GudVbfd9ZU)
 
 <img src="img/footer.png">
