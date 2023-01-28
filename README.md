@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/github/issues/addi00000/empyrean?color=%23000000&logoColor=%23000000">
     <img src="https://img.shields.io/github/issues-closed/addi00000/empyrean?color=%23000000&logoColor=%23000000">
     <br>
-    <a href="https://discord.gg/GudVbfd9ZU"><img src="https://img.shields.io/discord/1067145306350813366?color=%23000000&label=discord&logo=discord&logoColor=%23FFFFFF"></a>
+    Due to constant Discord terminations I will not be making a new support server. For urgent contact: <a href="https://t.me/addi00000">Telegram</a>
 </div>
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
