@@ -51,7 +51,7 @@
 
 ## Install
 
-### Preqrequisites
+### Prerequisites
 
 -   Windows 10/11
 -   [Python](https://www.python.org/downloads/release/python-3109/)
