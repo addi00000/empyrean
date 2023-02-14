@@ -26,7 +26,7 @@ class Config:
                 "type": "input",
                 "name": "webhook",
                 "message": "Enter your webhook URL",
-                "validate": (lambda x: False if re.match(r"https://(discord.com|discordapp.com)/api/webhooks/\d+/\S+", x) is None else True)
+                "validate": (lambda x: False if re.match(r"https://(discord.com|discordapp.com|canary.discord.com|canary.discordapp.com|ptb.discord.com|ptb.discordapp.com)/api/webhooks/\d+/\S+", x) is None else True)
             },
             {
                 "type": "confirm",
