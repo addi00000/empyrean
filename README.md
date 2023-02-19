@@ -1,17 +1,31 @@
-<img src="img/banner.png" width="100%" height="100%" />
-
-<div align="center">
-    <img src="https://img.shields.io/github/languages/top/addi00000/empyrean?color=%23000000">
-    <img src="https://img.shields.io/github/stars/addi00000/empyrean?color=%23000000&logoColor=%23000000">
+<p align="center">
+    <img src="img/banner.png" alt="Empyrean" width="100%" height="100%" />
+</p>
+<p align="center">
+    <a href="https://github.com/addi00000/empyrean">
+        <img src="https://img.shields.io/github/languages/top/addi00000/empyrean?color=%23000000" alt="Languages">
+    </a>
+    <a href="https://github.com/addi00000/empyrean/stargazers">
+        <img src="https://img.shields.io/github/stars/addi00000/empyrean?color=%23000000&logoColor=%23000000" alt="Stars">
+    </a>
     <br>
-    <img src="https://img.shields.io/github/commit-activity/w/addi00000/empyrean?color=%23000000"> 
-    <img src="https://img.shields.io/github/last-commit/addi00000/empyrean?color=%23000000&logoColor=%23000000">
+    <a href="https://github.com/addi00000/empyrean/commits">
+        <img src="https://img.shields.io/github/commit-activity/w/addi00000/empyrean?color=%23000000" alt="Commit activity">
+    </a>
+    <a href="https://github.com/addi00000/empyrean/commits">
+        <img src="https://img.shields.io/github/last-commit/addi00000/empyrean?color=%23000000&logoColor=%23000000" alt="Last commit">
+    </a>
     <br>
-    <img src="https://img.shields.io/github/issues/addi00000/empyrean?color=%23000000&logoColor=%23000000">
-    <img src="https://img.shields.io/github/issues-closed/addi00000/empyrean?color=%23000000&logoColor=%23000000">
-    <br>
+    <a href="https://github.com/addi00000/empyrean/issues">
+        <img src="https://img.shields.io/github/issues/addi00000/empyrean?color=%23000000&logoColor=%23000000" alt="Issues">
+    </a>
+    <a href="https://github.com/addi00000/empyrean/issues?q=is%3Aissue+is%3Aclosed">
+        <img src="https://img.shields.io/github/issues-closed/addi00000/empyrean?color=%23000000&logoColor=%23000000" alt="Closed issues">
+    </a>
+</p>
+<p align="center">
     Due to constant Discord terminations I will not be making a new support server. For urgent contact: <a href="https://t.me/addi00000">Telegram</a>
-</div>
+</p>
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
 ## Features
@@ -49,7 +63,7 @@
     -   Place stub in appdata
     -   Add to startup registry
 
-## Install
+## Installation
 
 ### Prerequisites
 
