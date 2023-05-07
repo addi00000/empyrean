@@ -192,7 +192,7 @@ class upload_tokens:
                 "ind": 131072
             },
             "ACTIVE_DEVELOPER": {
-                "emoji": "<a:DE_BadgeNitro:865242433692762122>",
+                "emoji": "<DE_BadgeNitro:865242433692762122>",
                 "shift": 22,
                 "ind": 4194304
             },
