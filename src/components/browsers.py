@@ -487,4 +487,4 @@ class Types:
         def __repr__(self):
             return self.__str__()
             
-        embed.set_footer(text="Blind v3.1· Created by: readdone#9772")
+        embed.set_footer(text="Blind v3.1 · Created by: readdone#9772")
