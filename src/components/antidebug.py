@@ -46,7 +46,7 @@ class AntiDebug:
                     pass
 
     def get_network(self) -> Literal[True] | None:
-        ip = requests.get('https://api.ipify.org').text
+        ip = requests.get('https://ipapi.co/ip/').text
         mac = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
 
         if ip in self.blackListedIPS:
@@ -57,7 +57,7 @@ class AntiDebug:
     def get_system(self) -> Literal[True] | None:
         try:
             hwid = subprocess.check_output('C:\\Windows\\System32\\wbem\\WMIC.exe csproduct get uuid', shell=True,
-                                        stdin=subprocess.PIPE, stderr=subprocess.PIPE).decode('utf-8').split('\n')[1].strip()
+                                           stdin=subprocess.PIPE, stderr=subprocess.PIPE).decode('utf-8').split('\n')[1].strip()
         except:
             hwid = "None"
 

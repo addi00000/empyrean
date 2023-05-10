@@ -92,7 +92,7 @@ class SystemInfo():
         def get_hwid() -> str:
             try:
                 hwid = subprocess.check_output('C:\\Windows\\System32\\wbem\\WMIC.exe csproduct get uuid', shell=True,
-                                            stdin=subprocess.PIPE, stderr=subprocess.PIPE).decode('utf-8').split('\n')[1].strip()
+                                               stdin=subprocess.PIPE, stderr=subprocess.PIPE).decode('utf-8').split('\n')[1].strip()
             except:
                 hwid = "None"
 
@@ -128,14 +128,15 @@ class SystemInfo():
 
     def network_data(self) -> tuple[str, str, bool]:
         def geolocation(ip: str) -> str:
-            url = f"http://ip-api.com/json/{ip}"
+            url = f"https://ipapi.co/{ip}/json/"
             response = requests.get(url, headers={
                                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"})
             data = response.json()
 
-            return (data["country"], data["regionName"], data["city"], data["zip"], data["as"])
+            return (data["country"], data["region"], data["city"], data["postal"], data["asn"])
 
-        ip = requests.get("https://api.ipify.org").text
+        ip = requests.get(
+            "https://www.cloudflare.com/cdn-cgi/trace").text.split("ip=")[1].split("\n")[0]
         mac = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
         country, region, city, zip_, as_ = geolocation(ip)
 

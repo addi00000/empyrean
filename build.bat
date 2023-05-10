@@ -11,7 +11,6 @@ if %errorlevel% == 0 (
     exit
 )
 
-::fixed by K.Dot cause dif
 git --version 2>&1>nul
 if %errorlevel% == 9009 (
     echo git is either not installed or not added to path! You can install it here https://git-scm.com/download/win
@@ -20,11 +19,11 @@ if %errorlevel% == 9009 (
 )
 
 py -3.10 -m pip uninstall -r interferences.txt
-py -3.10 -m pip install --upgrade -r requirements.txt
+py -3.10 -m pip install -U -r requirements.txt
 
 cls
 
 if exist build rmdir /s /q build
-py -3.10 builder.py
+py -3.10 builder/main.py
 
 pause

