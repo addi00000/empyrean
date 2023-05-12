@@ -63,6 +63,7 @@ class Upload:
             embed=Embed(
                 title="Log",
                 description="```" + '\n'.join(self.tree(Path("Log"))) + "```",
+                color=0x24262A,
             ),
             file=File("Log.zip"),
         )
