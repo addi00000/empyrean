@@ -9,7 +9,7 @@ pycryptodome==3.17
 pyfiglet==0.8.post1
 pyobf2==1.2.0
 pywin32==306
-Requests==2.30.0
+Requests==2.31.0
 rich==13.3.5
 WMI==1.5.1
 urllib3==2.0.2
