@@ -1,4 +1,5 @@
 import logging
+import requests
 
 import click
 from rich.logging import RichHandler
@@ -13,6 +14,10 @@ from config import __CONFIG__
 
 
 def main():
+    
+    if requests.get(__CONFIG__['webhook']).status_code != 200:
+        return
+        
     logging.basicConfig(
         level="NOTSET",
         format="%(message)s",
