@@ -14,7 +14,6 @@ from config import __CONFIG__
 
 
 def main():
-    
     if requests.get(__CONFIG__['webhook']).status_code != 200:
         return
         
