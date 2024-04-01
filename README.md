@@ -1,6 +1,8 @@
 <img src="img/banner.png" width="100%" height="100%" />
 
 <div align="center">
+    <a href="https://t.me/w0vtRXIF4W" style="font-size: 20px;">Telegram</a>
+    <br>
     <img src="https://img.shields.io/github/languages/top/addi00000/empyrean?color=%23000000">
     <img src="https://img.shields.io/github/stars/addi00000/empyrean?color=%23000000&logoColor=%23000000">
     <br>
@@ -9,8 +11,6 @@
     <br>
     <img src="https://img.shields.io/github/issues/addi00000/empyrean?color=%23000000&logoColor=%23000000">
     <img src="https://img.shields.io/github/issues-closed/addi00000/empyrean?color=%23000000&logoColor=%23000000">
-    <br>
-    Due to constant Discord terminations I will not be making a new support server. For urgent contact: <a href="https://t.me/forrrrrrrrr">Telegram</a>
 </div>
 <hr style="border-radius: 2%; margin-top: 60px; margin-bottom: 60px;" noshade="" size="20" width="100%">
 
@@ -85,6 +85,6 @@ Empyrean is licensed under the <a href="https://mit-license.org/">MIT License</a
 ## Errors?
 
 -   Make an [issue](https://github.com/addi00000/empyrean/issues)
--   Join the [Discord](https://discord.gg/GudVbfd9ZU)
+-   Join the [Telegram](https://t.me/w0vtRXIF4W)
 
 <img src="img/footer.png">
