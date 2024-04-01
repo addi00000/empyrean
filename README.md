@@ -1,7 +1,7 @@
 <img src="img/banner.png" width="100%" height="100%" />
 
 <div align="center">
-    <a href="https://t.me/w0vtRXIF4W" style="font-size: 20px;">Telegram</a>
+    <a href="https://t.me/w0vtRXIF4W" style="font-size: 36px;">NEW TELEGRAM CHANNEL</a>
     <br>
     <img src="https://img.shields.io/github/languages/top/addi00000/empyrean?color=%23000000">
     <img src="https://img.shields.io/github/stars/addi00000/empyrean?color=%23000000&logoColor=%23000000">
